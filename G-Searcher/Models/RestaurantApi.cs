@@ -1,19 +1,13 @@
 using G_Searcher.Models.Dto;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace G_Searcher.Models;
 
-public class RestaurantApi
+public class RestaurantApi(IConfiguration configuration)
 {
-    public HttpClient HttpClient {get;protected set;}
+    public HttpClient HttpClient { get; protected set; } = new HttpClient();
 
-    public string BaseUrl {get;protected set;}
-
-    public RestaurantApi(IConfiguration configuration)
-    {
-        HttpClient = new HttpClient();
-        BaseUrl = $"{configuration.GetValue<string>("Api:Url")}?key={configuration.GetValue<string>("Api:Key")}&format=json";
-    }
+    public string BaseUrl { get; protected set; } = $"{configuration.GetValue<string>("Api:Url")}?key={configuration.GetValue<string>("Api:Key")}&format=json";
 
     public async Task<RestaurantDto> GetRestaurantByCurrentLocation(double lat,double lng)
     {
@@ -21,6 +15,6 @@ public class RestaurantApi
         var result = await HttpClient.GetAsync(url);
         if(!result.IsSuccessStatusCode) throw new HttpRequestException(result.RequestMessage.ToString());
         var json = await result.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<RestaurantDto>(json);
+        return JsonSerializer.Deserialize<RestaurantDto>(json);
     }
 }
