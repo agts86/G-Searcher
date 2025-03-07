@@ -4,9 +4,8 @@ using G_Searcher.Models.DB.Daos;
 
 namespace G_Searcher.Models.DB.Repositories;
 
-public class SearchRepository(MyContext dbContext)
+public class SearchRepository(MyContext dbContext) : Repository(dbContext)
 {
-    private MyContext DbContext { get; } = dbContext;
     public GourmetLogDao GourmetLogDao { get; } = new GourmetLogDao(dbContext);
 
     public async Task CreateLogAsync(GourmetGettingDto dto)

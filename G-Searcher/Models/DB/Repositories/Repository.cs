@@ -1,0 +1,9 @@
+using G_Searcher.Models.DB;
+
+
+namespace G_Searcher.Models.DB.Repositories;
+
+public abstract class Repository(MyContext dbContext)
+{
+    protected MyContext DBContext { get; } = dbContext;
+}
