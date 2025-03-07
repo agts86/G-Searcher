@@ -3,7 +3,7 @@ using G_Searcher.Models.DB.Daos;
 namespace G_Searcher.Models.DB.Repositories;
 
 /// <summary>
-/// ミドルウェア用リポジトリー
+/// ミドルウェア用リポジトリ
 /// </summary>
 public class MiddleWareRepository(MyContext dbContext) : Repository(dbContext)
 {

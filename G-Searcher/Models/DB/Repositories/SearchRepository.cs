@@ -5,7 +5,7 @@ using G_Searcher.Models.DB.Daos;
 namespace G_Searcher.Models.DB.Repositories;
 
 /// <summary>
-/// サーチコントローラー用リポジトリー
+/// サーチコントローラー用リポジトリ
 /// </summary>
 public class SearchRepository(MyContext dbContext) : Repository(dbContext)
 {
