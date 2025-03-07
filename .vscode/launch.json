@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/G-Searcher/bin/Debug/net6.0/G-Searcher.dll",
+            "program": "${workspaceFolder}/G-Searcher/bin/Debug/net8.0/G-Searcher.dll",
             "args": [],
             "cwd": "${workspaceFolder}/G-Searcher",
             "stopAtEntry": false,
@@ -22,7 +22,7 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "https://localhost:5001",
+                "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000",
                 "ASPNETCORE_Kestrel__Certificates__Default__Path": "${env:USERPROFILE}/.aspnet/https/WslLocalHost.pfx",
                 "ASPNETCORE_Kestrel__Certificates__Default__Password": "WslLocalHost"
             },
