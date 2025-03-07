@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/G-Searcher/bin/Debug/net8.0/G-Searcher.dll",
+            "program": "${workspaceFolder}/G-Searcher/bin/Debug/net9.0/G-Searcher.dll",
             "args": [],
             "cwd": "${workspaceFolder}/G-Searcher",
             "stopAtEntry": false,
