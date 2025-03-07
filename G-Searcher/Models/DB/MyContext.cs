@@ -1,9 +1,9 @@
-﻿using G_Searcher.DB.Tables;
+﻿using G_Searcher.Models.DB.Tables;
 using Microsoft.EntityFrameworkCore;
 using G_Searcher.Utilities;
-using G_Searcher.DB.SaveChanges;
+using G_Searcher.Models.DB.SaveChanges;
 
-namespace G_Searcher.DB;
+namespace G_Searcher.Models.DB;
 
 public class MyContext(DbContextOptions<MyContext> options) : DbContext(options)
 {

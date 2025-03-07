@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace G_Searcher.DB.Tables;
+namespace G_Searcher.Models.DB.Tables;
 
 [Table("ErrorLog")]
 public class ErrorLog : Meta

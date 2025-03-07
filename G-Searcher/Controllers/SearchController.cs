@@ -1,4 +1,4 @@
-using G_Searcher.DB;
+using G_Searcher.Models.DB;
 using G_Searcher.Models.BL.Search;
 using G_Searcher.Models.Dto.Search;
 using Microsoft.AspNetCore.Mvc;

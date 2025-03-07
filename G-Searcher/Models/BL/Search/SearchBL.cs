@@ -1,7 +1,7 @@
-using G_Searcher.DB.Repositories;
+using G_Searcher.Models.DB.Repositories;
 using G_Searcher.Models.Dto.Search;
 using System.Text.Json;
-using G_Searcher.DB;
+using G_Searcher.Models.DB;
 
 namespace G_Searcher.Models.BL.Search;
 

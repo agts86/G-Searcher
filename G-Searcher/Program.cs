@@ -1,7 +1,7 @@
 using G_Searcher.Configurations;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.EntityFrameworkCore;
-using G_Searcher.DB;
+using G_Searcher.Models.DB;
 
 var builder = WebApplication.CreateBuilder(args);
 

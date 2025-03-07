@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace G_Searcher.DB.Tables;
+namespace G_Searcher.Models.DB.Tables;
 
 public abstract class Meta
 {

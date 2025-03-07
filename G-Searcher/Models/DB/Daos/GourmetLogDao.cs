@@ -1,7 +1,7 @@
-using G_Searcher.DB.Tables;
-using G_Searcher.DB;
+using G_Searcher.Models.DB.Tables;
+using G_Searcher.Models.DB;
 
-namespace G_Searcher.DB.Daos;
+namespace G_Searcher.Models.DB.Daos;
 
 public class GourmetLogDao(MyContext dbContext) : Dao(dbContext)
 {

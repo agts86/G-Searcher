@@ -1,6 +1,6 @@
-using G_Searcher.DB.Daos;
+using G_Searcher.Models.DB.Daos;
 
-namespace G_Searcher.DB.Repositories;
+namespace G_Searcher.Models.DB.Repositories;
 
 public class MiddleWareRepository(MyContext dbContext)
 {

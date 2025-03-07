@@ -1,7 +1,7 @@
-using G_Searcher.DB.Tables;
+using G_Searcher.Models.DB.Tables;
 using Microsoft.EntityFrameworkCore;
 
-namespace G_Searcher.DB.SaveChanges;
+namespace G_Searcher.Models.DB.SaveChanges;
 
 public class SaveChangesAdd : ISaveChanges
 {

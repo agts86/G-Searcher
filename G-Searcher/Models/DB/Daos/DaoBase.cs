@@ -1,6 +1,4 @@
-using G_Searcher.DB;
-
-namespace G_Searcher.DB.Daos;
+namespace G_Searcher.Models.DB.Daos;
 
 public class Dao(MyContext dbContext)
 {

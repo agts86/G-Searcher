@@ -1,6 +1,6 @@
 using System.Net;
-using G_Searcher.DB;
-using G_Searcher.DB.Repositories;
+using G_Searcher.Models.DB;
+using G_Searcher.Models.DB.Repositories;
 using G_Searcher.Models.Exceptions;
 
 namespace G_Searcher.Configurations;

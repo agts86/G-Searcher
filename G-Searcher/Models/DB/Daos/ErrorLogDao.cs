@@ -1,8 +1,8 @@
-using G_Searcher.DB.Tables;
-using G_Searcher.DB;
+using G_Searcher.Models.DB.Tables;
+using G_Searcher.Models.DB;
 using G_Searcher.Models.Exceptions;
 
-namespace G_Searcher.DB.Daos;
+namespace G_Searcher.Models.DB.Daos;
 
 public class ErrorLogDao(MyContext dbContext) : Dao(dbContext)
 {
