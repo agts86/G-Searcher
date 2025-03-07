@@ -1,4 +1,5 @@
-using G_Searcher.Models;
+using G_Searcher.Models.BL.Search;
+using G_Searcher.Models.Dto.Search;
 using Microsoft.AspNetCore.Mvc;
 
 namespace G_Searcher.Controllers;
@@ -7,12 +8,12 @@ namespace G_Searcher.Controllers;
 [Route("api/[controller]")]
 public class SearchController(IConfiguration configuration) : ControllerBase
 {
-    public RestaurantApi RestaurantApi { get; protected set; } = new RestaurantApi(configuration);
+    public SearchBL SearchBL { get; protected set; } = new SearchBL(configuration);
 
     [HttpGet]
-    public async Task<IActionResult> GetRestaurantByCurrentLocation([FromQuery] double lat,double lng)
+    public async Task<IActionResult> GetGourmetAsync([FromQuery] GourmetGettingDto gourmetGettingDto)
     {
-        var res = await RestaurantApi.GetRestaurantByCurrentLocation(lat,lng);
+        var res = await SearchBL.GetGourmetAsync(gourmetGettingDto);
         return Ok(new {res.Results});
     }
 }

@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
 
-namespace G_Searcher.Models.Dto;
+namespace G_Searcher.Models.Dto.Search;
 
 /// <summary>
 /// グルメサーチAPIレスポンスのDTO
 /// </summary>
-public class RestaurantDto
+public class HotPepperGourmetResponseDto
 {
     /// <summary>
     /// 結果
@@ -15,32 +15,32 @@ public class RestaurantDto
     /// <summary>
     /// 結果
     /// </summary>
-    public class Result
+    public class Result : HotPepperErrorResponseDto
     {
         /// <summary>
         /// APIのバージョン情報
         /// </summary>
         [JsonPropertyName("api_version")]
         public string ApiVersion { get; set; }
-        
+
         /// <summary>
         /// 検索結果の全件数
         /// </summary>
         [JsonPropertyName("results_available")]
         public int ResultsAvailable { get; set; }
-        
+
         /// <summary>
         /// このレスポンスに含まれる検索結果の件数
         /// </summary>
         [JsonPropertyName("results_returned")]
         public string ResultsReturned { get; set; }
-        
+
         /// <summary>
         /// 検索結果の開始位置
         /// </summary>
         [JsonPropertyName("results_start")]
         public int ResultsStart { get; set; }
-        
+
         /// <summary>
         /// 店舗情報の配列
         /// </summary>
@@ -57,67 +57,67 @@ public class RestaurantDto
             /// </summary>
             [JsonPropertyName("id")]
             public string Id { get; set; }
-            
+
             /// <summary>
             /// 掲載店名
             /// </summary>
             [JsonPropertyName("name")]
             public string Name { get; set; }
-            
+
             /// <summary>
             /// ロゴ画像URL
             /// </summary>
             [JsonPropertyName("logo_image")]
             public string LogoImage { get; set; }
-            
+
             /// <summary>
             /// 住所
             /// </summary>
             [JsonPropertyName("address")]
             public string Address { get; set; }
-            
+
             /// <summary>
             /// 最寄駅名
             /// </summary>
             [JsonPropertyName("station_name")]
             public string StationName { get; set; }
-            
+
             /// <summary>
             /// 緯度
             /// </summary>
             [JsonPropertyName("lat")]
             public double Latitude { get; set; }
-            
+
             /// <summary>
             /// 経度
             /// </summary>
             [JsonPropertyName("lng")]
             public double Longitude { get; set; }
-            
+
             /// <summary>
             /// お店のジャンル情報
             /// </summary>
             [JsonPropertyName("genre")]
             public GenreInfo Genre { get; set; }
-            
+
             /// <summary>
             /// キャッチコピー
             /// </summary>
             [JsonPropertyName("catch")]
             public string Catch { get; set; }
-            
+
             /// <summary>
             /// 交通アクセス
             /// </summary>
             [JsonPropertyName("access")]
             public string Access { get; set; }
-            
+
             /// <summary>
             /// 店舗のURL情報
             /// </summary>
             [JsonPropertyName("urls")]
             public UrlInfo Urls { get; set; }
-            
+
             /// <summary>
             /// 写真情報
             /// </summary>
@@ -134,7 +134,7 @@ public class RestaurantDto
                 /// </summary>
                 [JsonPropertyName("code")]
                 public string Code { get; set; }
-                
+
                 /// <summary>
                 /// お店のジャンル名
                 /// </summary>
@@ -176,13 +176,13 @@ public class RestaurantDto
                 /// </summary>
                 [JsonPropertyName("l")]
                 public string Large { get; set; }
-                
+
                 /// <summary>
                 /// 店舗トップ写真（中）
                 /// </summary>
                 [JsonPropertyName("m")]
                 public string Medium { get; set; }
-                
+
                 /// <summary>
                 /// 店舗トップ写真（小）
                 /// </summary>
