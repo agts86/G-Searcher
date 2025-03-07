@@ -18,7 +18,7 @@ public class Middleware(RequestDelegate next)
     /// 例外処理
     /// </summary>
     /// <param name="httpContext">HTTP 要求</param>
-    public async Task InvokeAsync(HttphttpContext httpContext)
+    public async Task InvokeAsync(HttpContext httpContext)
     {
         try
         {
@@ -42,7 +42,7 @@ public class Middleware(RequestDelegate next)
     /// <param name="statusCode"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    private static async Task ResponseErrorAsync(HttphttpContext httpContext, HttpStatusCode statusCode, ResponseError error)
+    private static async Task ResponseErrorAsync(HttpContext httpContext, HttpStatusCode statusCode, ResponseError error)
     {
         httpContext.Response.ContentType = "application/json";
         httpContext.Response.StatusCode = (int)statusCode;
