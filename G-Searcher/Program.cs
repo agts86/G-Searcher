@@ -1,5 +1,7 @@
 using G_Searcher.Configurations;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.EntityFrameworkCore;
+using G_Searcher.DB;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+// ミドルウェアでDIできるようにする
+builder.Services.AddTransient<Middleware>();
+
+// EFCoreの設定
+builder.Services.AddDbContext<MyContext>
+(
+    options => options.UseSqlite("Data Source=G-Searcher.db")
+);
 
 var app = builder.Build();
 

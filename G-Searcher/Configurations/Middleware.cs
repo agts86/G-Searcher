@@ -1,4 +1,5 @@
 using System.Net;
+using G_Searcher.DB;
 using G_Searcher.Models.Exceptions;
 
 namespace G_Searcher.Configurations;
@@ -7,22 +8,19 @@ namespace G_Searcher.Configurations;
 /// ミドルウェア
 /// 例外はここで全て処理する
 /// </summary>
-public class Middleware(RequestDelegate next)
+public class Middleware(MyContext dbContext) : IMiddleware
 {
-    /// <summary>
-    ///  HTTP 要求を処理できる関数
-    /// </summary>
-    public RequestDelegate Next { get; } = next;
+    public MyContext DbContext { get; } = dbContext;
 
     /// <summary>
     /// 例外処理
     /// </summary>
     /// <param name="httpContext">HTTP 要求</param>
-    public async Task InvokeAsync(HttpContext httpContext)
+    public async Task InvokeAsync(HttpContext httpContext,RequestDelegate next)
     {
         try
         {
-            await Next(httpContext);
+            await next(httpContext);
         }
         catch(StatusCodeException ex)
         {
