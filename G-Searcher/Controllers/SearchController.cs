@@ -5,14 +5,9 @@ namespace G_Searcher.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SearchController : ControllerBase
+public class SearchController(IConfiguration configuration) : ControllerBase
 {
-    public RestaurantApi RestaurantApi {get; protected set;}
-
-    public SearchController(IConfiguration configuration)
-    {
-        RestaurantApi = new RestaurantApi(configuration);
-    }
+    public RestaurantApi RestaurantApi { get; protected set; } = new RestaurantApi(configuration);
 
     [HttpGet]
     public async Task<IActionResult> GetRestaurantByCurrentLocation([FromQuery] double lat,double lng)
