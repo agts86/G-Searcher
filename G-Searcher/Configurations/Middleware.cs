@@ -1,5 +1,6 @@
 using System.Net;
 using G_Searcher.DB;
+using G_Searcher.DB.Repositories;
 using G_Searcher.Models.Exceptions;
 
 namespace G_Searcher.Configurations;
@@ -10,7 +11,7 @@ namespace G_Searcher.Configurations;
 /// </summary>
 public class Middleware(MyContext dbContext) : IMiddleware
 {
-    public MyContext DbContext { get; } = dbContext;
+    public MiddleWareRepository Repository { get; } = new MiddleWareRepository(dbContext);
 
     /// <summary>
     /// 例外処理
@@ -25,10 +26,12 @@ public class Middleware(MyContext dbContext) : IMiddleware
         catch(StatusCodeException ex)
         {
             await ResponseErrorAsync(httpContext,ex.StatusCode,ex.Error);
+            await Repository.ErrorLogDao.CreateLogAsync(ex.Error);
         }
         catch(Exception)
         {
             var error = new ResponseError("An error occurred while processing your request.");
+            await Repository.ErrorLogDao.CreateLogAsync(error);
             await ResponseErrorAsync(httpContext,HttpStatusCode.InternalServerError,error);
         }
     }
