@@ -17,35 +17,35 @@ public class Middleware(RequestDelegate next)
     /// <summary>
     /// 例外処理
     /// </summary>
-    /// <param name="context">HTTP 要求</param>
-    public async Task InvokeAsync(HttpContext context)
+    /// <param name="httpContext">HTTP 要求</param>
+    public async Task InvokeAsync(HttphttpContext httpContext)
     {
         try
         {
-            await Next(context);
+            await Next(httpContext);
         }
         catch(StatusCodeException ex)
         {
-            await ResponseErrorAsync(context,ex.StatusCode,ex.Error);
+            await ResponseErrorAsync(httpContext,ex.StatusCode,ex.Error);
         }
         catch(Exception)
         {
             var error = new ResponseError("An error occurred while processing your request.");
-            await ResponseErrorAsync(context,HttpStatusCode.InternalServerError,error);
+            await ResponseErrorAsync(httpContext,HttpStatusCode.InternalServerError,error);
         }
     }
 
     /// <summary>
     /// レスポンスを返す
     /// </summary>
-    /// <param name="context"></param>
+    /// <param name="httpContext"></param>
     /// <param name="statusCode"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    private static async Task ResponseErrorAsync(HttpContext context, HttpStatusCode statusCode, ResponseError error)
+    private static async Task ResponseErrorAsync(HttphttpContext httpContext, HttpStatusCode statusCode, ResponseError error)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)statusCode;
-        await context.Response.WriteAsJsonAsync(error);
+        httpContext.Response.ContentType = "application/json";
+        httpContext.Response.StatusCode = (int)statusCode;
+        await httpContext.Response.WriteAsJsonAsync(error);
     }
 }
