@@ -32,6 +32,9 @@ public abstract class HotPepperErrorResponseDto
         public string Code { get; set; }
     }
 
+    /// <summary>
+    /// 実はエラーでないかチェック
+    /// </summary>
     public void CheckResult()
     {
         if(Error is null) return;
