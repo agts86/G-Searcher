@@ -1,5 +1,4 @@
-# G-Searcher
-
-HotPepperApiを使ったAPI
+# LineWebHookAPI
 
 LineAPIのフック先に使う予定
+
