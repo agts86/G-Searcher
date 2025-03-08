@@ -1,17 +1,21 @@
+using LineWebHookAPI.Models.Dto.Line.Messages;
+using LineWebHookAPI.Models.Dto.Line;
+using LineWebHookAPI.Models.Dto.Line.Sources;
+
 namespace LineWebHookAPI.Models.Dto.HotPepper;
 
 /// <summary>
-/// GetGourmetAsyncのリクエストDto
+/// PostGourmetLocationAsyncのリクエストDto
 /// </summary>
 public class GourmetGettingDto
 {
     /// <summary>
-    /// 緯度
+    /// Webhookイベントを受信すべきボットのユーザーID
     /// </summary>
-    public double Lat {get; set;}
+    public string Destination {get; set;}
 
     /// <summary>
-    /// 軽度
+    /// Webhookイベントオブジェクトの配列
     /// </summary>
-    public double Lng {get; set;}
+    public MessageEvent<UserSource,LocationMessage>[] Events {get; set;}
 }

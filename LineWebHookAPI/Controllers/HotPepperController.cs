@@ -15,10 +15,10 @@ public class HotPepperController
 {
     public HotPepperBL HotPepperBL { get; protected set; } = new HotPepperBL(configuration,dbContext);
 
-    [HttpGet]
-    public async Task<IActionResult> GetGourmetAsync([FromQuery] GourmetGettingDto gourmetGettingDto)
+    [HttpPost("Gourmet/location")]
+    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto)
     {
-        var res = await HotPepperBL.GetGourmetAsync(gourmetGettingDto);
+        var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
         return Ok(new {res.Results});
     }
 }

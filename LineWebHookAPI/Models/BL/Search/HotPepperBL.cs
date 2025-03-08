@@ -15,11 +15,12 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
 
     public JsonSerializerOptions JsonSerializerOptions { get; protected set; } = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 
-    public async Task<HotPepperGourmetResponseDto> GetGourmetAsync(GourmetGettingDto gourmetGettingDto)
+    public async Task<HotPepperGourmetResponseDto> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto)
     {
         await HotPepperRepository.CreateLogAsync(gourmetGettingDto);
         await HotPepperRepository.SaveChangesAsync();
-        var url = $"{BaseUrl}&lat={gourmetGettingDto.Lat}&lng={gourmetGettingDto.Lng}";
+        var message = gourmetGettingDto.Events.First().Message;
+        var url = $"{BaseUrl}&lat={message.Latitude}&lng={message.Longitude}";
         var result = await HttpClient.GetAsync(url);
         if (!result.IsSuccessStatusCode) throw new HttpRequestException(result.RequestMessage.ToString());
         var json = await result.Content.ReadAsStringAsync();

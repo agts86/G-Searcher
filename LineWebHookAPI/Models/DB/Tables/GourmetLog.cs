@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LineWebHookAPI.Models.DB.Tables;
 
 /// <summary>
-/// GetGourmetAsyncのリクエストログ
+/// PostGourmetLocationAsyncのリクエストログ
 /// </summary>
 [Table("GourmetLog")]
 public class GourmetLog : Meta
