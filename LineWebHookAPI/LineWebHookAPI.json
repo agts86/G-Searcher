@@ -1,0 +1,45 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "LineWebHookAPI | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/HotPepper": {
+      "get": {
+        "tags": [
+          "HotPepper"
+        ],
+        "parameters": [
+          {
+            "name": "Lat",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "Lng",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": { },
+  "tags": [
+    {
+      "name": "HotPepper"
+    }
+  ]
+}

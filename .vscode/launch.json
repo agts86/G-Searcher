@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/G-Searcher/bin/Debug/net9.0/G-Searcher.dll",
+            "program": "${workspaceFolder}/LineWebHookAPI/bin/Debug/net9.0/LineWebHookAPI.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/G-Searcher",
+            "cwd": "${workspaceFolder}/LineWebHookAPI",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
