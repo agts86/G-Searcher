@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using LineWebHookAPI.Models.Exceptions;
 
-namespace LineWebHookAPI.Models.Dto.HotPepper;
+namespace LineWebHookAPI.Models.Dto.HotPeppers;
 
 /// <summary>
 /// ホットペッパーAPIエラーレスポンスのDTO

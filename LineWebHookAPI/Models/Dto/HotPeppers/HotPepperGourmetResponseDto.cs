@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
+using LineWebHookAPI.Models.Dto.Line.API.Templates;
+using LineWebHookAPI.Models.Dto.Line.API.Actions;
 
-namespace LineWebHookAPI.Models.Dto.HotPepper;
+namespace LineWebHookAPI.Models.Dto.HotPeppers;
 
 /// <summary>
 /// グルメサーチAPIレスポンスのDTO
@@ -189,6 +191,28 @@ public class HotPepperGourmetResponseDto
                 [JsonPropertyName("s")]
                 public string Small { get; set; }
             }
+        }
+
+        /// <summary>
+        /// カルーセルテンプレートの配列に変換
+        /// </summary>
+        /// <returns></returns>
+        public CarouselTemplate.Column[] ToCarouselTemplateColumns()
+        {
+            return Shops.Select(shop => new CarouselTemplate.Column
+            {
+                ThumbnailImageUrl = shop.Photo?.Pc?.Large,
+                Title = shop.Name,
+                Text = shop.Catch,
+                Actions = new UriAction[]
+                {
+                    new UriAction
+                    {
+                        Label = "詳細を見る",
+                        Uri = shop.Urls?.Pc
+                    }
+                }
+            }).ToArray();
         }
     }
 }

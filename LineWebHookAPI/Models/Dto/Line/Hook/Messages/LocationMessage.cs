@@ -1,4 +1,4 @@
-namespace LineWebHookAPI.Models.Dto.Line.Messages;
+namespace LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 /// <summary>
 /// 位置情報メッセージ

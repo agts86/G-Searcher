@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LineWebHookAPI.Models.Dto.Line.Sources;
+namespace LineWebHookAPI.Models.Dto.Line.Hook.Sources;
 
 /// <summary>
 /// ソース基底クラス

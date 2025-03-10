@@ -1,6 +1,6 @@
 using LineWebHookAPI.Models.DB.Tables;
-using LineWebHookAPI.Models.Dto.HotPepper;
 using LineWebHookAPI.Models.DB.Daos;
+using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 namespace LineWebHookAPI.Models.DB.Repositories;
 
@@ -17,14 +17,14 @@ public class HotPepperRepository(MyContext dbContext) : Repository(dbContext)
     /// <summary>
     /// ログを作成する
     /// </summary>
-    /// <param name="dto">リクエストデータ</param>
-    public async Task CreateLogAsync(GourmetGettingDto dto)
+    /// <param name="dto">位置情報メッセージ</param>
+    public async Task CreateLogAsync(LocationMessage message)
     {
         var log = new GourmetLog
         {
             Id = Guid.NewGuid(),
-            Lat = dto.Lat,
-            Lng = dto.Lng
+            Lat = message.Latitude,
+            Lng = message.Longitude
         };
         await GourmetLogDao.CreateLogAsync(log);
     }

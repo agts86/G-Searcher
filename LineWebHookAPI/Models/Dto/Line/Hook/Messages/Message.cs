@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LineWebHookAPI.Models.Dto.Line.Messages;
+namespace LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 /// <summary>
 /// メッセージ基底クラス

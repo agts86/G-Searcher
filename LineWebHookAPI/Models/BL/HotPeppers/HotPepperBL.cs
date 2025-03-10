@@ -1,9 +1,11 @@
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.Dto.HotPepper;
+using LineWebHookAPI.Models.Dto.HotPeppers;
 using System.Text.Json;
 using LineWebHookAPI.Models.DB;
+using LineWebHookAPI.Models.Dto.Line.API.Templates;
+using LineWebHookAPI.Models.Dto.Line.API;
 
-namespace LineWebHookAPI.Models.BL.HotPepper;
+namespace LineWebHookAPI.Models.BL.HotPeppers;
 
 public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
 {
@@ -15,17 +17,28 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
 
     public JsonSerializerOptions JsonSerializerOptions { get; protected set; } = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 
-    public async Task<HotPepperGourmetResponseDto> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto)
+    public async Task<TemplateMessage> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto)
     {
-        await HotPepperRepository.CreateLogAsync(gourmetGettingDto);
-        await HotPepperRepository.SaveChangesAsync();
         var message = gourmetGettingDto.Events.First().Message;
+        
+        await HotPepperRepository.CreateLogAsync(message);
+        await HotPepperRepository.SaveChangesAsync();
+        
         var url = $"{BaseUrl}&lat={message.Latitude}&lng={message.Longitude}";
         var result = await HttpClient.GetAsync(url);
         if (!result.IsSuccessStatusCode) throw new HttpRequestException(result.RequestMessage.ToString());
         var json = await result.Content.ReadAsStringAsync();
-        var ret = JsonSerializer.Deserialize<HotPepperGourmetResponseDto>(json, JsonSerializerOptions);
-        ret.Results.CheckResult();
-        return ret;
+        var gourmet = JsonSerializer.Deserialize<HotPepperGourmetResponseDto>(json, JsonSerializerOptions);
+        gourmet.Results.CheckResult();
+        var columns = gourmet.Results.ToCarouselTemplateColumns();
+        var templateMessage = new TemplateMessage()
+        {
+            AltText = "検索結果",
+            Template = new CarouselTemplate()
+            {
+                Columns = columns
+            }
+        };
+        return templateMessage;
     }
 }
