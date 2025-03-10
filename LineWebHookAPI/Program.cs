@@ -17,7 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 // ミドルウェアでDIできるようにする
 builder.Services.AddTransient<Middleware>();
-
+// Lineの署名検証用フィルター
+builder.Services.AddScoped<LineSignatureFilter>();
 // EFCoreの設定
 builder.Services.AddDbContext<MyContext>
 (
