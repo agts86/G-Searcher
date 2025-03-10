@@ -206,7 +206,7 @@ public class HotPepperGourmetResponseDto
                 Text = shop.Catch,
                 Actions = new UriAction[]
                 {
-                    new UriAction
+                    new ()
                     {
                         Label = "詳細を見る",
                         Uri = shop.Urls?.Pc
