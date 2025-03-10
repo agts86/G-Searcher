@@ -1,4 +1,6 @@
 using LineWebHookAPI.Configurations;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Models.DB;
 
@@ -6,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
