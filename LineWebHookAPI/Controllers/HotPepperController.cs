@@ -1,6 +1,6 @@
 using LineWebHookAPI.Models.DB;
-using LineWebHookAPI.Models.BL.HotPepper;
-using LineWebHookAPI.Models.Dto.HotPepper;
+using LineWebHookAPI.Models.BL.HotPeppers;
+using LineWebHookAPI.Models.Dto.HotPeppers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LineWebHookAPI.Controllers;
@@ -19,6 +19,6 @@ public class HotPepperController
     public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto)
     {
         var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
-        return Ok(new {res.Results});
+        return Ok(res);
     }
 }

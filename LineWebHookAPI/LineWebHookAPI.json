@@ -5,29 +5,31 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/HotPepper": {
-      "get": {
+    "/api/HotPepper/Gourmet/location": {
+      "post": {
         "tags": [
           "HotPepper"
         ],
-        "parameters": [
-          {
-            "name": "Lat",
-            "in": "query",
-            "schema": {
-              "type": "number",
-              "format": "double"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GourmetGettingDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GourmetGettingDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GourmetGettingDto"
+              }
             }
           },
-          {
-            "name": "Lng",
-            "in": "query",
-            "schema": {
-              "type": "number",
-              "format": "double"
-            }
-          }
-        ],
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -36,7 +38,128 @@
       }
     }
   },
-  "components": { },
+  "components": {
+    "schemas": {
+      "DeliveryContextInfo": {
+        "type": "object",
+        "properties": {
+          "isRedelivery": {
+            "type": "boolean"
+          }
+        },
+        "nullable": true
+      },
+      "GourmetEvent": {
+        "required": [
+          "type",
+          "mode",
+          "webhookEventId",
+          "replyToken",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "mode": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "source": {
+            "$ref": "#/components/schemas/UserSource"
+          },
+          "webhookEventId": {
+            "type": "string",
+            "nullable": true
+          },
+          "deliveryContext": {
+            "$ref": "#/components/schemas/DeliveryContextInfo"
+          },
+          "replyToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "$ref": "#/components/schemas/LocationMessage"
+          }
+        }
+      },
+      "GourmetGettingDto": {
+        "type": "object",
+        "properties": {
+          "destination": {
+            "type": "string",
+            "nullable": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GourmetEvent"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "LocationMessage": {
+        "required": [
+          "id",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "nullable": true
+      },
+      "UserSource": {
+        "required": [
+          "userId",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "nullable": true
+      }
+    }
+  },
   "tags": [
     {
       "name": "HotPepper"
