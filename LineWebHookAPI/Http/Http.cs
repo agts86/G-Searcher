@@ -69,7 +69,7 @@ public class HttpAdapter
     /// <param name="contentType">ContentType</param>
     /// <param name="authenticationHeaderValue">basic認証</param>
     /// <returns>レスポンス結果</returns>
-    public async Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null)
+    public async Task<T> PostRequestAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null)
     {
         var request = new HttpRequestMessage
         {
