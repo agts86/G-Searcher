@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using LineWebHookAPI.Constants.Line.API.Templates.Carousels;
 using LineWebHookAPI.Jsons;
-using LineWebHookAPI.Models.Dto.Line.API.Actions;
+using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 
-namespace LineWebHookAPI.Models.Dto.Line.API.Templates;
+namespace LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 
 public class CarouselTemplate : ITemplate
 {

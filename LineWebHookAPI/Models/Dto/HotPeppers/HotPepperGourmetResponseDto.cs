@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
-using LineWebHookAPI.Models.Dto.Line.API.Templates;
-using LineWebHookAPI.Models.Dto.Line.API.Actions;
+using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
+using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 
 namespace LineWebHookAPI.Models.Dto.HotPeppers;
 

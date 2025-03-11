@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
-using LineWebHookAPI.Models.Dto.Line.API.Templates;
+using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Jsons;
 
-namespace LineWebHookAPI.Models.Dto.Line.API;
+namespace LineWebHookAPI.Models.Dto.Line.API.Messages;
 
-public class TemplateMessage
+public class TemplateMessage : IMessage
 {
     public string Type { get; } = "template";
 

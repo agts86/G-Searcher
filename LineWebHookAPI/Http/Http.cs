@@ -79,7 +79,7 @@ public class HttpAdapter
         };
         request.Headers.Authorization = authenticationHeaderValue;
         var res = await HttpClient.SendAsync(request);
-        if (!res.IsSuccessStatusCode) throw new HttpRequestException(res.RequestMessage.ToString());
+        // if (!res.IsSuccessStatusCode) throw new HttpRequestException(res.RequestMessage.ToString());
         var json = await res.Content.ReadAsStringAsync();
         return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
     }

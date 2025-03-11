@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LineWebHookAPI.Models.Dto.Line.API.Actions;
+namespace LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 
 public class UriAction : IAction
 {
