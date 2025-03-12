@@ -42,7 +42,9 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
                 }
             }
         };
+        #if PRODUCTION
         await lineHttp.PostReplayAsync(replay);
+        #endif
         return replay;
     }
 }
