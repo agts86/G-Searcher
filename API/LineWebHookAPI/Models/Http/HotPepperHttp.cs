@@ -2,7 +2,7 @@ using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.HotPeppers;
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
-namespace LineWebHookAPI.Http;
+namespace LineWebHookAPI.Models.Http;
 
 /// <summary>
 /// ホットペッパーAPI用のHTTPクライアント

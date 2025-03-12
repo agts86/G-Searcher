@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
 
-namespace LineWebHookAPI.Http;
+namespace LineWebHookAPI.Models.Http;
 
 /// <summary>
 /// ホットペッパーAPI用のHTTPクライアント

@@ -3,7 +3,7 @@ using LineWebHookAPI.Models.Dto.HotPeppers;
 using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages;
-using LineWebHookAPI.Http;
+using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
 
 namespace LineWebHookAPI.Models.BL.HotPeppers;

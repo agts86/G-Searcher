@@ -1,4 +1,4 @@
-namespace LineWebHookAPI.Http;
+namespace LineWebHookAPI.Models.Http;
 
 /// <summary>
 /// API通信クライアント基底クラス

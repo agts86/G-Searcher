@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace LineWebHookAPI.Http;
+namespace LineWebHookAPI.Models.Http;
 
 /// <summary>
 /// http操作クラス
