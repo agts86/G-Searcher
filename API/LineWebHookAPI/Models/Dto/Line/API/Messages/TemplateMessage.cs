@@ -4,12 +4,24 @@ using LineWebHookAPI.Jsons;
 
 namespace LineWebHookAPI.Models.Dto.Line.API.Messages;
 
+/// <summary>
+/// テンプレートメッセージ
+/// </summary>
 public class TemplateMessage : IMessage
 {
+    /// <summary>
+    /// タイプ
+    /// </summary>
     public string Type { get; } = "template";
 
+    /// <summary>
+    /// テキスト
+    /// </summary>
     public string AltText { get; set; }
 
+    /// <summary>
+    /// テンプレート
+    /// </summary>
     [JsonConverter(typeof(RealMoldConverter<ITemplate>))]
     public ITemplate Template { get; set; }
 }

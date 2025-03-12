@@ -5,6 +5,9 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages;
 
 namespace LineWebHookAPI.Models.Dto.Line.API.Requests;
 
+/// <summary>
+/// 応答メッセージ
+/// </summary>
 public class Replay
 {
     /// <summary>
