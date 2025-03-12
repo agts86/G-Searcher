@@ -11,7 +11,7 @@ services:
     environment:
       - TZ=Asia/Tokyo
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5000;https://+:5001
+      - ASPNETCORE_URLS=https://localhost:5001;http://localhost:5000
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/WslLocalHost.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=WslLocalHost
     network_mode: "host"
