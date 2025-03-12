@@ -1,31 +1,29 @@
-# ベースイメージ
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 5000
 EXPOSE 5001
 
-# SDKイメージ
+# SQLite 用のフォルダを作成
+RUN mkdir -p /app/Data
+
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-
-# csproj のみをコピーしてリストア
+COPY ["API/LineWebHookAPI/LineWebHookAPI.db", "/app/Data/"]
 COPY ["API/LineWebHookAPI/LineWebHookAPI.csproj", "LineWebHookAPI/"]
 RUN dotnet restore "LineWebHookAPI/LineWebHookAPI.csproj"
 
-# 残りのファイルをコピーしてビルド
 COPY ["API/LineWebHookAPI/", "LineWebHookAPI/"]
 WORKDIR "/src/LineWebHookAPI"
 RUN dotnet build "LineWebHookAPI.csproj" -c publish -o /app/build
 
-# パブリッシュ
 FROM build AS publish
 RUN dotnet publish "LineWebHookAPI.csproj" -c publish -o /app/publish /p:UseAppHost=false
 
-# 実行環境
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf && \
-    sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
+
+# SQLite のデータベースを /app/Data に配置
+VOLUME /app/Data
 
 ENTRYPOINT ["dotnet", "LineWebHookAPI.dll"]

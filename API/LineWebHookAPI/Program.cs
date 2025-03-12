@@ -19,12 +19,17 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<Middleware>();
 // Lineの署名検証用フィルター
 builder.Services.AddScoped<LineSignatureFilter>();
+
+// DockerコンテナのときのDB接続文字列
+var defaultConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+// appsettings.jsonのDB接続文字列
+var configConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 // EFCoreの設定
 builder.Services.AddDbContext<MyContext>
 (
     // 一旦趣味だからSQLiteにしたけど
     // サービス展開考えたらdevとprodで分けるべき
-    options => options.UseSqlite("Data Source=LineWebHookAPI.db")
+    options => options.UseSqlite(defaultConnection ?? configConnection)
 );
 
 var app = builder.Build();
