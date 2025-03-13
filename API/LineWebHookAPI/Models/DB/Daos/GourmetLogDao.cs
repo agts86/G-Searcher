@@ -1,4 +1,5 @@
 using LineWebHookAPI.Models.DB.Tables;
+using Microsoft.EntityFrameworkCore;
 
 namespace LineWebHookAPI.Models.DB.Daos;
 
@@ -14,5 +15,14 @@ public class GourmetLogDao(MyContext dbContext) : Dao(dbContext)
     public async Task CreateLogAsync(GourmetLog log)
     {
         await DbContext.GourmetLogs.AddAsync(log);
+    }
+
+    /// <summary>
+    /// ログを取得する
+    /// </summary>
+    /// <returns>ログ</returns>
+    public async Task<GourmetLog[]> FetchLogAsync()
+    {
+        return await DbContext.GourmetLogs.AsNoTracking().ToArrayAsync();
     }
 }
