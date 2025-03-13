@@ -33,11 +33,12 @@ public class Middleware(MyContext dbContext) : IMiddleware
             await Repository.SaveChangesAsync();
             await ResponseErrorAsync(httpContext,ex.StatusCode,ex.Error);
         }
-        catch(Exception)
+        catch(Exception ex)
         {
-            var error = new ResponseError("An error occurred while processing your request.");
-            await Repository.ErrorLogDao.CreateLogAsync(error);
+            var realError = new ResponseError(ex.Message);
+            await Repository.ErrorLogDao.CreateLogAsync(realError);
             await Repository.SaveChangesAsync();
+            var error = new ResponseError("An error occurred while processing your request.");
             await ResponseErrorAsync(httpContext,HttpStatusCode.InternalServerError,error);
         }
     }
