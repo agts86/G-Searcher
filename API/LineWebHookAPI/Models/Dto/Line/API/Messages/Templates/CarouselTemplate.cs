@@ -17,10 +17,10 @@ public class CarouselTemplate : ITemplate
     public Column[] Columns { get; set; }
 
     [JsonPropertyName("imageAspectRatio")]
-    public ImageAspectRatio ImageAspectRatio { get; set; } = ImageAspectRatio.Rectangle;
+    public ImageAspectRatio ImageAspectRatio { get; set; } = ImageAspectRatio.rectangle;
 
     [JsonPropertyName("imageSize")]
-    public ImageSize ImageSize { get; set; } = ImageSize.Cover;
+    public ImageSize ImageSize { get; set; } = ImageSize.cover;
 
     public class Column
     {

@@ -11,10 +11,10 @@ public enum ImageAspectRatio
     /// <summary>
     /// 1.51:1
     /// </summary>
-    Rectangle,
+    rectangle,
 
     /// <summary>
     /// 1:1
     /// </summary>
-    Square
+    square
 }

@@ -199,11 +199,11 @@ public class HotPepperGourmetResponseDto
         /// <returns></returns>
         public CarouselTemplate.Column[] ToCarouselTemplateColumns()
         {
-            return Shops.Select(shop => new CarouselTemplate.Column
+            return [.. Shops.Select(shop => new CarouselTemplate.Column
             {
                 ThumbnailImageUrl = shop.Photo?.Pc?.Large,
                 Title = shop.Name,
-                Text = shop.Catch,
+                Text = shop.Address,
                 Actions = new UriAction[]
                 {
                     new ()
@@ -212,7 +212,7 @@ public class HotPepperGourmetResponseDto
                         Uri = shop.Urls?.Pc
                     }
                 }
-            }).ToArray();
+            })];
         }
     }
 }

@@ -48,6 +48,18 @@
           }
         }
       }
+    },
+    "/api/managed/error-log": {
+      "get": {
+        "tags": [
+          "Managed"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
