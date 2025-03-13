@@ -10,7 +10,7 @@ namespace LineWebHookAPI.Controllers;
 /// ホットペッパー関連API
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/hot-pepper")]
 public class HotPepperController
 (
     IConfiguration configuration,

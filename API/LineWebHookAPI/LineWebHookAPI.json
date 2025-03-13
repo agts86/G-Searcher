@@ -5,7 +5,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/HotPepper/gourmet/location": {
+    "/api/hot-pepper/gourmet/location": {
       "post": {
         "tags": [
           "HotPepper"
@@ -37,7 +37,7 @@
         }
       }
     },
-    "/api/Managed/gourmet": {
+    "/api/managed/gourmet": {
       "get": {
         "tags": [
           "Managed"

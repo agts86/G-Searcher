@@ -11,7 +11,7 @@ namespace LineWebHookAPI.Controllers;
 /// ホットペッパー関連API
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/managed")]
 public class ManagedController
 (
     MyContext dbContext
