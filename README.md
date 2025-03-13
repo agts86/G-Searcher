@@ -28,6 +28,8 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 ■ その他<br>
 
 -   docker | docker-compose
+-   HotPepperAPI
+-   Line Messaging API
 
 ## 前提
 
