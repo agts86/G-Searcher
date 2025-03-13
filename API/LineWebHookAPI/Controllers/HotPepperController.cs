@@ -39,7 +39,6 @@ public class HotPepperController
     [ServiceFilter(typeof(LineSignatureFilter))]
     public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto)
     {
-        Console.WriteLine(JsonSerializer.Serialize(gourmetGettingDto));
         if (Env.IsDevelopment())
         {
             var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
