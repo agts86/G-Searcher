@@ -5,6 +5,7 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
+using System.Text.Json;
 
 namespace LineWebHookAPI.Models.BL.HotPeppers;
 
@@ -59,6 +60,7 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
                 }
             }
         };
+        Console.WriteLine(JsonSerializer.Serialize(replay));
         // デバッグ実行時はエラーコード確定のため処理しない
         #if PRODUCTION
         await lineHttp.PostReplayAsync(replay);
