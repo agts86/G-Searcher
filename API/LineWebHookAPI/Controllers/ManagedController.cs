@@ -30,7 +30,19 @@ public class ManagedController
     [HttpGet("gourmet")]
     public async Task<IActionResult> GetGourmetLogAsync()
     {
-        var res = await ManagedBL.GetLogAsync();
+        var res = await ManagedBL.GetGourmetLogAsync();
+        return Ok(res);
+    }
+
+    /// <summary>
+    /// エラーログを取得する
+    /// </summary>
+    /// <param name="gourmetGettingDto">位置情報</param>
+    /// <returns>エラーログ</returns>
+    [HttpGet("error-log")]
+    public async Task<IActionResult> GetErrorLogAsync()
+    {
+        var res = await ManagedBL.GetErrorLogAsync();
         return Ok(res);
     }
 }

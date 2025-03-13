@@ -12,10 +12,23 @@ public class ManagedBL(MyContext dbContext)
     /// <summary>
     /// リポジトリ
     /// </summary>
-    public HotPepperRepository HotPepperRepository { get; protected set; } = new HotPepperRepository(dbContext);
+    public ManagedRepository ManagedRepository { get; protected set; } = new ManagedRepository(dbContext);
 
-    public async Task<GourmetLog[]> GetLogAsync()
+    /// <summary>
+    /// LineChatBotの実行ログを取得する
+    /// </summary>
+    /// <returns>LineChatBotの実行ログ</returns>
+    public async Task<GourmetLog[]> GetGourmetLogAsync()
     {
-        return await HotPepperRepository.GourmetLogDao.FetchLogAsync();
+        return await ManagedRepository.GourmetLogDao.FetchLogAsync();
+    }
+
+    /// <summary>
+    /// エラーログを取得する
+    /// </summary>
+    /// <returns>エラーログ</returns>
+    public async Task<ErrorLog[]> GetErrorLogAsync()
+    {
+        return await ManagedRepository.ErrorLogDao.FetchLogAsync();
     }
 }

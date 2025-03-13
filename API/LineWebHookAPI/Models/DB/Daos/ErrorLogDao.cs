@@ -1,5 +1,6 @@
 using LineWebHookAPI.Models.DB.Tables;
 using LineWebHookAPI.Models.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace LineWebHookAPI.Models.DB.Daos;
 
@@ -20,5 +21,13 @@ public class ErrorLogDao(MyContext dbContext) : Dao(dbContext)
             Contents = error.Message
         };
         await DbContext.ErrorLogs.AddAsync(errorLog);
+    }
+
+    /// <summary>
+    /// ログを取得する
+    /// </summary>
+    public async Task<ErrorLog[]> FetchLogAsync()
+    {
+        return await DbContext.ErrorLogs.AsNoTracking().ToArrayAsync();
     }
 }

@@ -1,6 +1,4 @@
-using LineWebHookAPI.Models.DB.Tables;
 using LineWebHookAPI.Models.DB.Daos;
-using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 namespace LineWebHookAPI.Models.DB.Repositories;
 
@@ -13,4 +11,9 @@ public class ManagedRepository(MyContext dbContext) : Repository(dbContext)
     /// グルメログDAO
     /// </summary>
     public GourmetLogDao GourmetLogDao { get; } = new GourmetLogDao(dbContext);
+
+    /// <summary>
+    /// エラーログDAO
+    /// </summary>
+    public ErrorLogDao ErrorLogDao { get; } = new ErrorLogDao(dbContext);
 }
