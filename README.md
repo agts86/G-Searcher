@@ -2,7 +2,9 @@
 
 ## 概要
 
-LineChatBotのフック先に使うAPI(予定)<br/>
+LineChatBotのフック先に使うAPI<br/>
+
+https://lin.ee/sOGflWx
 
 ## 作成の背景
 
@@ -23,7 +25,7 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 ■ クラウド
 
--   Back4App（予定）
+-   Back4App
 
 ■ その他<br>
 
