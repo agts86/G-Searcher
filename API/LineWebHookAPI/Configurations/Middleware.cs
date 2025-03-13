@@ -29,13 +29,15 @@ public class Middleware(MyContext dbContext) : IMiddleware
         }
         catch(StatusCodeException ex)
         {
-            await ResponseErrorAsync(httpContext,ex.StatusCode,ex.Error);
             await Repository.ErrorLogDao.CreateLogAsync(ex.Error);
+            await Repository.SaveChangesAsync();
+            await ResponseErrorAsync(httpContext,ex.StatusCode,ex.Error);
         }
         catch(Exception)
         {
             var error = new ResponseError("An error occurred while processing your request.");
             await Repository.ErrorLogDao.CreateLogAsync(error);
+            await Repository.SaveChangesAsync();
             await ResponseErrorAsync(httpContext,HttpStatusCode.InternalServerError,error);
         }
     }
