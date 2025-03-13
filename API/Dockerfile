@@ -9,11 +9,11 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # csproj のみをコピーしてリストア
-COPY ["API/LineWebHookAPI/LineWebHookAPI.csproj", "LineWebHookAPI/"]
+COPY ["LineWebHookAPI/LineWebHookAPI.csproj", "LineWebHookAPI/"]
 RUN dotnet restore "LineWebHookAPI/LineWebHookAPI.csproj"
 
 # 残りのファイルをコピーしてビルド
-COPY ["API/LineWebHookAPI/", "LineWebHookAPI/"]
+COPY ["LineWebHookAPI/", "LineWebHookAPI/"]
 WORKDIR "/src/LineWebHookAPI"
 RUN dotnet build "LineWebHookAPI.csproj" -c publish -o /app/build
 
