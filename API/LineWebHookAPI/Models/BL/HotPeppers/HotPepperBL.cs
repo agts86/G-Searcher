@@ -34,7 +34,7 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Replay> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto)
+    public async Task<Reply> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto)
     {
         var message = gourmetGettingDto.Events.First().Message;
         
@@ -45,7 +45,7 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
         var gourmet = await hotPepperHttp.GetGourmetAsync(message);
         var lineHttp = new LineHttp(Http, Configuration);
         // クリックリファレンスがでているがその通り対応するとインターフェイス型でシリアライズ時されるのであえてこのままにする
-        var replay = new Replay()
+        var Reply = new Reply()
         {
             ReplyToken = gourmetGettingDto.Events.First().ReplyToken,
             Messages = new TemplateMessage[]
@@ -60,11 +60,11 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
                 }
             }
         };
-        Console.WriteLine(JsonSerializer.Serialize(replay));
+        Console.WriteLine(JsonSerializer.Serialize(Reply));
         // デバッグ実行時はエラーコード確定のため処理しない
         #if PRODUCTION
-        await lineHttp.PostReplayAsync(replay);
+        await lineHttp.PostReplyAsync(Reply);
         #endif
-        return replay;
+        return Reply;
     }
 }

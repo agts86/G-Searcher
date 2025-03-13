@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 
 public class UriAction : IAction
 {
+    [JsonPropertyName("type")]
     public string Type { get; } = "uri";
 
+    [JsonPropertyName("label")]
     public string Label { get; set; }
 
     [Required]
+    [JsonPropertyName("uri")]
     public string Uri { get; set; }
 }
