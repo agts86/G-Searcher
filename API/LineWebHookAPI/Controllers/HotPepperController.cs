@@ -14,13 +14,16 @@ namespace LineWebHookAPI.Controllers;
 public class HotPepperController
 (
     IConfiguration configuration,
-    MyContext dbContext
+    MyContext dbContext,
+    IHostEnvironment env
 ) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
     public HotPepperBL HotPepperBL { get; protected set; } = new HotPepperBL(configuration,dbContext);
+
+    public IHostEnvironment Env { get; protected set; } = env;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
@@ -31,7 +34,16 @@ public class HotPepperController
     // [ServiceFilter(typeof(LineSignatureFilter))]
     public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto)
     {
-        var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
-        return Ok(res);
+        if (Env.IsDevelopment())
+        {
+            var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
+            return Ok(res);
+        }
+        else
+        {
+            _ = HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
+            return Ok();
+        }
+        
     }
 }
