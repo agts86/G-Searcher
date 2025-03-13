@@ -212,7 +212,8 @@ public class HotPepperGourmetResponseDto
                         Uri = shop.Urls?.Pc
                     }
                 }
-            })];
+            })
+            .Take(10)];
         }
     }
 }
