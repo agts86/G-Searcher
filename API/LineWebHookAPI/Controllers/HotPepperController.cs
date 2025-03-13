@@ -21,8 +21,12 @@ public class HotPepperController
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public HotPepperBL HotPepperBL { get; protected set; } = new HotPepperBL(configuration,dbContext);
+    public HotPepperBL HotPepperBL { get; protected set; } = new HotPepperBL(configuration,dbContext,env);
 
+    /// <summary>
+    /// 環境情報
+    /// </summary>
+    /// <value></value>
     public IHostEnvironment Env { get; protected set; } = env;
 
     /// <summary>

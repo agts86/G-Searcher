@@ -5,14 +5,13 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
-using System.Text.Json;
 
 namespace LineWebHookAPI.Models.BL.HotPeppers;
 
 /// <summary>
 /// ホットペッパーコントローラーのビジネスロジック
 /// </summary>
-public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
+public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHostEnvironment env)
 {
     /// <summary>
     /// リポジトリ
@@ -23,6 +22,12 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
     /// 設定情報
     /// </summary>
     private IConfiguration Configuration { get; } = configuration;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    private IHostEnvironment Env { get; } = env;
 
     /// <summary>
     /// Http操作クラス
@@ -60,11 +65,9 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext)
                 }
             }
         };
-        Console.WriteLine(JsonSerializer.Serialize(Reply));
+
         // デバッグ実行時はエラーコード確定のため処理しない
-        #if PRODUCTION
-        await lineHttp.PostReplyAsync(Reply);
-        #endif
+        if(!Env.IsDevelopment()) await lineHttp.PostReplyAsync(Reply);
         return Reply;
     }
 }

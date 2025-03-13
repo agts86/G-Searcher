@@ -71,6 +71,7 @@ public class HttpAdapter
     /// <returns>レスポンス結果</returns>
     public async Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null)
     {
+        Console.WriteLine(JsonSerializer.Serialize(body));
         var request = new HttpRequestMessage
         {
             Method = HttpMethod.Post,
