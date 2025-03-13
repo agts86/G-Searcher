@@ -25,7 +25,6 @@ public class ManagedController
     /// <summary>
     /// LineChatBotの実行ログを取得する
     /// </summary>
-    /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
     [HttpGet("gourmet")]
     public async Task<IActionResult> GetGourmetLogAsync()
@@ -37,7 +36,6 @@ public class ManagedController
     /// <summary>
     /// エラーログを取得する
     /// </summary>
-    /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>エラーログ</returns>
     [HttpGet("error-log")]
     public async Task<IActionResult> GetErrorLogAsync()
