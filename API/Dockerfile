@@ -1,8 +1,8 @@
 # ベースイメージ
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
-EXPOSE 5000
-EXPOSE 5001
+EXPOSE 80
+EXPOSE 443
 
 # SDKイメージ
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build

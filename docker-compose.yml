@@ -6,8 +6,8 @@ services:
       context: ./API
       dockerfile: Dockerfile
     ports:
-      - 5000:5000
-      - 5001:5001
+      - 5000:80
+      - 5001:443
     environment:
       - TZ=Asia/Tokyo
       - ASPNETCORE_ENVIRONMENT=Development
