@@ -27,7 +27,7 @@ public class HotPepperController
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
-    [HttpPost("Gourmet/location")]
+    [HttpPost("gourmet/location")]
     [ServiceFilter(typeof(LineSignatureFilter))]
     public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto)
     {
