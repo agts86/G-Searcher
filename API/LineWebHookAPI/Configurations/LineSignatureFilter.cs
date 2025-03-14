@@ -40,9 +40,9 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
         var channelSecret = Configuration.GetValue<string>("Line:ChannelSecret");
         Console.WriteLine($"Channel Secret: {channelSecret}");
         request.Body.Position = 0;
-        using var StreamReader = new StreamReader(request.Body);
+        using var StreamReader = new StreamReader(request.Body,Encoding.UTF8);
         var requestBody = await StreamReader.ReadToEndAsync();
-        
+        Console.WriteLine($"Request Body: {requestBody}");
         request.Body = new MemoryStream(Encoding.UTF8.GetBytes(requestBody)); // 再読込可能に
         request.Body.Position = 0;
         if (!VerifySignature(channelSecret, requestBody, signatureHeader))
@@ -65,7 +65,7 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(channelSecret));
 
         var requestBodyBytes = Encoding.UTF8.GetBytes(requestBody);
-        var hash = hmac.ComputeHash(requestBodyBytes,0,requestBodyBytes.Length);
+        var hash = hmac.ComputeHash(requestBodyBytes);
 
         var computedSignature = Convert.ToBase64String(hash);
         Console.WriteLine($"Computed Signature: {computedSignature}");
