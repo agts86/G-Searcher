@@ -36,7 +36,7 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
             return;
         }
 
-        var channelSecret = Configuration["LineBot:ChannelSecret"];
+        var channelSecret = Configuration["Line:ChannelSecret"];
         using var StreamReader = new StreamReader(request.Body);
         var requestBody = await StreamReader.ReadToEndAsync();
         request.Body = new MemoryStream(Encoding.UTF8.GetBytes(requestBody)); // 再読込可能に
