@@ -37,11 +37,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
 }
 app.Use(async (context, next) =>
-    {
-        context.Request.EnableBuffering(); // リクエストボディを再読込可能に
-        context.Request.Body.Position = 0;
-        await next(); 
-    });
+{
+    // Line署名検証でFromBody以外でも使うので再読み込み可能にしておく
+    context.Request.EnableBuffering(); 
+    await next(); 
+});
 app.UseMiddleware<Middleware>();
 
 app.UseHttpsRedirection();
@@ -50,10 +50,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// DBを作成・更新する
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<MyContext>();
-    dbContext.Database.Migrate(); // DBを作成・更新する
+    dbContext.Database.Migrate(); 
 }
 
 app.Run();
