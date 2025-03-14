@@ -59,7 +59,10 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
     private static bool VerifySignature(string channelSecret, string requestBody, string receivedSignature)
     {
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(channelSecret));
-        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(requestBody));
+
+        var requestBodyBytes = Encoding.UTF8.GetBytes(requestBody);
+        var hash = hmac.ComputeHash(requestBodyBytes);
+
         var computedSignature = Convert.ToBase64String(hash);
 
         return computedSignature == receivedSignature;
