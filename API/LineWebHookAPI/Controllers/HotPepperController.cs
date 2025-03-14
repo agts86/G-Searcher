@@ -3,6 +3,7 @@ using LineWebHookAPI.Models.BL.HotPeppers;
 using LineWebHookAPI.Models.Dto.HotPeppers;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
+using System.Text.Json;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -38,6 +39,7 @@ public class HotPepperController
     [ServiceFilter(typeof(LineSignatureFilter))]
     public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto)
     {
+        Console.WriteLine(JsonSerializer.Serialize(gourmetGettingDto));
         if (Env.IsDevelopment())
         {
             var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
