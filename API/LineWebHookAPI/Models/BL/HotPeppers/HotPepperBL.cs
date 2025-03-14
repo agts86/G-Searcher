@@ -5,6 +5,7 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
+using LineWebHookAPI.Constants.Line.API;
 
 namespace LineWebHookAPI.Models.BL.HotPeppers;
 
@@ -24,9 +25,8 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHost
     private IConfiguration Configuration { get; } = configuration;
 
     /// <summary>
-    /// 
+    /// 環境情報
     /// </summary>
-    /// <value></value>
     private IHostEnvironment Env { get; } = env;
 
     /// <summary>
@@ -49,11 +49,12 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHost
         var hotPepperHttp = new HotPepperHttp(Http, Configuration);
         var gourmet = await hotPepperHttp.GetGourmetAsync(message);
         var lineHttp = new LineHttp(Http, Configuration);
-        // クリックリファレンスがでているがその通り対応するとインターフェイス型でシリアライズ時されるのであえてこのままにする
+        var columns = gourmet.Results.ToCarouselTemplateColumns();
         var Reply = new Reply()
         {
             ReplyToken = gourmetGettingDto.Events.First().ReplyToken,
-            Messages = new TemplateMessage[]
+            Messages = columns.Length == 0 ? 
+            new TemplateMessage[]
             {
                 new()
                 {
@@ -62,6 +63,13 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHost
                     {
                         Columns = gourmet.Results.ToCarouselTemplateColumns()
                     }
+                }
+            } :
+            new TextMessage[]
+            {
+                new()
+                {
+                    Text = MessageTexts.NotFound
                 }
             }
         };
