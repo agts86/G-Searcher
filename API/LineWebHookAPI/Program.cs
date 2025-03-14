@@ -36,7 +36,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
 }
-
+app.Use(async (context, next) =>
+    {
+        context.Request.EnableBuffering(); // リクエストボディを再読込可能に
+        context.Request.Body.Position = 0;
+        await next(); 
+    });
 app.UseMiddleware<Middleware>();
 
 app.UseHttpsRedirection();

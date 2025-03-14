@@ -23,11 +23,11 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         // デバッグ環境では署名検証をスキップ
-        if (Environment.IsDevelopment())
-        {
-            await next();
-            return;
-        }
+        // if (Environment.IsDevelopment())
+        // {
+        //     await next();
+        //     return;
+        // }
 
         var request = context.HttpContext.Request;
         if (!request.Headers.TryGetValue("x-line-signature", out var signatureHeader))
@@ -39,8 +39,10 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
         Console.WriteLine($"Received Signature: {signatureHeader}");
         var channelSecret = Configuration.GetValue<string>("Line:ChannelSecret");
         Console.WriteLine($"Channel Secret: {channelSecret}");
+        request.Body.Position = 0;
         using var StreamReader = new StreamReader(request.Body);
         var requestBody = await StreamReader.ReadToEndAsync();
+        requestBody = requestBody.Replace("\r\n", "\n");
         request.Body = new MemoryStream(Encoding.UTF8.GetBytes(requestBody)); // 再読込可能に
         request.Body.Position = 0;
         if (!VerifySignature(channelSecret, requestBody, signatureHeader))
