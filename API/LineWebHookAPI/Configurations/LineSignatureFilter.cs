@@ -36,7 +36,6 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
             return;
         }
 
-        var channelSecret = Configuration.GetValue<string>("Line:ChannelSecret");
         // 再度読み込むために一度0に戻す
         request.Body.Position = 0;
         using var StreamReader = new StreamReader(request.Body,Encoding.UTF8);
@@ -47,11 +46,13 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
             Position = 0
         }; 
 
+        var channelSecret = Configuration.GetValue<string>("Line:ChannelSecret");
         if (!VerifySignature(channelSecret, requestBody, signatureHeader))
         {
             context.Result = new UnauthorizedResult();
             return;
         }
+
         await next();
     }
 
