@@ -37,7 +37,7 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
             return;
         }
         Console.WriteLine($"Received Signature: {signatureHeader}");
-        var channelSecret = Configuration["Line:ChannelSecret"];
+        var channelSecret = Configuration.GetValue<string>("Line:ChannelSecret");
         Console.WriteLine($"Channel Secret: {channelSecret}");
         using var StreamReader = new StreamReader(request.Body);
         var requestBody = await StreamReader.ReadToEndAsync();
