@@ -53,7 +53,7 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHost
         var Reply = new Reply()
         {
             ReplyToken = gourmetGettingDto.Events.First().ReplyToken,
-            Messages = columns.Length >= 0 ? 
+            Messages = columns.Length > 0 ? 
             new TemplateMessage[]
             {
                 new()
@@ -61,7 +61,7 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHost
                     AltText = "検索結果",
                     Template = new CarouselTemplate()
                     {
-                        Columns = gourmet.Results.ToCarouselTemplateColumns()
+                        Columns = columns
                     }
                 }
             } :
