@@ -50,10 +50,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// using (var scope = app.Services.CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<MyContext>();
-//     dbContext.Database.Migrate(); // DBを作成・更新する
-// }
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<MyContext>();
+    dbContext.Database.Migrate(); // DBを作成・更新する
+}
 
 app.Run();
