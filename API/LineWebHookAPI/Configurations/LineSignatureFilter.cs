@@ -42,10 +42,10 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
         request.Body.Position = 0;
         using var StreamReader = new StreamReader(request.Body);
         var requestBody = await StreamReader.ReadToEndAsync();
-        requestBody = requestBody.Replace("\r\n", "\n");
+        // requestBody = requestBody.Replace("\r\n", "\n");
         request.Body = new MemoryStream(Encoding.UTF8.GetBytes(requestBody)); // 再読込可能に
         request.Body.Position = 0;
-        if (!VerifySignature(channelSecret, requestBody, signatureHeader))
+        if (!VerifySignature(signatureHeader, requestBody, channelSecret))
         {
             context.Result = new UnauthorizedResult();
             return;
@@ -60,16 +60,19 @@ public class LineSignatureFilter(IConfiguration configuration, IWebHostEnvironme
     /// <param name="requestBody"></param>
     /// <param name="receivedSignature"></param>
     /// <returns></returns>
-    private static bool VerifySignature(string channelSecret, string requestBody, string receivedSignature)
+    private static bool VerifySignature(string xLineSignature, string requestBody, string channelSecret)
     {
-        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(channelSecret));
-
-        var requestBodyBytes = Encoding.UTF8.GetBytes(requestBody);
-        var hash = hmac.ComputeHash(requestBodyBytes);
-
-        var computedSignature = Convert.ToBase64String(hash);
-        Console.WriteLine($"Computed Signature: {computedSignature}");
-        Console.WriteLine($"Received Signature: {receivedSignature}");
-        return computedSignature == receivedSignature;
+        var key = Encoding.UTF8.GetBytes(channelSecret);
+        var body = Encoding.UTF8.GetBytes(requestBody);
+        
+        //channel secretをキーにしてHMAC-SHA256アルゴリズムでrequest bodyのダイジェスト値を得る
+        using (HMACSHA256 hmac = new HMACSHA256(key))
+        {
+            var hash = hmac.ComputeHash(body, 0, body.Length);
+            //ダイジェスト値をBASE64に変換
+            var hash64 = Convert.ToBase64String(hash);
+            //X-LINE-Signatureヘッダの値と一致すればOK！！
+            return xLineSignature == hash64;
+        }
     }
 }
