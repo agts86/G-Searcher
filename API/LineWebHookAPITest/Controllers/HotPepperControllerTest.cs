@@ -210,14 +210,8 @@ public class HotPepperControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Production";
-        var configuration = new ConfigurationBuilder()
-        .AddInMemoryCollection(new Dictionary<string, string>
-        {
-            { "Line:Url", "https://api.line.me/v2/bot/message/{0}" }
-        })
-        .Build();
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(configuration, DbContext, Env, http);
+        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
         var res = await hotPepperController.PostGourmetLocationAsync(dto);
 
         Assert.IsType<OkResult>(res);

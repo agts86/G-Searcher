@@ -21,7 +21,12 @@ public abstract class TestBase
     /// <summary>
     /// 設定情報
     /// </summary>
-    protected IConfiguration Configuration { get; } = new ConfigurationBuilder().Build();
+    protected IConfiguration Configuration { get; } = new ConfigurationBuilder()
+    .AddInMemoryCollection(new Dictionary<string, string>
+    {
+        { "Line:Url", "https://api.line.me/v2/bot/message/{0}" }
+    })
+    .Build();
 
     /// <summary>
     /// 環境情報
