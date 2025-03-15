@@ -15,9 +15,9 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 ■ 言語・FW<br>
 
--   C#(ASP.NET Core API)
+-   C#：ASP.NET Core API
 -   Bat
--   TypeScript(Nuxt.js or Next.js)(予定。後で利用履歴管理画面を作ろうかなて思ってます）
+-   TypeScript：Nuxt.js or Next.js(予定。後で利用履歴管理画面を作ろうかなて思ってます）
 
 ■ DB
 
@@ -27,10 +27,13 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 -   Back4App
 
-■ その他<br>
+■ コンテナ
 
 -   docker | docker-compose
--   HotPepperAPI
+
+■ その他<br>
+
+-   HotPepper API
 -   Line Messaging API
 
 ## 前提
