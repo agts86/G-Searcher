@@ -21,11 +21,11 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 ■ DB
 
--   Sqlite
+-   Sqlite（本格的にやるなら移行したい）
 
 ■ クラウド
 
--   Back4App
+-   Back4App（コスト次第でAws LambdaかAzure CloudFunctionsに移行する）
 
 ■ コンテナ
 
