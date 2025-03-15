@@ -36,8 +36,7 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 ## 前提
 
 1. HotPepperAPIのキーを取得済み
-2. Line公式アカウント、Line Developerアカウント開設済み
-3. デバッグするだけならLine Messaging APIの機能以外なら試せます
+2. Line公式アカウント、Line Developerアカウント開設済み（デバッグ時は不要）
 
 ## 実行方法(WindowsOSでWSL上で動かす想定)
 
@@ -49,23 +48,42 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
   ```
       cd /API
       Dev-Certs-Link.bat
+  ```
+3. 設定ファイルの作成
+
+`appsettings.json`をコピーし`appsettings.Development.json`にリネームして以下を修正
+  ```
+  {
+    "ConnectionStrings": {
+      "DefaultConnection": "Data Source=LineWebHookAPI.db"
+    },
+    "HotPepper": {
+      "Url": "https://webservice.recruit.co.jp/hotpepper/{0}/v1/?key={1}&format=json",
+      "Key": {取得したHotPepperのAPIキー)
+    },
+    "Line": {
+      "Url": "https://api.line.me/v2/bot/message/{0}",
+      "Token": {取得したLine Developersのチャネルアクセストークン),
+      "ChannelSecret": {取得したLine 公式アカウントのチャンネルシークレット)
+    }
+  }
   ``` 
 
-3. ビルド
+4. ビルド
    
   ```
       docker-compose build
   ```    
-4. コンテナ起動（実行）
+5. コンテナ起動（実行）
   ```
       docker-compose up -d
   ``` 
-5. コンテナ停止
+6. コンテナ停止
   ```
       docker-compose down
   ``` 
 
-6. 確認
+7. 確認
 
   https://localhost:5001/swagger/index.html
 
