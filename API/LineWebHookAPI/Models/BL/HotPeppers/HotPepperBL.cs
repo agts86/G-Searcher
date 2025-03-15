@@ -12,12 +12,12 @@ namespace LineWebHookAPI.Models.BL.HotPeppers;
 /// <summary>
 /// ホットペッパーコントローラーのビジネスロジック
 /// </summary>
-public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHostEnvironment env)
+public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHostEnvironment env,HttpAdapter http)
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    public HotPepperRepository HotPepperRepository { get; protected set; } = new HotPepperRepository(dbContext);
+    protected HotPepperRepository HotPepperRepository { get; set; } = new HotPepperRepository(dbContext);
 
     /// <summary>
     /// 設定情報
@@ -32,7 +32,7 @@ public class HotPepperBL(IConfiguration configuration, MyContext dbContext,IHost
     /// <summary>
     /// Http操作クラス
     /// </summary>
-    public HttpAdapter Http { get; protected set; } = new HttpAdapter();
+    protected HttpAdapter Http { get; set; } = http;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する

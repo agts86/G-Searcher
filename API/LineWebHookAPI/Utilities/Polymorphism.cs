@@ -15,9 +15,8 @@ public class Polymorphism
     /// <returns>基底型配列</returns>
     public static T[] CreatePolymorphismArray<T>(params object[] obj)
     {
-        return Assembly.GetExecutingAssembly().GetTypes()
+        return [.. Assembly.GetExecutingAssembly().GetTypes()
             .Where(x => typeof(T).IsAssignableFrom(x) && !x.IsAbstract && !x.IsInterface)
-            .Select(x => obj.Length == 0 ? (T)Activator.CreateInstance(x) : (T)Activator.CreateInstance(x, obj))
-            .ToArray();
+            .Select(x => obj.Length == 0 ? (T)Activator.CreateInstance(x) : (T)Activator.CreateInstance(x, obj))];
     }
 }

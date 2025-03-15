@@ -166,30 +166,31 @@ public class HotPepperGourmetResponseDto
                 /// </summary>
                 [JsonPropertyName("pc")]
                 public PhotoPc Pc { get; set; }
-            }
-
-            /// <summary>
-            /// PC向け写真情報クラス
-            /// </summary>
-            public class PhotoPc
-            {
-                /// <summary>
-                /// 店舗トップ写真（大）
-                /// </summary>
-                [JsonPropertyName("l")]
-                public string Large { get; set; }
+            
 
                 /// <summary>
-                /// 店舗トップ写真（中）
+                /// PC向け写真情報クラス
                 /// </summary>
-                [JsonPropertyName("m")]
-                public string Medium { get; set; }
+                public class PhotoPc
+                {
+                    /// <summary>
+                    /// 店舗トップ写真（大）
+                    /// </summary>
+                    [JsonPropertyName("l")]
+                    public string Large { get; set; }
 
-                /// <summary>
-                /// 店舗トップ写真（小）
-                /// </summary>
-                [JsonPropertyName("s")]
-                public string Small { get; set; }
+                    /// <summary>
+                    /// 店舗トップ写真（中）
+                    /// </summary>
+                    [JsonPropertyName("m")]
+                    public string Medium { get; set; }
+
+                    /// <summary>
+                    /// 店舗トップ写真（小）
+                    /// </summary>
+                    [JsonPropertyName("s")]
+                    public string Small { get; set; }
+                }
             }
         }
 

@@ -12,7 +12,7 @@ public class HttpAdapter
     /// <summary>
     /// HttpClientオブジェクト
     /// </summary>
-    private HttpClient HttpClient { get;}
+    protected HttpClient HttpClient { get;}
 
     /// <summary>
     /// シリアライズオプション
@@ -48,7 +48,7 @@ public class HttpAdapter
     /// <param name="url">リクエスト先</param>
     /// <param name="authenticationHeaderValue">basic認証</param>
     /// <returns>レスポンス結果</returns>
-    public async Task<T> GetAsync<T>(string url, AuthenticationHeaderValue authenticationHeaderValue = null)
+    public async virtual Task<T> GetAsync<T>(string url, AuthenticationHeaderValue authenticationHeaderValue = null) where T : class
     {
         var request = new HttpRequestMessage
         {
@@ -69,7 +69,7 @@ public class HttpAdapter
     /// <param name="contentType">ContentType</param>
     /// <param name="authenticationHeaderValue">basic認証</param>
     /// <returns>レスポンス結果</returns>
-    public async Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null)
+    public async virtual Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null)  where T : class
     {
         var request = new HttpRequestMessage
         {

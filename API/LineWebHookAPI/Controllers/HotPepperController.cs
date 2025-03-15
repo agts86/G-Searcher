@@ -4,6 +4,7 @@ using LineWebHookAPI.Models.Dto.HotPeppers;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
 using System.Text.Json;
+using LineWebHookAPI.Models.Http;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -22,7 +23,7 @@ public class HotPepperController
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public HotPepperBL HotPepperBL { get; protected set; } = new HotPepperBL(configuration,dbContext,env);
+    public HotPepperBL HotPepperBL { get; protected set; } = new HotPepperBL(configuration,dbContext,env,new HttpAdapter());
 
     /// <summary>
     /// 環境情報
