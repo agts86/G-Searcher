@@ -31,15 +31,10 @@ jobs:
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-    - name: Generate coverage report
+    - name: Generate coverage report in Markdown
       run: |
         reportgenerator -reports:**/TestResults/*/coverage.cobertura.xml \
                         -targetdir:./API/CoverageReport \
-                        -reporttypes:Html
-
-    - name: Deploy coverage report to GitHub Pages
-      if: github.ref == 'refs/heads/develop'
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./API/CoverageReport
+                        -reporttypes:MarkdownSummary
+    
+        cat ./API/CoverageReport/Summary.md >> $GITHUB_STEP_SUMMARY
