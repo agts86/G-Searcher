@@ -36,12 +36,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
 }
-app.Use(async (context, next) =>
-{
-    // Line署名検証でFromBody以外でも使うので再読み込み可能にしておく
-    context.Request.EnableBuffering(); 
-    await next(); 
-});
+
 app.UseMiddleware<Middleware>();
 
 app.UseHttpsRedirection();
@@ -51,10 +46,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 // DBを作成・更新する
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<MyContext>();
-    dbContext.Database.Migrate(); 
-}
+using var scope = app.Services.CreateScope();
+
+var dbContext = scope.ServiceProvider.GetRequiredService<MyContext>();
+dbContext.Database.Migrate(); 
+
 
 app.Run();

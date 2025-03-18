@@ -25,6 +25,8 @@ public class Middleware(MyContext dbContext) : IMiddleware
     {
         try
         {
+            // Line署名検証でFromBody以外でも使うので再読み込み可能にしておく
+            httpContext.Request.EnableBuffering(); 
             await next(httpContext);
         }
         catch(StatusCodeException ex)
