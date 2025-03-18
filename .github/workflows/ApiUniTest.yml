@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ../API/
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ../API/ --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test ../API/ --no-build --verbosity normal
