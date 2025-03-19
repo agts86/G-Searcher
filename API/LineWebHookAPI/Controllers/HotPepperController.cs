@@ -3,7 +3,6 @@ using LineWebHookAPI.Models.BL.HotPeppers;
 using LineWebHookAPI.Models.Dto.HotPeppers;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
-using System.Text.Json;
 using LineWebHookAPI.Models.Http;
 
 namespace LineWebHookAPI.Controllers;

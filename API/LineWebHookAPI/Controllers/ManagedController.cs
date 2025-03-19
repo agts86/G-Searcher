@@ -1,8 +1,5 @@
 using LineWebHookAPI.Models.DB;
-using LineWebHookAPI.Models.BL.HotPeppers;
-using LineWebHookAPI.Models.Dto.HotPeppers;
 using Microsoft.AspNetCore.Mvc;
-using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Models.BL.Managed;
 
 namespace LineWebHookAPI.Controllers;
