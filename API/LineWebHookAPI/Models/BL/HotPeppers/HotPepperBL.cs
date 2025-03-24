@@ -76,7 +76,7 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
                             }
                         }
                     } :
-                    new Dto.Line.API.Messages.TextMessage[]
+                    new TextV2Message[]
                     {
                         new()
                         {

@@ -3,15 +3,15 @@ using System.Text.Json.Serialization;
 namespace LineWebHookAPI.Models.Dto.Line.API.Messages;
 
 /// <summary>
-/// テキストメッセージ
+/// テキストV2メッセージ
 /// </summary>
-public class TextMessage : IMessage
+public class TextV2Message : IMessage
 {
     /// <summary>
     /// タイプ
     /// </summary>
     [JsonPropertyName("type")]
-    public string Type { get; } = "text";
+    public string Type { get; } = "textV2";
 
     /// <summary>
     /// テキスト
