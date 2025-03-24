@@ -16,7 +16,8 @@ public class HotPepperHttp(HttpAdapter http,IConfiguration configuration) : ApiC
     /// <returns>実行結果</returns>
     public async Task<HotPepperGourmetResponseDto> GetGourmetAsync(LocationMessage message)
     {
-        var midnightQuery = DateTime.Now.Hour >= 23 ? "&midnight=1" : "";
+        var hour = DateTime.Now.Hour;
+        var midnightQuery = hour <= 5 && 23 <= hour ? "&midnight=1" : "";
         var url = string.Format
         (
             $"{Configuration.GetValue<string>("HotPepper:Url")}&genre=G013&lat={message.Latitude}&lng={message.Longitude}{midnightQuery}",
