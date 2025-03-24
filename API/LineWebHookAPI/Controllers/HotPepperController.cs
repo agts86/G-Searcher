@@ -4,6 +4,7 @@ using LineWebHookAPI.Models.Dto.HotPeppers;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Models.Http;
+using LineWebHookAPI.Constants.HotPepper;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -34,21 +35,22 @@ public class HotPepperController
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
+    /// <param name="genreCode">ジャンルコード</param>
     /// <returns>LineAPIにPostした内容</returns>
     [HttpPost("gourmet/location")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto)
+    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto,[FromQuery] GenreCode? genreCode = null)
     {
+        var dto = new PostGourmetLocationDto(gourmetGettingDto,genreCode);
         if (Env.IsDevelopment())
         {
-            var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
+            var res = await HotPepperBL.PostGourmetLocationAsync(dto);
             return Ok(res);
         }
         else
         {
-            _ = HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto);
+            _ = HotPepperBL.PostGourmetLocationAsync(dto);
             return Ok();
         }
-        
     }
 }

@@ -38,22 +38,20 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
     /// </summary>
-    /// <param name="gourmetGettingDto">位置情報</param>
+    /// <param name="dto">リクエスト情報で使うもの</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Reply> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto)
-    {
-        var message = gourmetGettingDto.Events.First().Message;
-        
-        await HotPepperRepository.CreateLogAsync(message);
+    public async Task<Reply> PostGourmetLocationAsync(PostGourmetLocationDto dto)
+    {    
+        await HotPepperRepository.CreateLogAsync(dto.Message);
         await HotPepperRepository.SaveChangesAsync();
         
         var hotPepperHttp = new HotPepperHttp(Http, Configuration);
-        var gourmet = await hotPepperHttp.GetGourmetAsync(message);
+        var gourmet = await hotPepperHttp.GetGourmetAsync(dto);
         var lineHttp = new LineHttp(Http, Configuration);
         var columns = gourmet.Results.ToCarouselTemplateColumns();
         var Reply = new Reply()
         {
-            ReplyToken = gourmetGettingDto.Events.First().ReplyToken,
+            ReplyToken = dto.ReplyToken,
             Messages = columns.Length > 0 ? 
             new TemplateMessage[]
             {

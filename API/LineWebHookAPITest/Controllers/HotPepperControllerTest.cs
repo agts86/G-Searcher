@@ -9,6 +9,7 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
+using LineWebHookAPI.Constants.HotPepper;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -82,7 +83,7 @@ public class HotPepperControllerTest : TestBase
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
         var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto);
+        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
         Assert.IsType<Reply>((res as OkObjectResult).Value);
@@ -160,7 +161,7 @@ public class HotPepperControllerTest : TestBase
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
         var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto);
+        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
         Assert.IsType<Reply>((res as OkObjectResult).Value);
@@ -215,7 +216,7 @@ public class HotPepperControllerTest : TestBase
         Env.EnvironmentName = "Production";
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
         var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto);
+        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkResult>(res);
     }
