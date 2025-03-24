@@ -17,7 +17,7 @@ public class GourmetGettingDto
     /// <summary>
     /// Webhookイベントオブジェクトの配列
     /// </summary>
-    public GourmetEvent[] Events {get; set;}
+    public GourmetEvent[] Events {get; set;} = [];
 
     /// <summary>
     /// Webhookイベントオブジェクト

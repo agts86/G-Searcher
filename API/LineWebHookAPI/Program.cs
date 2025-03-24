@@ -19,7 +19,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<Middleware>();
 // Lineの署名検証用フィルター
 builder.Services.AddScoped<LineSignatureFilter>();
-
+// Enumを文字列として扱う
+builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // EFCoreの設定
 builder.Services.AddDbContext<LineWebHookContext>
 (

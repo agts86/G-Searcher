@@ -39,7 +39,7 @@ public class HotPepperController
     /// <returns>LineAPIにPostした内容</returns>
     [HttpPost("gourmet/location")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto,[FromQuery] GenreCode? genreCode = null)
+    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto,[FromQuery] GenreCode genreCode)
     {
         var dto = new PostGourmetLocationDto(gourmetGettingDto,genreCode);
         if (Env.IsDevelopment())
