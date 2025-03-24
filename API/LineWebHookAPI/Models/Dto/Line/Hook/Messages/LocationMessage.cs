@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 /// <summary>
@@ -5,6 +7,12 @@ namespace LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 /// </summary>
 public class LocationMessage : Message
 {
+    /// <summary>
+    /// タイプ
+    /// </summary>
+    [Required]
+    public override string Type { get; set; } = "location";
+
     /// <summary>
     /// タイトル
     /// </summary>
@@ -24,4 +32,9 @@ public class LocationMessage : Message
     /// 軽度
     /// </summary>
     public double Longitude {get; set;}
+
+    /// <summary>
+    /// HotPepperAPIのクエリを作成する
+    /// </summary>
+    public override string CreateHotPepperApiQuey() => $"&lat={Latitude}&lng={Longitude}";
 }

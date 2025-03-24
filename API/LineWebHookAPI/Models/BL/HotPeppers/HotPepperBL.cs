@@ -7,6 +7,7 @@ using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Constants.HotPepper;
+using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 namespace LineWebHookAPI.Models.BL.HotPeppers;
 
@@ -45,11 +46,15 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
         var hotPepperHttp = new HotPepperHttp(Http, Configuration);
         var lineHttp = new LineHttp(Http, Configuration);
         var replies = new List<Reply>();
-        
+
         foreach(var e in gourmetGettingDto.Events ?? [])
         {
-            await HotPepperRepository.CreateLogAsync(e.Message);
-            await HotPepperRepository.SaveChangesAsync();
+            if(e.Message is LocationMessage message) 
+            {
+                await HotPepperRepository.CreateLogAsync(message);
+                await HotPepperRepository.SaveChangesAsync();
+            }
+            
             
             var gourmet = await hotPepperHttp.GetGourmetAsync(e.Message,genreCode);
             
@@ -71,7 +76,7 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
                             }
                         }
                     } :
-                    new TextMessage[]
+                    new Dto.Line.API.Messages.TextMessage[]
                     {
                         new()
                         {

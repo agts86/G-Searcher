@@ -170,10 +170,10 @@ public class HotPepperControllerTest : TestBase
         var contents = (res as OkObjectResult).Value as Reply[];
         Assert.Single(contents);
         Assert.Equal("replyToken", contents[0].ReplyToken);
-        Assert.IsType<TextMessage[]>(contents[0].Messages);
+        Assert.IsType<LineWebHookAPI.Models.Dto.Line.API.Messages.TextMessage[]>(contents[0].Messages);
         Assert.Single(contents[0].Messages);
 
-        var message = contents[0].Messages as TextMessage[];
+        var message = contents[0].Messages as LineWebHookAPI.Models.Dto.Line.API.Messages.TextMessage[];
         Assert.Equal("text", message[0].Type);
         Assert.Equal(MessageTexts.NotFound, message[0].Text);
 

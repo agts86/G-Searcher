@@ -16,6 +16,10 @@ public abstract class Message
     /// <summary>
     /// タイプ
     /// </summary>
-    [Required]
-    public string Type { get; set; }
+    public abstract string Type { get; set; }
+
+    /// <summary>
+    /// HotPepperAPIのクエリを作成する
+    /// </summary>
+    public abstract string CreateHotPepperApiQuey();
 }

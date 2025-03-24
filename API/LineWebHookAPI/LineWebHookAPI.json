@@ -137,7 +137,7 @@
             "nullable": true
           },
           "message": {
-            "$ref": "#/components/schemas/LocationMessage"
+            "$ref": "#/components/schemas/Message"
           }
         }
       },
@@ -157,29 +157,12 @@
           }
         }
       },
-      "LocationMessage": {
+      "Message": {
         "required": [
-          "id",
-          "type"
+          "id"
         ],
         "type": "object",
         "properties": {
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "latitude": {
-            "type": "number",
-            "format": "double"
-          },
-          "longitude": {
-            "type": "number",
-            "format": "double"
-          },
           "id": {
             "type": "string",
             "nullable": true

@@ -1,6 +1,8 @@
+using LineWebHookAPI.Jsons;
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.Line.Hook.Sources;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace LineWebHookAPI.Models.Dto.HotPeppers;
 
@@ -78,6 +80,7 @@ public class GourmetGettingDto
         /// メッセージの内容を含むオブジェクト
         /// </summary>
         [Required]
-        public LocationMessage Message {get; set;}
+        [JsonConverter(typeof(MessageConverter))]
+        public Message Message {get; set;}
     }
 }
