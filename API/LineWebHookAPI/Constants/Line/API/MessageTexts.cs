@@ -8,5 +8,5 @@ public static class MessageTexts
     /// <summary>
     /// 何もなし
     /// </summary>
-    public const string NotFound = "この近くには何もありませんでした。";
+    public const string NotFound = "ごめんなさい。。見つかりませんでした。。";
 }
