@@ -21,7 +21,7 @@ builder.Services.AddTransient<Middleware>();
 builder.Services.AddScoped<LineSignatureFilter>();
 
 // EFCoreの設定
-builder.Services.AddDbContext<MyContext>
+builder.Services.AddDbContext<LineWebHookContext>
 (
     // 一旦趣味だからSQLiteにしたけど
     // サービス展開考えたらdevとprodで分けるべき
@@ -48,7 +48,7 @@ app.MapControllers();
 // DBを作成・更新する
 using var scope = app.Services.CreateScope();
 
-var dbContext = scope.ServiceProvider.GetRequiredService<MyContext>();
+var dbContext = scope.ServiceProvider.GetRequiredService<LineWebHookContext>();
 dbContext.Database.Migrate(); 
 
 

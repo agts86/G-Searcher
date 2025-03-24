@@ -5,7 +5,7 @@ namespace LineWebHookAPI.Models.DB.Repositories;
 /// <summary>
 /// サーチコントローラー用リポジトリ
 /// </summary>
-public class ManagedRepository(MyContext dbContext) : Repository(dbContext)
+public class ManagedRepository(LineWebHookContext dbContext) : Repository(dbContext)
 {
     /// <summary>
     /// グルメログDAO

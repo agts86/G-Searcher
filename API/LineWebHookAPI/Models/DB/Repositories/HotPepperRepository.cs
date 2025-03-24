@@ -7,7 +7,7 @@ namespace LineWebHookAPI.Models.DB.Repositories;
 /// <summary>
 /// サーチコントローラー用リポジトリ
 /// </summary>
-public class HotPepperRepository(MyContext dbContext) : Repository(dbContext)
+public class HotPepperRepository(LineWebHookContext dbContext) : Repository(dbContext)
 {
     /// <summary>
     /// グルメログDAO

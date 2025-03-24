@@ -12,7 +12,7 @@ public class HotPepperControllerMock : HotPepperController
     public HotPepperControllerMock
     (
         IConfiguration configuration,
-        MyContext dbContext,
+        LineWebHookContext dbContext,
         IHostEnvironment env,
         HttpAdapterMock http
     ) : base(configuration, dbContext, env)

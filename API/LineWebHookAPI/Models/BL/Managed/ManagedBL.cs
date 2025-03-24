@@ -7,7 +7,7 @@ namespace LineWebHookAPI.Models.BL.Managed;
 /// <summary>
 /// 管理用コントローラーのビジネスロジック
 /// </summary>
-public class ManagedBL(MyContext dbContext)
+public class ManagedBL(LineWebHookContext dbContext)
 {
     /// <summary>
     /// リポジトリ

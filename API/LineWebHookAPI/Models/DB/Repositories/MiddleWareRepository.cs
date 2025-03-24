@@ -5,7 +5,7 @@ namespace LineWebHookAPI.Models.DB.Repositories;
 /// <summary>
 /// ミドルウェア用リポジトリ
 /// </summary>
-public class MiddleWareRepository(MyContext dbContext) : Repository(dbContext)
+public class MiddleWareRepository(LineWebHookContext dbContext) : Repository(dbContext)
 {
     /// <summary>
     /// エラーログDAO

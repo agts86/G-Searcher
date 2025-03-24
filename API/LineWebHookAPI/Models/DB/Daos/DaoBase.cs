@@ -3,10 +3,10 @@ namespace LineWebHookAPI.Models.DB.Daos;
 /// <summary>
 /// Daoの基底クラス
 /// </summary>
-public abstract class Dao(MyContext dbContext)
+public abstract class Dao(LineWebHookContext dbContext)
 {
     /// <summary>
     /// EFCoreのコンテキスト
     /// </summary>
-    protected MyContext DbContext { get; } = dbContext;
+    protected LineWebHookContext DbContext { get; } = dbContext;
 }

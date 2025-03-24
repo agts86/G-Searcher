@@ -5,7 +5,7 @@ using LineWebHookAPI.Models.DB.SaveChanges;
 
 namespace LineWebHookAPI.Models.DB;
 
-public class MyContext(DbContextOptions<MyContext> options) : DbContext(options)
+public class LineWebHookContext(DbContextOptions<LineWebHookContext> options) : DbContext(options)
 {
     public virtual DbSet<ErrorLog> ErrorLogs {get;set;}
 

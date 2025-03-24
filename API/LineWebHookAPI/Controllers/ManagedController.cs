@@ -11,7 +11,7 @@ namespace LineWebHookAPI.Controllers;
 [Route("api/managed")]
 public class ManagedController
 (
-    MyContext dbContext
+    LineWebHookContext dbContext
 ) : ControllerBase
 {
     /// <summary>

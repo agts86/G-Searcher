@@ -6,7 +6,7 @@ namespace LineWebHookAPI.Models.DB.Daos;
 /// <summary>
 /// グルメログDAO
 /// </summary>
-public class GourmetLogDao(MyContext dbContext) : Dao(dbContext)
+public class GourmetLogDao(LineWebHookContext dbContext) : Dao(dbContext)
 {
     /// <summary>
     /// ログを作成する

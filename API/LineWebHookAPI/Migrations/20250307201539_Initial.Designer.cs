@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LineWebHookAPI.Migrations
 {
-    [DbContext(typeof(MyContext))]
+    [DbContext(typeof(LineWebHookContext))]
     [Migration("20250307201539_Initial")]
     partial class Initial
     {

@@ -11,9 +11,9 @@ public abstract class TestBase
     /// <summary>
     /// DB
     /// </summary>
-    protected MyContext DbContext { get; set; } = new MyContext
+    protected LineWebHookContext DbContext { get; set; } = new LineWebHookContext
     (
-        new DbContextOptionsBuilder<MyContext>()
+        new DbContextOptionsBuilder<LineWebHookContext>()
         .UseInMemoryDatabase(Guid.NewGuid().ToString())
         .Options
     );

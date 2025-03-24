@@ -15,7 +15,7 @@ namespace LineWebHookAPI.Controllers;
 public class HotPepperController
 (
     IConfiguration configuration,
-    MyContext dbContext,
+    LineWebHookContext dbContext,
     IHostEnvironment env
 ) : ControllerBase
 {

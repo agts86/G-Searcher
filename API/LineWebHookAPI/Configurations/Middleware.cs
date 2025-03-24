@@ -9,7 +9,7 @@ namespace LineWebHookAPI.Configurations;
 /// ミドルウェア
 /// 例外はここで全て処理する
 /// </summary>
-public class Middleware(MyContext dbContext) : IMiddleware
+public class Middleware(LineWebHookContext dbContext) : IMiddleware
 {
     /// <summary>
     /// ミドルウェア用リポジトリ

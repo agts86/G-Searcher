@@ -7,7 +7,7 @@ namespace LineWebHookAPI.Models.DB.Daos;
 /// <summary>
 /// エラーログDAO
 /// </summary>
-public class ErrorLogDao(MyContext dbContext) : Dao(dbContext)
+public class ErrorLogDao(LineWebHookContext dbContext) : Dao(dbContext)
 {
     /// <summary>
     /// ログを作成する

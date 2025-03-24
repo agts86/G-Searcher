@@ -3,10 +3,10 @@ namespace LineWebHookAPI.Models.DB.Repositories;
 /// <summary>
 /// リポジトリの基底クラス
 /// </summary>
-public abstract class Repository(MyContext dbContext)
+public abstract class Repository(LineWebHookContext dbContext)
 {
     /// <summary>
     /// EFCoreのコンテキスト
     /// </summary>
-    protected MyContext DbContext { get; } = dbContext;
+    protected LineWebHookContext DbContext { get; } = dbContext;
 }
