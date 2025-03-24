@@ -86,14 +86,15 @@ public class HotPepperControllerTest : TestBase
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
-        Assert.IsType<Reply>((res as OkObjectResult).Value);
+        Assert.IsType<Reply[]>((res as OkObjectResult).Value);
 
-        var contents = (res as OkObjectResult).Value as Reply;
-        Assert.Equal("replyToken", contents.ReplyToken);
-        Assert.IsType<TemplateMessage[]>(contents.Messages);
-        Assert.Single(contents.Messages);
+        var contents = (res as OkObjectResult).Value as Reply[];
+        Assert.Single(contents);
+        Assert.Equal("replyToken", contents[0].ReplyToken);
+        Assert.IsType<TemplateMessage[]>(contents[0].Messages);
+        Assert.Single(contents[0].Messages);
 
-        var message = contents.Messages as TemplateMessage[];
+        var message = contents[0].Messages as TemplateMessage[];
         Assert.Equal("template", message[0].Type);
         Assert.Equal("検索結果", message[0].AltText);
         Assert.IsType<CarouselTemplate>(message[0].Template);
@@ -164,14 +165,15 @@ public class HotPepperControllerTest : TestBase
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
-        Assert.IsType<Reply>((res as OkObjectResult).Value);
+        Assert.IsType<Reply[]>((res as OkObjectResult).Value);
 
-        var contents = (res as OkObjectResult).Value as Reply;
-        Assert.Equal("replyToken", contents.ReplyToken);
-        Assert.IsType<TextMessage[]>(contents.Messages);
-        Assert.Single(contents.Messages);
+        var contents = (res as OkObjectResult).Value as Reply[];
+        Assert.Single(contents);
+        Assert.Equal("replyToken", contents[0].ReplyToken);
+        Assert.IsType<TextMessage[]>(contents[0].Messages);
+        Assert.Single(contents[0].Messages);
 
-        var message = contents.Messages as TextMessage[];
+        var message = contents[0].Messages as TextMessage[];
         Assert.Equal("text", message[0].Type);
         Assert.Equal(MessageTexts.NotFound, message[0].Text);
 

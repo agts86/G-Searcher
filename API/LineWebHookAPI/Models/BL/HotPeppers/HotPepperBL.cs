@@ -38,43 +38,52 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
     /// </summary>
-    /// <param name="dto">リクエスト情報で使うもの</param>
+    /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Reply> PostGourmetLocationAsync(PostGourmetLocationDto dto)
-    {    
-        await HotPepperRepository.CreateLogAsync(dto.Message);
-        await HotPepperRepository.SaveChangesAsync();
-        
+    public async Task<Reply[]> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto, GenreCode genreCode)
+    {
         var hotPepperHttp = new HotPepperHttp(Http, Configuration);
-        var gourmet = await hotPepperHttp.GetGourmetAsync(dto);
         var lineHttp = new LineHttp(Http, Configuration);
-        var columns = gourmet.Results.ToCarouselTemplateColumns();
-        var Reply = new Reply()
+        var replies = new List<Reply>();
+        
+        foreach(var e in gourmetGettingDto.Events ?? [])
         {
-            ReplyToken = dto.ReplyToken,
-            Messages = columns.Length > 0 ? 
-            new TemplateMessage[]
-            {
-                new()
+            await HotPepperRepository.CreateLogAsync(e.Message);
+            await HotPepperRepository.SaveChangesAsync();
+            
+            var gourmet = await hotPepperHttp.GetGourmetAsync(e.Message,genreCode);
+            
+            var columns = gourmet.Results.ToCarouselTemplateColumns();
+            replies.Add
+            (
+                new Reply()
                 {
-                    AltText = "検索結果",
-                    Template = new CarouselTemplate()
+                    ReplyToken = e.ReplyToken,
+                    Messages = columns.Length > 0 ? 
+                    new TemplateMessage[]
                     {
-                        Columns = columns
+                        new()
+                        {
+                            AltText = "検索結果",
+                            Template = new CarouselTemplate()
+                            {
+                                Columns = columns
+                            }
+                        }
+                    } :
+                    new TextMessage[]
+                    {
+                        new()
+                        {
+                            Text = MessageTexts.NotFound
+                        }
                     }
                 }
-            } :
-            new TextMessage[]
-            {
-                new()
-                {
-                    Text = MessageTexts.NotFound
-                }
-            }
-        };
-
+            );
+        }   
+        
         // デバッグ実行時はエラーコード確定のため処理しない
-        if(!Env.IsDevelopment()) await lineHttp.PostReplyAsync(Reply);
-        return Reply;
+        if(!Env.IsDevelopment()) replies.ForEach(async x => await lineHttp.PostReplyAsync(x));
+        return [.. replies];
     }
 }

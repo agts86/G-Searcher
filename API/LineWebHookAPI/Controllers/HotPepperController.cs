@@ -41,15 +41,14 @@ public class HotPepperController
     [ServiceFilter(typeof(LineSignatureFilter))]
     public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto,[FromQuery] GenreCode genreCode)
     {
-        var dto = new PostGourmetLocationDto(gourmetGettingDto,genreCode);
         if (Env.IsDevelopment())
         {
-            var res = await HotPepperBL.PostGourmetLocationAsync(dto);
+            var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
             return Ok(res);
         }
         else
         {
-            _ = HotPepperBL.PostGourmetLocationAsync(dto);
+            _ = HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
             return Ok();
         }
     }

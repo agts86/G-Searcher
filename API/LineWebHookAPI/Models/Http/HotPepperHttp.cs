@@ -1,5 +1,6 @@
 using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.HotPeppers;
+using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 namespace LineWebHookAPI.Models.Http;
 
@@ -13,14 +14,14 @@ public class HotPepperHttp(HttpAdapter http,IConfiguration configuration) : ApiC
     /// </summary>
     /// <param name="dto">位置情報、ジャンルコード</param>
     /// <returns>実行結果</returns>
-    public async Task<HotPepperGourmetResponseDto> GetGourmetAsync(PostGourmetLocationDto dto)
+    public async Task<HotPepperGourmetResponseDto> GetGourmetAsync(LocationMessage message,GenreCode genreCode)
     {
         var hour = DateTime.Now.Hour;
         var midnightQuery = hour <= 5 && 23 <= hour ? "&midnight=1" : "";
-        var genreQuery = Enum.IsDefined(dto.GenreCode) ? $"&genre={dto.GenreCode}" : "";
+        var genreQuery = Enum.IsDefined(genreCode) ? $"&genre={genreCode}" : "";
         var url = string.Format
         (
-            $"{Configuration.GetValue<string>("HotPepper:Url")}&lat={dto.Message.Latitude}&lng={dto.Message.Longitude}{genreQuery}{midnightQuery}",
+            $"{Configuration.GetValue<string>("HotPepper:Url")}&lat={message.Latitude}&lng={message.Longitude}{genreQuery}{midnightQuery}",
             HotPepperUrlRoot.Gourmet,
             Configuration.GetValue<string>("HotPepper:Key")
         );
