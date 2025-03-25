@@ -16,7 +16,8 @@ public class HotPepperHttp(HttpAdapter http,IConfiguration configuration) : ApiC
     /// <returns>実行結果</returns>
     public async Task<HotPepperGourmetResponseDto> GetGourmetAsync(Message message,GenreCode genreCode)
     {
-        var hour = DateTime.Now.Hour;
+        const int japanKind = 9;
+        var hour = DateTime.UtcNow.AddHours(japanKind).Hour;
         var midnightQuery = hour <= 5 && 23 <= hour ? "&midnight=1" : "";
         var genreQuery = Enum.IsDefined(genreCode) ? $"&genre={genreCode}" : "";
         var url = string.Format
