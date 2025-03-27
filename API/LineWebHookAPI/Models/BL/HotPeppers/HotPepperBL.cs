@@ -64,25 +64,22 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
                 new Reply()
                 {
                     ReplyToken = e.ReplyToken,
-                    Messages = columns.Length > 0 ? 
-                    new TemplateMessage[]
-                    {
-                        new()
+                    Messages = 
+                    [
+                        columns.Length > 0 ? 
+                        new TemplateMessage()
                         {
                             AltText = "検索結果",
                             Template = new CarouselTemplate()
                             {
                                 Columns = columns
                             }
-                        }
-                    } :
-                    new TextV2Message[]
-                    {
-                        new()
+                        }:
+                        new TextV2Message()
                         {
                             Text = MessageTexts.NotFound
                         }
-                    }
+                    ] 
                 }
             );
         }   

@@ -17,7 +17,15 @@ public class RealMoldConverter<T> : JsonConverter<T>
 
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
-        var realType = value.GetType();
-        JsonSerializer.Serialize(writer, value, realType, options);
+        if(value is Array array)
+        {
+            writer.WriteStartArray();
+            foreach (var item in array)
+                JsonSerializer.Serialize(writer, item, item.GetType(), options);
+            writer.WriteEndArray();
+        }
+        else
+            JsonSerializer.Serialize(writer, value, value.GetType(), options);
+        
     }
 }
