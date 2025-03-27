@@ -11,7 +11,7 @@ public class TextMessage : Message
     /// タイプ
     /// </summary>
     [Required]
-    public override string Type { get; set; } = "text";
+    public override string Type { get; } = "text";
 
     /// <summary>
     /// テキスト

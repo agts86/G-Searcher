@@ -11,7 +11,7 @@ public class LocationMessage : Message
     /// タイプ
     /// </summary>
     [Required]
-    public override string Type { get; set; } = "location";
+    public override string Type { get; } = "location";
 
     /// <summary>
     /// タイトル
