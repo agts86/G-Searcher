@@ -36,7 +36,7 @@ public class YahooBL(IConfiguration configuration, LineWebHookContext dbContext,
     protected HttpAdapter Http { get; set; } = http;
 
     /// <summary>
-    /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
+    /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>

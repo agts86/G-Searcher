@@ -71,24 +71,15 @@ public class HttpAdapter
     /// <returns>レスポンス結果</returns>
     public async virtual Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null)  where T : class
     {
-        var content = JsonSerializer.Serialize(body);
         var request = new HttpRequestMessage
         {
             Method = HttpMethod.Post,
             RequestUri = new Uri(url),
-            Content = new StringContent(content, Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json")
         };
         request.Headers.Authorization = authenticationHeaderValue;
-        Console.WriteLine(content);
-        Console.WriteLine(authenticationHeaderValue);
         var res = await HttpClient.SendAsync(request);
-        if (!res.IsSuccessStatusCode) 
-        {   
-            Console.WriteLine(res.StatusCode);
-            Console.WriteLine(res.RequestMessage.ToString());
-            Console.WriteLine(await res.Content.ReadAsStringAsync());
-            throw new HttpRequestException(res.RequestMessage.ToString());
-        }
+        if (!res.IsSuccessStatusCode) throw new HttpRequestException(res.RequestMessage.ToString());
         var json = await res.Content.ReadAsStringAsync();
         return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
     }

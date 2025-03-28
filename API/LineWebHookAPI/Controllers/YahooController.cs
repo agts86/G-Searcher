@@ -1,5 +1,4 @@
 using LineWebHookAPI.Models.DB;
-using LineWebHookAPI.Models.Dto.Yahoo;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Models.Http;
@@ -34,7 +33,7 @@ public class YahooController
     public IHostEnvironment Env { get; protected set; } = env;
 
     /// <summary>
-    /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
+    /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <param name="genreCode">ジャンルコード</param>
