@@ -4,7 +4,7 @@ using LineWebHookAPI.Models.Dto.Line.Hook.Sources;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace LineWebHookAPI.Models.Dto.HotPeppers;
+namespace LineWebHookAPI.Models.Dto.Line.Hook;
 
 /// <summary>
 /// PostGourmetLocationAsyncのリクエストDto

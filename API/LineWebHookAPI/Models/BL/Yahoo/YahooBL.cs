@@ -5,16 +5,15 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
 using LineWebHookAPI.Constants.Line.API;
-using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 
-namespace LineWebHookAPI.Models.BL.HotPeppers;
+namespace LineWebHookAPI.Models.BL.Yahoo;
 
 /// <summary>
-/// ホットペッパーコントローラーのビジネスロジック
+/// YahooBコントローラーのビジネスロジック
 /// </summary>
-public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
+public class YahooBL(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
 {
     /// <summary>
     /// リポジトリ
@@ -41,9 +40,9 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Reply[]> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto, GenreCode genreCode)
+    public async Task<Reply[]> PostLocalAsync(GourmetGettingDto gourmetGettingDto, string genreCode)
     {
-        var hotPepperHttp = new HotPepperHttp(Http, Configuration);
+        var yahooHttp = new YahooHttp(Http, Configuration);
         var lineHttp = new LineHttp(Http, Configuration);
         var replies = new List<Reply>();
 
@@ -54,11 +53,11 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
                 await HotPepperRepository.CreateLogAsync(message);
                 await HotPepperRepository.SaveChangesAsync();
             }
-            
-            
-            var gourmet = await hotPepperHttp.GetGourmetAsync(e.Message,genreCode);
-            
-            var columns = gourmet.Results.ToCarouselTemplateColumns();
+        
+        
+            var gourmet = await yahooHttp.GetLocateAsync(e.Message,genreCode);
+        
+            var columns = gourmet.ToCarouselTemplateColumns();
             replies.Add
             (
                 new Reply()
@@ -83,9 +82,10 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
                 }
             );
         }   
-        
+    
         // デバッグ実行時はエラーコード確定のため処理しない
         if(!Env.IsDevelopment()) replies.ForEach(async x => await lineHttp.PostReplyAsync(x));
         return [.. replies];
     }
 }
+

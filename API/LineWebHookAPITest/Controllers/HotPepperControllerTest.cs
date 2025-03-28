@@ -10,6 +10,7 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Constants.HotPepper;
+using LineWebHookAPI.Models.Dto.Line.Hook;
 
 namespace LineWebHookAPITest.Controllers;
 

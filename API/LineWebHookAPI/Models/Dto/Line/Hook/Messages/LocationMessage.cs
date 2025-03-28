@@ -37,4 +37,9 @@ public class LocationMessage : Message
     /// HotPepperAPIのクエリを作成する
     /// </summary>
     public override string CreateHotPepperApiQuey() => $"&lat={Latitude}&lng={Longitude}";
+
+    /// <summary>
+    /// YahooAPIのクエリを作成する
+    /// </summary>
+    public override string CreateYahooApiQuey() => $"&lat={Latitude}&lon={Longitude}";
 }

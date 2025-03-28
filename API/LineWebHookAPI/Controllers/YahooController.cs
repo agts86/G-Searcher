@@ -1,9 +1,11 @@
 using LineWebHookAPI.Models.DB;
-using LineWebHookAPI.Models.BL.HotPeppers;
+using LineWebHookAPI.Models.Dto.Yahoo;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Models.Http;
-using LineWebHookAPI.Constants.HotPepper;
+using LineWebHookAPI.Models.BL.Yahoo;
+using System.ComponentModel.DataAnnotations;
+using LineWebHookAPI.Validations;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 
 namespace LineWebHookAPI.Controllers;
@@ -12,8 +14,8 @@ namespace LineWebHookAPI.Controllers;
 /// ホットペッパー関連API
 /// </summary>
 [ApiController]
-[Route("api/hot-pepper")]
-public class HotPepperController
+[Route("api/yahoo")]
+public class YahooController
 (
     IConfiguration configuration,
     LineWebHookContext dbContext,
@@ -23,7 +25,7 @@ public class HotPepperController
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public HotPepperBL HotPepperBL { get; protected set; } = new HotPepperBL(configuration,dbContext,env,new HttpAdapter());
+    public YahooBL YahooBL { get; protected set; } = new YahooBL(configuration,dbContext,env,new HttpAdapter());
 
     /// <summary>
     /// 環境情報
@@ -37,18 +39,21 @@ public class HotPepperController
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <param name="genreCode">ジャンルコード</param>
     /// <returns>LineAPIにPostした内容</returns>
-    [HttpPost("gourmet/location")]
+    [HttpPost("local")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto,[FromQuery] GenreCode genreCode)
+    public async Task<IActionResult> PostLocalAsync
+    (
+        [FromBody] GourmetGettingDto gourmetGettingDto,
+        [FromQuery] [MaxLength(7)] [HalfNumeric] string genreCode)
     {
         if (Env.IsDevelopment())
         {
-            var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
+            var res = await YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
             return Ok(res);
         }
         else
         {
-            _ = HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
+            _ = YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
             return Ok();
         }
     }

@@ -22,4 +22,9 @@ public abstract class Message
     /// HotPepperAPIのクエリを作成する
     /// </summary>
     public abstract string CreateHotPepperApiQuey();
+
+    /// <summary>
+    /// YahooAPIのクエリを作成する
+    /// </summary>
+    public abstract string CreateYahooApiQuey();
 }

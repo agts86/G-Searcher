@@ -26,4 +26,13 @@ public class TextMessage : Message
         var value = Text.Replace('　', ' ');
         return $"&keyword={Uri.EscapeDataString(value)}";
     } 
+
+    /// <summary>
+    /// YahooAPIのクエリを作成する
+    /// </summary>
+    public override string CreateYahooApiQuey()
+    {
+        var value = Text.Replace('　', ' ');
+        return $"&query={Uri.EscapeDataString(value)}";
+    } 
 }

@@ -87,6 +87,48 @@
           }
         }
       }
+    },
+    "/api/yahoo/local": {
+      "post": {
+        "tags": [
+          "Yahoo"
+        ],
+        "parameters": [
+          {
+            "name": "genreCode",
+            "in": "query",
+            "schema": {
+              "maxLength": 7,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GourmetGettingDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GourmetGettingDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GourmetGettingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -200,6 +242,9 @@
     },
     {
       "name": "Managed"
+    },
+    {
+      "name": "Yahoo"
     }
   ]
 }
