@@ -18,7 +18,7 @@ public class HotPepperController
     IConfiguration configuration,
     LineWebHookContext dbContext,
     IHostEnvironment env
-) : LineWebHookAPIController(dbContext)
+) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
@@ -48,21 +48,7 @@ public class HotPepperController
         }
         else
         {
-            _ = Task.Run
-            (
-                async () => 
-                {
-                    try
-                    {
-                        await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
-                    }
-                    catch (Exception e)
-                    {
-                        await CreateErrorLogAsync(e);
-                    }
-                }
-
-            );
+            _ = HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
             return Ok();
         }
     }
