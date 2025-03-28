@@ -58,10 +58,13 @@ public class YahooController
                 {
                     try
                     {
-                        await YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
+                        Console.WriteLine("Start");
+                        _ = await YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
+                        Console.WriteLine("End");
                     }
                     catch (Exception e)
                     {
+                        Console.WriteLine(e.Message);
                         await CreateErrorLogAsync(e);
                     }
                 }
