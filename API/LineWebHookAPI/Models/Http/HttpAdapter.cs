@@ -82,7 +82,13 @@ public class HttpAdapter
         Console.WriteLine(content);
         Console.WriteLine(authenticationHeaderValue);
         var res = await HttpClient.SendAsync(request);
-        if (!res.IsSuccessStatusCode) throw new HttpRequestException(res.RequestMessage.ToString());
+        if (!res.IsSuccessStatusCode) 
+        {   
+            Console.WriteLine(res.StatusCode);
+            Console.WriteLine(res.RequestMessage.ToString());
+            Console.WriteLine(await res.Content.ReadAsStringAsync());
+            throw new HttpRequestException(res.RequestMessage.ToString());
+        }
         var json = await res.Content.ReadAsStringAsync();
         return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
     }
