@@ -84,7 +84,7 @@ public class YahooBL(IConfiguration configuration, LineWebHookContext dbContext,
         }   
     
         // デバッグ実行時はエラーコード確定のため処理しない
-        if(!Env.IsDevelopment()) replies.ForEach(async x => await lineHttp.PostReplyAsync(x));
+        replies.ForEach(async x => await lineHttp.PostReplyAsync(x));
         return [.. replies];
     }
 }
