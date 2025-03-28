@@ -19,7 +19,7 @@ public class YahooController
     IConfiguration configuration,
     LineWebHookContext dbContext,
     IHostEnvironment env
-) : ControllerBase
+) : LineWebHookAPIController(dbContext)
 {
     /// <summary>
     /// ビジネスロジック
@@ -52,7 +52,21 @@ public class YahooController
         }
         else
         {
-            _ = YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
+            _ = Task.Run
+            (
+                async () => 
+                {
+                    try
+                    {
+                        await YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
+                    }
+                    catch (Exception e)
+                    {
+                        await CreateErrorLogAsync(e);
+                    }
+                }
+
+            );
             return Ok();
         }
     }
