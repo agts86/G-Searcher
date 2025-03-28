@@ -1,3 +1,4 @@
+using LineWebHookAPI.Constants.Yahoo;
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.Yahoo;
 
@@ -13,13 +14,13 @@ public class YahooHttp(HttpAdapter http,IConfiguration configuration) : ApiClien
     /// </summary>
     /// <param name="dto">位置情報、ジャンルコード</param>
     /// <returns>実行結果</returns>
-    public async Task<LocalDto> GetLocateAsync(Message message,string genreCode)
+    public async Task<LocalDto> GetLocateAsync(Message message, string genreCode)
     {
         var genreQuery = genreCode is null ? "" : $"&gc={genreCode}";
         var url = string.Format
         (
             $"{Configuration.GetValue<string>("Yahoo:Url")}{message.CreateYahooApiQuey()}{genreQuery}&dist=1",
-            "localSearch",
+            YahooUrlRoot.LocalSearch,
             Configuration.GetValue<string>("Yahoo:Key")
         );
         return await Http.GetAsync<LocalDto>(url);

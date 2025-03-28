@@ -9,10 +9,7 @@ namespace LineWebHookAPI.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/managed")]
-public class ManagedController
-(
-    LineWebHookContext dbContext
-) : ControllerBase
+public class ManagedController(LineWebHookContext dbContext) : LineWebHookAPIController(dbContext)
 {
     /// <summary>
     /// ビジネスロジック
