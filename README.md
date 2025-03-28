@@ -34,12 +34,14 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 ■ その他<br>
 
 -   HotPepper API
+-   YOLP API
 -   Line Messaging API
 
 ## 前提
 
 1. HotPepperAPIのキーを取得済み
-2. Line公式アカウント、Line Developerアカウント開設済み（デバッグ時は不要）
+2. YOLP APIのキーを取得済み
+3. Line公式アカウント、Line Developerアカウント開設済み（デバッグ時は不要）
 
 ## 実行方法(WindowsOSでWSL上で動かす想定)
 
@@ -68,6 +70,10 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
       "Url": "https://api.line.me/v2/bot/message/{0}",
       "Token": {取得したLine Developersのチャネルアクセストークン),
       "ChannelSecret": {取得したLine 公式アカウントのチャンネルシークレット)
+    },
+    "Yahoo": {
+      "Url": "https://map.yahooapis.jp/search/local/V1/{0}?appid={1}&output=json&detail=full",
+      "Key": ""
     }
   }
   ``` 
