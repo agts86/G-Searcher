@@ -56,10 +56,7 @@ public class HttpAdapter
             RequestUri = new Uri(url)
         };
         request.Headers.Authorization = authenticationHeaderValue;
-        var res = await HttpClient.SendAsync(request);
-        if (!res.IsSuccessStatusCode) throw new HttpRequestException(res.RequestMessage.ToString());
-        var json = await res.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
+        return await SendAsync<T>(request);
     }
 
     /// <summary>
@@ -78,6 +75,15 @@ public class HttpAdapter
             Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json")
         };
         request.Headers.Authorization = authenticationHeaderValue;
+        return await SendAsync<T>(request);
+    }
+
+    /// <summary>
+    /// リクエスト共通処理
+    /// </summary>
+    /// <returns>レスポンス結果</returns>
+    private async Task<T> SendAsync<T>(HttpRequestMessage request) where T : class
+    {
         var res = await HttpClient.SendAsync(request);
         if (!res.IsSuccessStatusCode) throw new HttpRequestException(res.RequestMessage.ToString());
         var json = await res.Content.ReadAsStringAsync();
