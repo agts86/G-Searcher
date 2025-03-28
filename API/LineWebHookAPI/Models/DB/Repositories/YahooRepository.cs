@@ -5,9 +5,9 @@ using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 namespace LineWebHookAPI.Models.DB.Repositories;
 
 /// <summary>
-/// HotPepperコントローラー用リポジトリ
+/// Yahooコントローラー用リポジトリ
 /// </summary>
-public class HotPepperRepository(LineWebHookContext dbContext) : Repository(dbContext)
+public class YahooRepository(LineWebHookContext dbContext) : Repository(dbContext)
 {
     /// <summary>
     /// グルメログDAO

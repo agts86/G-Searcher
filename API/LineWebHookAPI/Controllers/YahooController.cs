@@ -52,21 +52,7 @@ public class YahooController
         }
         else
         {
-            _ = Task.Run
-            (
-                async () => 
-                {
-                    try
-                    {
-                        await YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
-                    }
-                    catch (Exception e)
-                    {
-                        await CreateErrorLogAsync(e);
-                    }
-                }
-
-            );
+            _ = RunTaskAsync(YahooBL.PostLocalAsync(gourmetGettingDto,genreCode));
             return Ok();
         }
     }

@@ -55,10 +55,9 @@ public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbCont
                 await HotPepperRepository.SaveChangesAsync();
             }
             
-            
             var gourmet = await hotPepperHttp.GetGourmetAsync(e.Message,genreCode);
-            
             var columns = gourmet.Results.ToCarouselTemplateColumns();
+            
             replies.Add
             (
                 new Reply()

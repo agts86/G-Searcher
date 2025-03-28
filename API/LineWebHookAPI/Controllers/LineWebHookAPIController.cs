@@ -11,16 +11,31 @@ namespace LineWebHookAPI.Controllers;
 /// </summary>
 public abstract class LineWebHookAPIController(LineWebHookContext dbContext) : ControllerBase
 {
-    protected BaseControllerRepository BaseControllerRepository { get; } = new BaseControllerRepository(dbContext);
+    /// <summary>
+    /// リポジトリ
+    /// </summary>
+    private BaseControllerRepository BaseControllerRepository { get; } = new BaseControllerRepository(dbContext);
 
     /// <summary>
-    /// エラーログを作成する
+    /// awaitせずにエラーハンドリングしながらタスクを実行する
     /// </summary>
-    /// <param name="ex">例外</param>
-    protected async Task CreateErrorLogAsync(Exception ex)
+    /// <param name="task">非同期メソッド</param>
+    /// <typeparam name="T">中身</typeparam>
+    protected async Task RunTaskAsync(Task task)
     {
-        var responseError = new ResponseError(ex.Message);
-        await BaseControllerRepository.ErrorLogDao.CreateLogAsync(responseError);
-        await BaseControllerRepository.SaveChangesAsync();
+        try
+        {
+            await task;
+        }
+        catch(StatusCodeException ex)
+        {
+            await BaseControllerRepository.ErrorLogDao.CreateLogAsync(ex.Error);
+            await BaseControllerRepository.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            await BaseControllerRepository.CreateErrorLogAsync(e);
+            await BaseControllerRepository.SaveChangesAsync();
+        }
     }
 }

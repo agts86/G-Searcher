@@ -11,9 +11,4 @@ public class ManagedRepository(LineWebHookContext dbContext) : Repository(dbCont
     /// グルメログDAO
     /// </summary>
     public GourmetLogDao GourmetLogDao { get; } = new GourmetLogDao(dbContext);
-
-    /// <summary>
-    /// エラーログDAO
-    /// </summary>
-    public ErrorLogDao ErrorLogDao { get; } = new ErrorLogDao(dbContext);
 }

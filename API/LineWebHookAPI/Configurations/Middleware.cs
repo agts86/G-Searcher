@@ -37,8 +37,7 @@ public class Middleware(LineWebHookContext dbContext) : IMiddleware
         }
         catch(Exception ex)
         {
-            var realError = new ResponseError(ex.Message);
-            await Repository.ErrorLogDao.CreateLogAsync(realError);
+            await Repository.CreateErrorLogAsync(ex);
             await Repository.SaveChangesAsync();
             var error = new ResponseError("An error occurred while processing your request.");
             await ResponseErrorAsync(httpContext,HttpStatusCode.InternalServerError,error);

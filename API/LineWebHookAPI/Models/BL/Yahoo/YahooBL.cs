@@ -18,7 +18,7 @@ public class YahooBL(IConfiguration configuration, LineWebHookContext dbContext,
     /// <summary>
     /// リポジトリ
     /// </summary>
-    protected HotPepperRepository HotPepperRepository { get; set; } = new HotPepperRepository(dbContext);
+    protected YahooRepository HotPepperRepository { get; set; } = new YahooRepository(dbContext);
 
     /// <summary>
     /// 設定情報
@@ -54,10 +54,9 @@ public class YahooBL(IConfiguration configuration, LineWebHookContext dbContext,
                 await HotPepperRepository.SaveChangesAsync();
             }
         
-        
-            var gourmet = await yahooHttp.GetLocateAsync(e.Message,genreCode);
-        
+            var gourmet = await yahooHttp.GetLocateAsync(e.Message,genreCode);        
             var columns = gourmet.ToCarouselTemplateColumns();
+            
             replies.Add
             (
                 new Reply()
