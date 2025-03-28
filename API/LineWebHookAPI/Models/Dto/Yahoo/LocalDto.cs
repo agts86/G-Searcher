@@ -41,7 +41,7 @@ public class LocalDto
     {
         return [.. Feature?.Select(feature => new CarouselTemplate.Column
         {
-            ThumbnailImageUrl = feature.Property.Detail.Image1 ?? feature.Property.Detail.CassetteOwnerLogoImage,
+            ThumbnailImageUrl = feature.Property.Detail.Image1,
             Title = feature.Name,
             Text = feature.Property.Address,
             Actions = new UriAction[]
