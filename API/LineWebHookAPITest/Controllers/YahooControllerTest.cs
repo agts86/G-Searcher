@@ -1,5 +1,4 @@
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
-using LineWebHookAPI.Models.Dto.HotPeppers;
 using LineWebHookAPITest.Mocks.Controllers;
 using LineWebHookAPITest.Mocks.Models.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,60 +8,67 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
-using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.Line.Hook;
+using LineWebHookAPI.Models.Dto.Yahoo;
 
 namespace LineWebHookAPITest.Controllers;
 
-public class HotPepperControllerTest : TestBase
+public class YahooControllerTest : TestBase
 {
     /// <summary>
     /// デバッグモード
     /// 結果あり
     /// </summary>
     [Fact]
-    public async Task PostGourmetLocationAsyncTestDevelopmentExistResult()
+    public async Task PostLocalAsyncTestDevelopmentExistResult()
     {
-        var hotPepperGourmetResponseDto = new HotPepperGourmetResponseDto()
+        var local = new LocalDto()
         {
-            Results = new HotPepperGourmetResponseDto.Result()
-            {
-                Shops =
-                [
-                    new HotPepperGourmetResponseDto.Result.Shop()
+            Feature = 
+            [
+                new LocalDto.FeatureInfo()
+                {
+                    Gid = "gid1",
+                    Name = "店舗1",
+                    Property = new LocalDto.FeatureInfo.PropertyInfo()
                     {
-                        Name = "店舗1",
                         Address = "住所1",
-                        Photo = new HotPepperGourmetResponseDto.Result.Shop.PhotoInfo()
+                        Detail = new LocalDto.FeatureInfo.PropertyInfo.DetailInfo()
                         {
-                            Pc = new HotPepperGourmetResponseDto.Result.Shop.PhotoInfo.PhotoPc()
-                            {
-                                Large = "写真1"
-                            }
-                        },
-                        Urls = new HotPepperGourmetResponseDto.Result.Shop.UrlInfo()
-                        {
-                            Pc = "URL1"
-                        }
-                    },
-                    new HotPepperGourmetResponseDto.Result.Shop()
-                    {
-                        Name = "店舗2",
-                        Address = "住所2",
-                        Photo = new HotPepperGourmetResponseDto.Result.Shop.PhotoInfo()
-                        {
-                            Pc = new HotPepperGourmetResponseDto.Result.Shop.PhotoInfo.PhotoPc()
-                            {
-                                Large = "写真2"
-                            }
-                        },
-                        Urls = new HotPepperGourmetResponseDto.Result.Shop.UrlInfo()
-                        {
-                            Pc = "URL2"
+                            Image1 = "写真1",
+                            YUrl = "URL1"
                         }
                     }
-                ]
-            }
+                },
+                new LocalDto.FeatureInfo()
+                {
+                    Gid = "gid1",
+                    Name = "店舗1-1",
+                    Property = new LocalDto.FeatureInfo.PropertyInfo()
+                    {
+                        Address = "住所1-1",
+                        Detail = new LocalDto.FeatureInfo.PropertyInfo.DetailInfo()
+                        {
+                            Image1 = "写真1-1",
+                            YUrl = "URL1-1"
+                        }
+                    }
+                },
+                new LocalDto.FeatureInfo()
+                {
+                    Gid = "gid2",
+                    Name = "店舗2",
+                    Property = new LocalDto.FeatureInfo.PropertyInfo()
+                    {
+                        Address = "住所2",
+                        Detail = new LocalDto.FeatureInfo.PropertyInfo.DetailInfo()
+                        {
+                            Image1 = "写真2",
+                            YUrl = "URL2"
+                        }
+                    }
+                }
+            ]
         };
 
         var dto = new GourmetGettingDto()
@@ -82,9 +88,9 @@ public class HotPepperControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
+        var http = new HttpAdapterMock(local);
+        var yahooController = new YahooControllerMock(Configuration, DbContext, Env, http);
+        var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
         Assert.IsType<Reply[]>((res as OkObjectResult).Value);
@@ -103,7 +109,7 @@ public class HotPepperControllerTest : TestBase
         var carousel = message.Template as CarouselTemplate;
         Assert.Equal(2, carousel.Columns.Length);
 
-        Assert.Equal("写真1", carousel.Columns[0].ThumbnailImageUrl);
+        Assert.Null(carousel.Columns[0].ThumbnailImageUrl);
         Assert.Equal("店舗1", carousel.Columns[0].Title);
         Assert.Equal("住所1", carousel.Columns[0].Text);
         Assert.IsType<UriAction[]>(carousel.Columns[0].Actions);
@@ -112,7 +118,7 @@ public class HotPepperControllerTest : TestBase
         Assert.Equal("URL1", action1[0].Uri);
         Assert.Equal("詳細を見る", action1[0].Label);
 
-        Assert.Equal("写真2", carousel.Columns[1].ThumbnailImageUrl);
+        Assert.Null(carousel.Columns[0].ThumbnailImageUrl);
         Assert.Equal("店舗2", carousel.Columns[1].Title);
         Assert.Equal("住所2", carousel.Columns[1].Text);
         Assert.IsType<UriAction[]>(carousel.Columns[1].Actions);
@@ -134,15 +140,9 @@ public class HotPepperControllerTest : TestBase
     /// 結果なし
     /// </summary>
     [Fact]
-    public async Task PostGourmetLocationAsyncTestDevelopmentNotResult()
+    public async Task PostLocalAsyncTestDevelopmentNotResult()
     {
-        var hotPepperGourmetResponseDto = new HotPepperGourmetResponseDto()
-        {
-            Results = new HotPepperGourmetResponseDto.Result()
-            {
-                Shops = []
-            }
-        };
+        var local = new LocalDto();
 
         var dto = new GourmetGettingDto()
         {
@@ -161,9 +161,9 @@ public class HotPepperControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
+        var http = new HttpAdapterMock(local);
+        var yahooController = new YahooControllerMock(Configuration, DbContext, Env, http);
+        var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
         Assert.IsType<Reply[]>((res as OkObjectResult).Value);
@@ -191,16 +191,9 @@ public class HotPepperControllerTest : TestBase
     /// 正常終了 
     /// </summary>
     [Fact]
-    public async Task PostGourmetLocationAsyncTestProduction()
+    public async Task PostLocalAsyncTestProduction()
     {
-        var hotPepperGourmetResponseDto = new HotPepperGourmetResponseDto()
-        {
-            Results = new HotPepperGourmetResponseDto.Result()
-            {
-                Shops = []
-            }
-        };
-
+        var local = new LocalDto();
         var dto = new GourmetGettingDto()
         {
             Events =
@@ -218,55 +211,9 @@ public class HotPepperControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Production";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
-
-        Assert.IsType<OkResult>(res);
-    }
-
-    /// <summary>
-    /// プロダクトモード
-    /// 200だけど実はエラー
-    /// </summary>
-    [Theory]
-    [InlineData("1000")]
-    [InlineData("2000")]
-    [InlineData("3000")]
-    public async Task PostGourmetLocationAsyncTestProductionStatusException(string code)
-    {
-        var hotPepperGourmetResponseDto = new HotPepperGourmetResponseDto()
-        {
-            Results = new HotPepperGourmetResponseDto.Result()
-            {
-                Error = new HotPepperErrorResponseDto.ErrorInfo()
-                {
-                    Code = code,
-                    Message = "Bad Request"
-                }
-            }
-        };
-
-        var dto = new GourmetGettingDto()
-        {
-            Events =
-            [
-                new ()
-                {
-                    ReplyToken = "replyToken",
-                    Message = new LocationMessage()
-                    {
-                        Latitude = 35.681236,
-                        Longitude = 139.767125
-                    }
-                }
-            ]
-        };
-
-        Env.EnvironmentName = "Production";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
+        var http = new HttpAdapterMock(local);
+        var yahooController = new YahooControllerMock(Configuration, DbContext, Env, http);
+        var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkResult>(res);
     }
