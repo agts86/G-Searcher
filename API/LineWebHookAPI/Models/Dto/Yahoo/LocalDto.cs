@@ -9,6 +9,8 @@ public class LocalDto
 
     public class FeatureInfo
     {
+        public string Gid { get; set; }
+
         public string Name { get; set; }
 
         public PropertyInfo Property { get; set; }
@@ -39,19 +41,27 @@ public class LocalDto
     /// <returns></returns>
     public CarouselTemplate.Column[] ToCarouselTemplateColumns()
     {
-        return [.. Feature?.Select(feature => new CarouselTemplate.Column
-        {
-            Title = feature.Name,
-            Text = feature.Property.Address,
-            Actions = new UriAction[]
-            {
-                new ()
-                {
-                    Label = "詳細を見る",
-                    Uri = feature.Property.Detail.YUrl
-                }
-            }
-        })
-        .Take(10) ?? []];
+        return 
+        [
+            .. Feature?
+                .GroupBy(x => x.Gid)
+                .Select
+                (
+                    x => new CarouselTemplate.Column
+                    {
+                        Title = x.First().Name,
+                        Text = x.First().Property.Address,
+                        Actions = new UriAction[]
+                        {
+                            new ()
+                            {
+                                Label = "詳細を見る",
+                                Uri = x.First().Property.Detail.YUrl
+                            }
+                        }
+                    }
+                )
+                .Take(10) ?? []
+        ];
     }
 }
