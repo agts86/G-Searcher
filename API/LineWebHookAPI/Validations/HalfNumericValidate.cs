@@ -5,12 +5,12 @@ namespace LineWebHookAPI.Validations;
 
 public class HalfNumericAttribute : ValidationAttribute
 {
-    public Regex regex = new(@"^\d+$");
+    private Regex Regex { get; } = new(@"^\d+$");
 
     public override bool IsValid(object value)
     {
         if(value is string str)
-            return regex.IsMatch(str);
+            return Regex.IsMatch(str);
         return true;
     }
 }

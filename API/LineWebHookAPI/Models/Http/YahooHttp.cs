@@ -19,7 +19,7 @@ public class YahooHttp(HttpAdapter http,IConfiguration configuration) : ApiClien
         var genreQuery = genreCode is null ? "" : $"&gc={genreCode}";
         var url = string.Format
         (
-            $"{Configuration.GetValue<string>("Yahoo:Url")}{message.CreateYahooApiQuey()}{genreQuery}&dist=1",
+            $"{Configuration.GetValue<string>("Yahoo:Url")}{message.CreateYahooApiQuey()}{genreQuery}&dist=1&results=20",
             YahooUrlRoot.LocalSearch,
             Configuration.GetValue<string>("Yahoo:Key")
         );
