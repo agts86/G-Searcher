@@ -23,6 +23,7 @@ public class MessageConverter : JsonConverter<Message>
             .Where(x => x.Type == typeValue)
             .Select(x => x.GetType())
             .SingleOrDefault();
+        if(convertType is null) return null;
         reader = backup;
         return JsonSerializer.Deserialize(ref reader, convertType, options) as Message;
     }
