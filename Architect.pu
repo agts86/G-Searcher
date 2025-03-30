@@ -5,13 +5,17 @@ actor "ユーザー" as User
 rectangle "LINE Messaging API" as LineMessagingAPI
 rectangle "Webフック先\nASP.NET Core API" as WebHookAPI
 rectangle "ホットペッパーAPI" as HotPepperAPI
+rectangle "YahooLocalAPI" as YahooLocalAPI
 rectangle "SQLite データベース" as SQLite
 
 User --> LineMessagingAPI : 位置情報送信
 LineMessagingAPI --> WebHookAPI : Webフック送信
 WebHookAPI --> HotPepperAPI : 情報取得
 HotPepperAPI --> WebHookAPI : 取得データ返却
+WebHookAPI --> YahooLocalAPI : 情報取得
+YahooLocalAPI --> WebHookAPI : 取得データ返却
 WebHookAPI --> SQLite : データ保存
+SQLite --> WebHookAPI : データ取得
 WebHookAPI --> LineMessagingAPI : 加工した情報返却
 LineMessagingAPI --> User : レスポンス
 
