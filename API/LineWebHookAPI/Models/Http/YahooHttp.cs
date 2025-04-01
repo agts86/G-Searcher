@@ -7,7 +7,7 @@ namespace LineWebHookAPI.Models.Http;
 /// <summary>
 /// YahooAPI用のHTTPクライアント
 /// </summary>
-public class YahooHttp(HttpAdapter http,IConfiguration configuration) : ApiClient(http, configuration)
+public class YahooHttp(IHttpAdapter http,IConfiguration configuration) : ApiClient(http, configuration)
 {
     /// <summary>
     /// グルメAPIを実行して結果を取得する

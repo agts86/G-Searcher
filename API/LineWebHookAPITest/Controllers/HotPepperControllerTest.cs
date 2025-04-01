@@ -1,6 +1,5 @@
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.HotPeppers;
-using LineWebHookAPITest.Mocks.Controllers;
 using LineWebHookAPITest.Mocks.Models.Http;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.Line.Hook;
+using LineWebHookAPI.Controllers;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -83,7 +83,7 @@ public class HotPepperControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
+        var hotPepperController = new HotPepperController(Configuration, DbContext, Env, http);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
@@ -162,7 +162,7 @@ public class HotPepperControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
+        var hotPepperController = new HotPepperController(Configuration, DbContext, Env, http);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
@@ -219,7 +219,7 @@ public class HotPepperControllerTest : TestBase
 
         Env.EnvironmentName = "Production";
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
+        var hotPepperController = new HotPepperController(Configuration, DbContext, Env, http);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkResult>(res);
@@ -265,7 +265,7 @@ public class HotPepperControllerTest : TestBase
 
         Env.EnvironmentName = "Production";
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperController = new HotPepperControllerMock(Configuration, DbContext, Env, http);
+        var hotPepperController = new HotPepperController(Configuration, DbContext, Env, http);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkResult>(res);

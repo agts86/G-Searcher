@@ -17,13 +17,14 @@ public class HotPepperController
 (
     IConfiguration configuration,
     LineWebHookContext dbContext,
-    IHostEnvironment env
+    IHostEnvironment env,
+    IHttpAdapter http
 ) : LineWebHookAPIController(dbContext)
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public HotPepperService HotPepperBL { get; protected set; } = new HotPepperService(configuration,dbContext,env,new HttpAdapter());
+    public HotPepperService HotPepperService { get; protected set; } = new HotPepperService(configuration,dbContext,env,http);
 
     /// <summary>
     /// 環境情報
@@ -43,12 +44,12 @@ public class HotPepperController
     {
         if (Env.IsDevelopment())
         {
-            var res = await HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
+            var res = await HotPepperService.PostGourmetLocationAsync(gourmetGettingDto,genreCode);
             return Ok(res);
         }
         else
         {
-            _ = RunTaskAsync(HotPepperBL.PostGourmetLocationAsync(gourmetGettingDto,genreCode));
+            _ = RunTaskAsync(HotPepperService.PostGourmetLocationAsync(gourmetGettingDto,genreCode));
             return Ok();
         }
     }

@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Models.DB;
+using LineWebHookAPI.Models.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<Middleware>();
 // Lineの署名検証用フィルター
 builder.Services.AddScoped<LineSignatureFilter>();
+builder.Services.AddScoped<IHttpAdapter,HttpAdapter>();
 // Enumを文字列として扱う
 builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // EFCoreの設定

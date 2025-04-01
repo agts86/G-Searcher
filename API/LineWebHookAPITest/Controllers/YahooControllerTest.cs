@@ -1,5 +1,4 @@
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
-using LineWebHookAPITest.Mocks.Controllers;
 using LineWebHookAPITest.Mocks.Models.Http;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
@@ -10,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 using LineWebHookAPI.Models.Dto.Yahoo;
+using LineWebHookAPI.Controllers;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -89,7 +89,7 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(local);
-        var yahooController = new YahooControllerMock(Configuration, DbContext, Env, http);
+        var yahooController = new YahooController(Configuration, DbContext, Env, http);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -162,7 +162,7 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(local);
-        var yahooController = new YahooControllerMock(Configuration, DbContext, Env, http);
+        var yahooController = new YahooController(Configuration, DbContext, Env, http);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -212,7 +212,7 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Production";
         var http = new HttpAdapterMock(local);
-        var yahooController = new YahooControllerMock(Configuration, DbContext, Env, http);
+        var yahooController = new YahooController(Configuration, DbContext, Env, http);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkResult>(res);

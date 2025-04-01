@@ -7,7 +7,7 @@ namespace LineWebHookAPI.Models.Http;
 /// <summary>
 /// ホットペッパーAPI用のHTTPクライアント
 /// </summary>
-public class HotPepperHttp(HttpAdapter http,IConfiguration configuration) : ApiClient(http, configuration)
+public class HotPepperHttp(IHttpAdapter http,IConfiguration configuration) : ApiClient(http, configuration)
 {
     /// <summary>
     /// グルメAPIを実行して結果を取得する

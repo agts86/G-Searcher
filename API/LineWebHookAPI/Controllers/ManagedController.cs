@@ -14,7 +14,7 @@ public class ManagedController(LineWebHookContext dbContext) : LineWebHookAPICon
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public ManagedService ManagedBL { get; protected set; } = new ManagedService(dbContext);
+    public ManagedService ManagedService { get; protected set; } = new ManagedService(dbContext);
 
     /// <summary>
     /// LineChatBotの実行ログを取得する
@@ -23,7 +23,7 @@ public class ManagedController(LineWebHookContext dbContext) : LineWebHookAPICon
     [HttpGet("gourmet")]
     public async Task<IActionResult> GetGourmetLogAsync()
     {
-        var res = await ManagedBL.GetGourmetLogAsync();
+        var res = await ManagedService.GetGourmetLogAsync();
         return Ok(res);
     }
 
@@ -34,7 +34,7 @@ public class ManagedController(LineWebHookContext dbContext) : LineWebHookAPICon
     [HttpGet("error-log")]
     public async Task<IActionResult> GetErrorLogAsync()
     {
-        var res = await ManagedBL.GetErrorLogAsync();
+        var res = await ManagedService.GetErrorLogAsync();
         return Ok(res);
     }
 }

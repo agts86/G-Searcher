@@ -18,13 +18,14 @@ public class YahooController
 (
     IConfiguration configuration,
     LineWebHookContext dbContext,
-    IHostEnvironment env
+    IHostEnvironment env,
+    IHttpAdapter http
 ) : LineWebHookAPIController(dbContext)
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public YahooService YahooBL { get; protected set; } = new YahooService(configuration,dbContext,env,new HttpAdapter());
+    public YahooService YahooService { get; protected set; } = new YahooService(configuration,dbContext,env,http);
 
     /// <summary>
     /// 環境情報
@@ -47,12 +48,12 @@ public class YahooController
     {
         if (Env.IsDevelopment())
         {
-            var res = await YahooBL.PostLocalAsync(gourmetGettingDto,genreCode);
+            var res = await YahooService.PostLocalAsync(gourmetGettingDto,genreCode);
             return Ok(res);
         }
         else
         {
-            _ = RunTaskAsync(YahooBL.PostLocalAsync(gourmetGettingDto,genreCode));
+            _ = RunTaskAsync(YahooService.PostLocalAsync(gourmetGettingDto,genreCode));
             return Ok();
         }
     }

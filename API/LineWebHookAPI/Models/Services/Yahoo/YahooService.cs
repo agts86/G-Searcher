@@ -13,7 +13,7 @@ namespace LineWebHookAPI.Models.Services.Yahoo;
 /// <summary>
 /// YahooBコントローラーのビジネスロジック
 /// </summary>
-public class YahooService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
+public class YahooService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,IHttpAdapter http)
 {
     /// <summary>
     /// リポジトリ
@@ -33,7 +33,7 @@ public class YahooService(IConfiguration configuration, LineWebHookContext dbCon
     /// <summary>
     /// Http操作クラス
     /// </summary>
-    protected HttpAdapter Http { get; set; } = http;
+    protected IHttpAdapter Http { get; set; } = http;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する

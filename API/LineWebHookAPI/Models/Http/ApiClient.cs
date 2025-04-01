@@ -4,12 +4,12 @@ namespace LineWebHookAPI.Models.Http;
 /// API通信クライアント基底クラス
 /// HttpClientは使い回すほうが効率がいいため、差し込み型にする
 /// </summary>
-public class ApiClient(HttpAdapter http,IConfiguration configuration)
+public class ApiClient(IHttpAdapter http,IConfiguration configuration)
 {
     /// <summary>
     /// HttpClient
     /// </summary>
-    protected HttpAdapter Http { get; } = http;
+    protected IHttpAdapter Http { get; } = http;
 
     /// <summary>
     /// 設定情報

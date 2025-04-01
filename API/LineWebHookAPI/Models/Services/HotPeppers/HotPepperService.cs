@@ -14,7 +14,7 @@ namespace LineWebHookAPI.Models.Services.HotPeppers;
 /// <summary>
 /// ホットペッパーコントローラーのビジネスロジック
 /// </summary>
-public class HotPepperService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
+public class HotPepperService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,IHttpAdapter http)
 {
     /// <summary>
     /// リポジトリ
@@ -34,7 +34,7 @@ public class HotPepperService(IConfiguration configuration, LineWebHookContext d
     /// <summary>
     /// Http操作クラス
     /// </summary>
-    protected HttpAdapter Http { get; set; } = http;
+    protected IHttpAdapter Http { get; set; } = http;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する

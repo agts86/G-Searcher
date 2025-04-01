@@ -4,10 +4,17 @@ using System.Text.Json;
 
 namespace LineWebHookAPI.Models.Http;
 
+public interface IHttpAdapter
+{
+    Task<T> GetAsync<T>(string url, AuthenticationHeaderValue authenticationHeaderValue = null) where T : class;
+
+    Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null) where T : class;
+}
+
 /// <summary>
 /// http操作クラス
 /// </summary>
-public class HttpAdapter
+public class HttpAdapter : IHttpAdapter
 {
     /// <summary>
     /// HttpClientオブジェクト
