@@ -1,11 +1,10 @@
-using LineWebHookAPI.Models.DB;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
-using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Services.Yahoo;
 using System.ComponentModel.DataAnnotations;
 using LineWebHookAPI.Validations;
 using LineWebHookAPI.Models.Dto.Line.Hook;
+using LineWebHookAPI.Models.DB.Repositories;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -16,16 +15,15 @@ namespace LineWebHookAPI.Controllers;
 [Route("api/yahoo")]
 public class YahooController
 (
-    IConfiguration configuration,
-    LineWebHookContext dbContext,
+    IYahooService yahooService,
     IHostEnvironment env,
-    IHttpAdapter http
-) : LineWebHookAPIController(dbContext)
+    BaseControllerRepository baseControllerRepository
+) : LineWebHookAPIController(baseControllerRepository)
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public YahooService YahooService { get; protected set; } = new YahooService(configuration,dbContext,env,http);
+    public IYahooService YahooService { get; protected set; } = yahooService;
 
     /// <summary>
     /// 環境情報

@@ -10,6 +10,8 @@ using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 using LineWebHookAPI.Models.Dto.Yahoo;
 using LineWebHookAPI.Controllers;
+using LineWebHookAPI.Models.Services.Yahoo;
+using LineWebHookAPI.Models.DB.Repositories;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -89,7 +91,10 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(local);
-        var yahooController = new YahooController(Configuration, DbContext, Env, http);
+        var yahooRepository = new YahooRepository(DbContext);
+        var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
+        var baseControllerRepository = new BaseControllerRepository(DbContext);
+        var yahooController = new YahooController(yahooService, Env, baseControllerRepository);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -162,7 +167,10 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var http = new HttpAdapterMock(local);
-        var yahooController = new YahooController(Configuration, DbContext, Env, http);
+        var yahooRepository = new YahooRepository(DbContext);
+        var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
+        var baseControllerRepository = new BaseControllerRepository(DbContext);
+        var yahooController = new YahooController(yahooService, Env, baseControllerRepository);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -212,7 +220,10 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Production";
         var http = new HttpAdapterMock(local);
-        var yahooController = new YahooController(Configuration, DbContext, Env, http);
+        var yahooRepository = new YahooRepository(DbContext);
+        var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
+        var baseControllerRepository = new BaseControllerRepository(DbContext);
+        var yahooController = new YahooController(yahooService, Env, baseControllerRepository);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkResult>(res);

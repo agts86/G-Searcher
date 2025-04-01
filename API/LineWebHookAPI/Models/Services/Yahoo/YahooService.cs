@@ -1,5 +1,4 @@
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
@@ -13,12 +12,25 @@ namespace LineWebHookAPI.Models.Services.Yahoo;
 /// <summary>
 /// YahooBコントローラーのビジネスロジック
 /// </summary>
-public class YahooService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,IHttpAdapter http)
+public interface IYahooService
+{
+    /// <summary>
+    /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
+    /// </summary>
+    /// <param name="gourmetGettingDto">位置情報</param>
+    /// <returns>LineAPIにPostした内容</returns>
+    Task<Reply[]> PostLocalAsync(GourmetGettingDto gourmetGettingDto, string genreCode);
+}
+
+/// <summary>
+/// YahooBコントローラーのビジネスロジック
+/// </summary>
+public class YahooService(IConfiguration configuration, YahooRepositoryBase yahooPepperRepository,IHostEnvironment env,IHttpAdapter http) : IYahooService
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    protected YahooRepository HotPepperRepository { get; set; } = new YahooRepository(dbContext);
+    protected YahooRepositoryBase YahooPepperRepository { get; set; } = yahooPepperRepository;
 
     /// <summary>
     /// 設定情報
@@ -50,8 +62,8 @@ public class YahooService(IConfiguration configuration, LineWebHookContext dbCon
         {
             if(e.Message is LocationMessage message) 
             {
-                await HotPepperRepository.CreateLogAsync(message);
-                await HotPepperRepository.SaveChangesAsync();
+                await YahooPepperRepository.CreateGourmetLogAsync(message);
+                await YahooPepperRepository.SaveChangesAsync();
             }
         
             var gourmet = await yahooHttp.GetLocateAsync(e.Message,genreCode);        

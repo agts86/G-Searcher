@@ -1,14 +1,42 @@
-using LineWebHookAPI.Models.DB.Daos;
+using LineWebHookAPI.Models.DB.Tables;
+using Microsoft.EntityFrameworkCore;
 
 namespace LineWebHookAPI.Models.DB.Repositories;
+
+public abstract class ManagedRepositoryBase(LineWebHookContext dbContext) : Repository(dbContext)
+{
+    /// <summary>
+    /// エラーログを作成する
+    /// </summary>
+    /// <param name="ex">例外</param>
+    public abstract Task<GourmetLog[]> FetchGourmetLogAsync();
+
+    /// <summary>
+    /// エラーログを作成する
+    /// </summary>
+    /// <param name="ex">例外</param>
+    public abstract Task<ErrorLog[]> FetchErrorLogAsync();
+}
 
 /// <summary>
 /// サーチコントローラー用リポジトリ
 /// </summary>
-public class ManagedRepository(LineWebHookContext dbContext) : Repository(dbContext)
+public class ManagedRepository(LineWebHookContext dbContext) : ManagedRepositoryBase(dbContext)
 {
     /// <summary>
-    /// グルメログDAO
+    /// ログを取得する
     /// </summary>
-    public GourmetLogDao GourmetLogDao { get; } = new GourmetLogDao(dbContext);
+    /// <returns>ログ</returns>
+    public override async Task<GourmetLog[]> FetchGourmetLogAsync()
+    {
+        return await DbContext.GourmetLogs.AsNoTracking().ToArrayAsync();
+    }
+
+    /// <summary>
+    /// ログを取得する
+    /// </summary>
+    public override async Task<ErrorLog[]> FetchErrorLogAsync()
+    {
+        return await DbContext.ErrorLogs.AsNoTracking().ToArrayAsync();
+    }
 }

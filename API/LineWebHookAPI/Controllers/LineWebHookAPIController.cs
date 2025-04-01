@@ -1,4 +1,3 @@
-using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +8,12 @@ namespace LineWebHookAPI.Controllers;
 /// APIコントローラーの基底クラス
 /// 複雑な処理はしないので特別にRepository直呼びを許可
 /// </summary>
-public abstract class LineWebHookAPIController(LineWebHookContext dbContext) : ControllerBase
+public abstract class LineWebHookAPIController(BaseControllerRepository baseControllerRepository) : ControllerBase
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    private BaseControllerRepository BaseControllerRepository { get; } = new BaseControllerRepository(dbContext);
+    private BaseControllerRepository BaseControllerRepository { get; } = baseControllerRepository;
 
     /// <summary>
     /// awaitせずにエラーハンドリングしながらタスクを実行する
@@ -29,7 +28,7 @@ public abstract class LineWebHookAPIController(LineWebHookContext dbContext) : C
         }
         catch(StatusCodeException ex)
         {
-            await BaseControllerRepository.ErrorLogDao.CreateLogAsync(ex.Error);
+            await BaseControllerRepository.CreateErrorLogAsync(ex.Error);
             await BaseControllerRepository.SaveChangesAsync();
         }
         catch (Exception e)

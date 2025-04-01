@@ -1,5 +1,4 @@
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
 using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
@@ -14,12 +13,25 @@ namespace LineWebHookAPI.Models.Services.HotPeppers;
 /// <summary>
 /// ホットペッパーコントローラーのビジネスロジック
 /// </summary>
-public class HotPepperService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,IHttpAdapter http)
+public interface IHotPepperService
+{
+    /// <summary>
+    /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
+    /// </summary>
+    /// <param name="gourmetGettingDto">位置情報</param>
+    /// <returns>LineAPIにPostした内容</returns>
+    Task<Reply[]> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto, GenreCode genreCode);
+}
+
+/// <summary>
+/// ホットペッパーコントローラーのビジネスロジック
+/// </summary>
+public class HotPepperService(IConfiguration configuration, HotPepperRepositoryBase hotPepperRepository,IHostEnvironment env,IHttpAdapter http) : IHotPepperService
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    protected HotPepperRepository HotPepperRepository { get; set; } = new HotPepperRepository(dbContext);
+    protected HotPepperRepositoryBase HotPepperRepository { get; set; } = hotPepperRepository;
 
     /// <summary>
     /// 設定情報
@@ -51,7 +63,7 @@ public class HotPepperService(IConfiguration configuration, LineWebHookContext d
         {
             if(e.Message is LocationMessage message) 
             {
-                await HotPepperRepository.CreateLogAsync(message);
+                await HotPepperRepository.CreateGourmetLogAsync(message);
                 await HotPepperRepository.SaveChangesAsync();
             }
             

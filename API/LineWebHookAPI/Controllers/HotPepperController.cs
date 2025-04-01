@@ -1,10 +1,9 @@
-using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.Services.HotPeppers;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
-using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.Line.Hook;
+using LineWebHookAPI.Models.DB.Repositories;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -15,16 +14,15 @@ namespace LineWebHookAPI.Controllers;
 [Route("api/hot-pepper")]
 public class HotPepperController
 (
-    IConfiguration configuration,
-    LineWebHookContext dbContext,
+    IHotPepperService hotPepperService,
     IHostEnvironment env,
-    IHttpAdapter http
-) : LineWebHookAPIController(dbContext)
+    BaseControllerRepository baseControllerRepository
+) : LineWebHookAPIController(baseControllerRepository)
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public HotPepperService HotPepperService { get; protected set; } = new HotPepperService(configuration,dbContext,env,http);
+    public IHotPepperService HotPepperService { get; protected set; } = hotPepperService;
 
     /// <summary>
     /// 環境情報

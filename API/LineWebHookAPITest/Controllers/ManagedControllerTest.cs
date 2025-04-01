@@ -1,6 +1,8 @@
 
 using LineWebHookAPI.Controllers;
+using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
+using LineWebHookAPI.Models.Services.Managed;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LineWebHookAPITest.Controllers;
@@ -25,7 +27,10 @@ public class ManagedControllerTest : TestBase
         };
         DbContext.GourmetLogs.AddRange(gourmetLogs);
         await DbContext.SaveChangesAsync();
-        var controller = new ManagedController(DbContext);
+        var managedRepository = new ManagedRepository(DbContext);
+        var managedService = new ManagedService(managedRepository);
+        var baseControllerRepository = new BaseControllerRepository(DbContext);
+        var controller = new ManagedController(managedService,baseControllerRepository);
         var result = await controller.GetGourmetLogAsync();
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GourmetLog[]>((result as OkObjectResult).Value);
@@ -57,7 +62,10 @@ public class ManagedControllerTest : TestBase
         };
         DbContext.ErrorLogs.AddRange(errorLogs);
         await DbContext.SaveChangesAsync();
-        var controller = new ManagedController(DbContext);
+        var managedRepository = new ManagedRepository(DbContext);
+        var managedService = new ManagedService(managedRepository);
+        var baseControllerRepository = new BaseControllerRepository(DbContext);
+        var controller = new ManagedController(managedService,baseControllerRepository);
         var result = await controller.GetErrorLogAsync();
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<ErrorLog[]>((result as OkObjectResult).Value);

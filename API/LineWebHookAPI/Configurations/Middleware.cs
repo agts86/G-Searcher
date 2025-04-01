@@ -31,7 +31,7 @@ public class Middleware(LineWebHookContext dbContext) : IMiddleware
         }
         catch(StatusCodeException ex)
         {
-            await Repository.ErrorLogDao.CreateLogAsync(ex.Error);
+            await Repository.CreateErrorLogAsync(ex.Error);
             await Repository.SaveChangesAsync();
             await ResponseErrorAsync(httpContext,ex.StatusCode,ex.Error);
         }
