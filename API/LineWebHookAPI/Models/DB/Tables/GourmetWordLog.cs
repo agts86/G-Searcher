@@ -6,8 +6,8 @@ namespace LineWebHookAPI.Models.DB.Tables;
 /// <summary>
 /// PostGourmetLocationAsyncのリクエストログ
 /// </summary>
-[Table("GourmetLocationLog")]
-public class GourmetLocationLog : Meta
+[Table("GourmetWordLog")]
+public class GourmetWordLog : Meta
 {
     /// <summary>
     /// 主キー
@@ -19,12 +19,6 @@ public class GourmetLocationLog : Meta
     /// <summary>
     /// 緯度
     /// </summary>
-    [Column("Lat")]
-    public double Lat {get; set;}
-
-    /// <summary>
-    /// 軽度
-    /// </summary>
-    [Column("Lng")]
-    public double Lng {get; set;}
+    [Column("Text")]
+    public string Text {get; set;}
 }

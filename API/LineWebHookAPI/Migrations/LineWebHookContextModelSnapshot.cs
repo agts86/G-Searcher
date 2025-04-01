@@ -3,7 +3,6 @@ using System;
 using LineWebHookAPI.Models.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,11 +10,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LineWebHookAPI.Migrations
 {
     [DbContext(typeof(LineWebHookContext))]
-    [Migration("20250307201539_Initial")]
-    partial class Initial
+    partial class LineWebHookContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -45,7 +42,7 @@ namespace LineWebHookAPI.Migrations
                     b.ToTable("ErrorLog");
                 });
 
-            modelBuilder.Entity("LineWebHookAPI.Models.DB.Tables.GourmetLog", b =>
+            modelBuilder.Entity("LineWebHookAPI.Models.DB.Tables.GourmetLocationLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +67,31 @@ namespace LineWebHookAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GourmetLog");
+                    b.ToTable("GourmetLocationLog");
+                });
+
+            modelBuilder.Entity("LineWebHookAPI.Models.DB.Tables.GourmetWordLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GourmetWordLog");
                 });
 #pragma warning restore 612, 618
         }

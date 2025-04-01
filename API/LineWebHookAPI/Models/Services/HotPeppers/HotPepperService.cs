@@ -5,7 +5,6 @@ using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Constants.HotPepper;
-using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 
 namespace LineWebHookAPI.Models.Services.HotPeppers;
@@ -61,13 +60,10 @@ public class HotPepperService(IConfiguration configuration, HotPepperRepositoryB
 
         foreach(var e in gourmetGettingDto.Events ?? [])
         {
-            if(e.Message is LocationMessage message) 
-            {
-                await HotPepperRepository.CreateGourmetLogAsync(message);
-                await HotPepperRepository.SaveChangesAsync();
-            }
+            await HotPepperRepository.CreateGourmetLogAsync(e.Message);
+            await HotPepperRepository.SaveChangesAsync();
             
-            var gourmet = await hotPepperHttp.GetGourmetAsync(e.Message,genreCode);
+            var gourmet = await hotPepperHttp.GetGourmetAsync(e.Message, genreCode);
             var columns = gourmet.Results.ToCarouselTemplateColumns();
             
             replies.Add

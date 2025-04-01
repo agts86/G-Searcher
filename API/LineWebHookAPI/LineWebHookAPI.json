@@ -64,10 +64,23 @@
         }
       }
     },
-    "/api/managed/gourmet": {
+    "/api/managed/gourmet/{messageType}": {
       "get": {
         "tags": [
           "Managed"
+        ],
+        "parameters": [
+          {
+            "name": "messageType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "location",
+                "text"
+              ]
+            }
+          }
         ],
         "responses": {
           "200": {

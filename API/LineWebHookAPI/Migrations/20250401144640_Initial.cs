@@ -26,7 +26,7 @@ namespace LineWebHookAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GourmetLog",
+                name: "GourmetLocationLog",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -37,7 +37,21 @@ namespace LineWebHookAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GourmetLog", x => x.Id);
+                    table.PrimaryKey("PK_GourmetLocationLog", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GourmetWordLog",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Text = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GourmetWordLog", x => x.Id);
                 });
         }
 
@@ -48,7 +62,10 @@ namespace LineWebHookAPI.Migrations
                 name: "ErrorLog");
 
             migrationBuilder.DropTable(
-                name: "GourmetLog");
+                name: "GourmetLocationLog");
+
+            migrationBuilder.DropTable(
+                name: "GourmetWordLog");
         }
     }
 }

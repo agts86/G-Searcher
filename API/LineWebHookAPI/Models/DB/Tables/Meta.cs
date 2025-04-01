@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using LineWebHookAPI.Jsons;
 
 namespace LineWebHookAPI.Models.DB.Tables;
 
 /// <summary>
 /// メタデータ
 /// </summary>
+[JsonConverter(typeof(RealMoldConverter<Meta>))]
 public abstract class Meta
 {
     /// <summary>

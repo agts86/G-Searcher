@@ -11,7 +11,7 @@ public class RealMoldConverter<T> : JsonConverter<T>
 {
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return JsonSerializer.Deserialize<T>(ref reader, options);
+        throw new NotImplementedException();
     }
 
 
@@ -26,6 +26,5 @@ public class RealMoldConverter<T> : JsonConverter<T>
         }
         else
             JsonSerializer.Serialize(writer, value, value.GetType(), options);
-        
     }
 }

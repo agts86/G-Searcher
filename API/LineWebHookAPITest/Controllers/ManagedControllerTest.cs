@@ -1,4 +1,4 @@
-
+using LineWebHookAPI.Constants;
 using LineWebHookAPI.Controllers;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
@@ -10,9 +10,9 @@ namespace LineWebHookAPITest.Controllers;
 public class ManagedControllerTest : TestBase
 {
     [Fact]
-    public async Task GetGourmetLogAsyncTest()
+    public async Task GetGourmetLogAsyncTestLocation()
     {
-        var gourmetLogs = new GourmetLog[]
+        var gourmetLogs = new GourmetLocationLog[]
         {
             new()
             {
@@ -25,16 +25,16 @@ public class ManagedControllerTest : TestBase
                 Lng = 0
             }
         };
-        DbContext.GourmetLogs.AddRange(gourmetLogs);
+        DbContext.GourmetLocationLogs.AddRange(gourmetLogs);
         await DbContext.SaveChangesAsync();
         var managedRepository = new ManagedRepository(DbContext);
         var managedService = new ManagedService(managedRepository);
         var baseControllerRepository = new BaseControllerRepository(DbContext);
         var controller = new ManagedController(managedService,baseControllerRepository);
-        var result = await controller.GetGourmetLogAsync();
+        var result = await controller.GetGourmetLogsAsync(MessageTypes.location);
         Assert.IsType<OkObjectResult>(result);
-        Assert.IsType<GourmetLog[]>((result as OkObjectResult).Value);
-        var content = (result as OkObjectResult).Value as GourmetLog[];
+        Assert.IsType<GourmetLocationLog[]>((result as OkObjectResult).Value);
+        var content = (result as OkObjectResult).Value as GourmetLocationLog[];
         Assert.Equal(2, content.Length);
         Assert.Equal(0, content[0].Lat);
         Assert.Equal(1, content[0].Lng);
@@ -42,6 +42,39 @@ public class ManagedControllerTest : TestBase
         Assert.Equal(DateTime.Today, content[0].UpdatedAt.Date);
         Assert.Equal(1, content[1].Lat);
         Assert.Equal(0, content[1].Lng);
+        Assert.Equal(DateTime.Today, content[1].CreatedAt.Date);
+        Assert.Equal(DateTime.Today, content[1].UpdatedAt.Date);
+    }
+
+    [Fact]
+    public async Task GetGourmetLogAsyncTestWord()
+    {
+        var gourmetLogs = new GourmetWordLog[]
+        {
+            new()
+            {
+                Text = "二郎系"
+            },
+            new()
+            {
+                Text = "家系"
+            }
+        };
+        DbContext.GourmetWordLogs.AddRange(gourmetLogs);
+        await DbContext.SaveChangesAsync();
+        var managedRepository = new ManagedRepository(DbContext);
+        var managedService = new ManagedService(managedRepository);
+        var baseControllerRepository = new BaseControllerRepository(DbContext);
+        var controller = new ManagedController(managedService,baseControllerRepository);
+        var result = await controller.GetGourmetLogsAsync(MessageTypes.text);
+        Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<GourmetWordLog[]>((result as OkObjectResult).Value);
+        var content = (result as OkObjectResult).Value as GourmetWordLog[];
+        Assert.Equal(2, content.Length);
+        Assert.Equal("二郎系", content[0].Text);
+        Assert.Equal(DateTime.Today, content[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today, content[0].UpdatedAt.Date);
+        Assert.Equal("家系", content[1].Text);
         Assert.Equal(DateTime.Today, content[1].CreatedAt.Date);
         Assert.Equal(DateTime.Today, content[1].UpdatedAt.Date);
     }

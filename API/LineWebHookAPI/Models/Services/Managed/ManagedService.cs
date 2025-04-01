@@ -1,3 +1,4 @@
+using LineWebHookAPI.Constants;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
 
@@ -12,7 +13,7 @@ public interface IManagedService
     /// LineChatBotの実行ログを取得する
     /// </summary>
     /// <returns>LineChatBotの実行ログ</returns>
-    Task<GourmetLog[]> GetGourmetLogAsync();
+    Task<Meta[]> GetGourmetLogsAsync(MessageTypes messageType);
 
     /// <summary>
     /// エラーログを取得する
@@ -35,9 +36,13 @@ public class ManagedService(ManagedRepositoryBase managedRepository) : IManagedS
     /// LineChatBotの実行ログを取得する
     /// </summary>
     /// <returns>LineChatBotの実行ログ</returns>
-    public async Task<GourmetLog[]> GetGourmetLogAsync()
+    public async Task<Meta[]> GetGourmetLogsAsync(MessageTypes messageType)
     {
-        return await ManagedRepository.FetchGourmetLogAsync();
+        if(messageType == MessageTypes.location)
+            return await ManagedRepository.FetchGourmetLocationLogsAsync();
+        else if (messageType == MessageTypes.text)
+            return await ManagedRepository.FetchGourmetWordLogsAsync();
+        return [];
     }
 
     /// <summary>
@@ -46,6 +51,6 @@ public class ManagedService(ManagedRepositoryBase managedRepository) : IManagedS
     /// <returns>エラーログ</returns>
     public async Task<ErrorLog[]> GetErrorLogAsync()
     {
-        return await ManagedRepository.FetchErrorLogAsync();
+        return await ManagedRepository.FetchErrorLogsAsync();
     }
 }

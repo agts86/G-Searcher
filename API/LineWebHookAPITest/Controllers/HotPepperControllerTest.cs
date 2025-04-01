@@ -126,7 +126,7 @@ public class HotPepperControllerTest : TestBase
         Assert.Equal("URL2", action2[0].Uri);
         Assert.Equal("詳細を見る", action2[0].Label);
 
-        var logs = await DbContext.GourmetLogs.ToArrayAsync();
+        var logs = await DbContext.GourmetLocationLogs.ToArrayAsync();
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
@@ -186,7 +186,7 @@ public class HotPepperControllerTest : TestBase
         Assert.Equal("textV2", message.Type);
         Assert.Equal(MessageTexts.NotFound, message.Text);
 
-        var logs = await DbContext.GourmetLogs.ToArrayAsync();
+        var logs = await DbContext.GourmetLocationLogs.ToArrayAsync();
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);

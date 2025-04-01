@@ -9,7 +9,7 @@ using LineWebHookAPI.Models.DB.Repositories;
 namespace LineWebHookAPI.Controllers;
 
 /// <summary>
-/// ホットペッパー関連API
+/// Yahoo関連API
 /// </summary>
 [ApiController]
 [Route("api/yahoo")]

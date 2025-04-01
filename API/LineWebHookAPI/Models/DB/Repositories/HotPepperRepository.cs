@@ -12,7 +12,7 @@ public abstract class HotPepperRepositoryBase(LineWebHookContext dbContext) : Re
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    public abstract Task CreateGourmetLogAsync(LocationMessage message);
+    public abstract Task CreateGourmetLogAsync(Message message);
 }
 
 /// <summary>
@@ -24,14 +24,44 @@ public class HotPepperRepository(LineWebHookContext dbContext) : HotPepperReposi
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    public override async Task CreateGourmetLogAsync(LocationMessage message)
+    public override async Task CreateGourmetLogAsync(Message message)
     {
-        var log = new GourmetLog
+        if(message is LocationMessage locationMessage)
+        {
+            await CreateGourmetLogAsync(locationMessage);
+        }
+        else if(message is TextMessage textMessage)
+        {
+            await CreateGourmetLogAsync(textMessage);
+        }
+    }
+
+    /// <summary>
+    /// 位置情報ログを作成する
+    /// </summary>
+    /// <param name="dto">位置情報メッセージ</param>
+    private async Task CreateGourmetLogAsync(LocationMessage message)
+    {
+        var log = new GourmetLocationLog
         {
             Id = Guid.NewGuid(),
             Lat = message.Latitude,
             Lng = message.Longitude
         };
-        await DbContext.GourmetLogs.AddAsync(log);
+        await DbContext.GourmetLocationLogs.AddAsync(log);
+    }
+
+    /// <summary>
+    /// テキスト情報ログを作成する
+    /// </summary>
+    /// <param name="dto">位置情報メッセージ</param>
+    private async Task CreateGourmetLogAsync(TextMessage message)
+    {
+        var log = new GourmetWordLog
+        {
+            Id = Guid.NewGuid(),
+            Text = message.Text
+        };
+        await DbContext.GourmetWordLogs.AddAsync(log);
     }
 }

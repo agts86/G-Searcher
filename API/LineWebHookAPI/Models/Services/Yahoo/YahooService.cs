@@ -4,7 +4,6 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
 using LineWebHookAPI.Constants.Line.API;
-using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 
 namespace LineWebHookAPI.Models.Services.Yahoo;
@@ -60,13 +59,10 @@ public class YahooService(IConfiguration configuration, YahooRepositoryBase yaho
 
         foreach(var e in gourmetGettingDto.Events ?? [])
         {
-            if(e.Message is LocationMessage message) 
-            {
-                await YahooPepperRepository.CreateGourmetLogAsync(message);
-                await YahooPepperRepository.SaveChangesAsync();
-            }
+            await YahooPepperRepository.CreateGourmetLogAsync(e.Message);
+            await YahooPepperRepository.SaveChangesAsync();
         
-            var gourmet = await yahooHttp.GetLocateAsync(e.Message,genreCode);        
+            var gourmet = await yahooHttp.GetLocateAsync(e.Message, genreCode);        
             var columns = gourmet.ToCarouselTemplateColumns();
             
             replies.Add

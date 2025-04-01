@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Models.Services.Managed;
 using LineWebHookAPI.Models.DB.Repositories;
+using LineWebHookAPI.Constants;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -21,13 +22,13 @@ public class ManagedController
     public IManagedService ManagedService { get; protected set; } = managedService;
 
     /// <summary>
-    /// LineChatBotの実行ログを取得する
+    /// LineChatBotの位置情報検索実行ログを取得する
     /// </summary>
     /// <returns>LineAPIにPostした内容</returns>
-    [HttpGet("gourmet")]
-    public async Task<IActionResult> GetGourmetLogAsync()
+    [HttpGet("gourmet/{messageType}")]
+    public async Task<IActionResult> GetGourmetLogsAsync([FromRoute] MessageTypes messageType)
     {
-        var res = await ManagedService.GetGourmetLogAsync();
+        var res = await ManagedService.GetGourmetLogsAsync(messageType);
         return Ok(res);
     }
 

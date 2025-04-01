@@ -9,7 +9,9 @@ public class LineWebHookContext(DbContextOptions<LineWebHookContext> options) : 
 {
     public virtual DbSet<ErrorLog> ErrorLogs {get;set;}
 
-    public virtual DbSet<GourmetLog> GourmetLogs {get;set;}
+    public virtual DbSet<GourmetLocationLog> GourmetLocationLogs {get;set;}
+    
+    public virtual DbSet<GourmetWordLog> GourmetWordLogs {get;set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -17,7 +19,11 @@ public class LineWebHookContext(DbContextOptions<LineWebHookContext> options) : 
         {
             entity.HasKey(e => new {e.Id});
         });
-        modelBuilder.Entity<GourmetLog>(entity =>
+        modelBuilder.Entity<GourmetLocationLog>(entity =>
+        {
+            entity.HasKey(e => new {e.Id});
+        });
+        modelBuilder.Entity<GourmetWordLog>(entity =>
         {
             entity.HasKey(e => new {e.Id});
         });
