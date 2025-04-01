@@ -9,12 +9,12 @@ using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 
-namespace LineWebHookAPI.Models.BL.HotPeppers;
+namespace LineWebHookAPI.Models.Services.HotPeppers;
 
 /// <summary>
 /// ホットペッパーコントローラーのビジネスロジック
 /// </summary>
-public class HotPepperBL(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
+public class HotPepperService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
 {
     /// <summary>
     /// リポジトリ

@@ -2,7 +2,7 @@ using LineWebHookAPI.Models.DB;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Models.Http;
-using LineWebHookAPI.Models.BL.Yahoo;
+using LineWebHookAPI.Models.Services.Yahoo;
 using System.ComponentModel.DataAnnotations;
 using LineWebHookAPI.Validations;
 using LineWebHookAPI.Models.Dto.Line.Hook;
@@ -24,7 +24,7 @@ public class YahooController
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public YahooBL YahooBL { get; protected set; } = new YahooBL(configuration,dbContext,env,new HttpAdapter());
+    public YahooService YahooBL { get; protected set; } = new YahooService(configuration,dbContext,env,new HttpAdapter());
 
     /// <summary>
     /// 環境情報

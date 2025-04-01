@@ -1,6 +1,6 @@
 using LineWebHookAPI.Models.DB;
 using Microsoft.AspNetCore.Mvc;
-using LineWebHookAPI.Models.BL.Managed;
+using LineWebHookAPI.Models.Services.Managed;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -14,7 +14,7 @@ public class ManagedController(LineWebHookContext dbContext) : LineWebHookAPICon
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public ManagedBL ManagedBL { get; protected set; } = new ManagedBL(dbContext);
+    public ManagedService ManagedBL { get; protected set; } = new ManagedService(dbContext);
 
     /// <summary>
     /// LineChatBotの実行ログを取得する

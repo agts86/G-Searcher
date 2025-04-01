@@ -2,12 +2,12 @@ using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.DB.Tables;
 
-namespace LineWebHookAPI.Models.BL.Managed;
+namespace LineWebHookAPI.Models.Services.Managed;
 
 /// <summary>
 /// 管理用コントローラーのビジネスロジック
 /// </summary>
-public class ManagedBL(LineWebHookContext dbContext)
+public class ManagedService(LineWebHookContext dbContext)
 {
     /// <summary>
     /// リポジトリ

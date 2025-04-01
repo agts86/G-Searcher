@@ -8,12 +8,12 @@ using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 
-namespace LineWebHookAPI.Models.BL.Yahoo;
+namespace LineWebHookAPI.Models.Services.Yahoo;
 
 /// <summary>
 /// YahooBコントローラーのビジネスロジック
 /// </summary>
-public class YahooBL(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
+public class YahooService(IConfiguration configuration, LineWebHookContext dbContext,IHostEnvironment env,HttpAdapter http)
 {
     /// <summary>
     /// リポジトリ
