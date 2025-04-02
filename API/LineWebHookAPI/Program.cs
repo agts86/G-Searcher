@@ -62,9 +62,7 @@ app.MapControllers();
 
 // DBを作成・更新する
 using var scope = app.Services.CreateScope();
-
 var dbContext = scope.ServiceProvider.GetRequiredService<LineWebHookContext>();
 dbContext.Database.Migrate(); 
-
 
 app.Run();
