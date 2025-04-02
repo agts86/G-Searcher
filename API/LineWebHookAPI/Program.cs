@@ -40,7 +40,7 @@ builder.Services.AddDbContext<LineWebHookContext>
 (
     // 一旦趣味だからSQLiteにしたけど
     // サービス展開考えたらdevとprodで分けるべき
-    options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options => options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection"))
 );
 
 var app = builder.Build();
