@@ -28,11 +28,13 @@ public abstract class LineWebHookAPIController(BaseControllerRepository baseCont
         }
         catch(StatusCodeException ex)
         {
+            Console.WriteLine(ex.Error);
             await BaseControllerRepository.CreateErrorLogAsync(ex.Error);
             await BaseControllerRepository.SaveChangesAsync();
         }
         catch (Exception e)
         {
+            Console.WriteLine(e.Message);
             await BaseControllerRepository.CreateErrorLogAsync(e);
             await BaseControllerRepository.SaveChangesAsync();
         }
