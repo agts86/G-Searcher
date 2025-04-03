@@ -38,9 +38,7 @@ builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Ad
 // EFCoreの設定
 builder.Services.AddDbContext<LineWebHookContext>
 (
-    // 一旦趣味だからSQLiteにしたけど
-    // サービス展開考えたらdevとprodで分けるべき
-    options => options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection"))
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"))
 );
 
 var app = builder.Build();
@@ -59,10 +57,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// DBを作成・更新する
-using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetRequiredService<LineWebHookContext>();
-dbContext.Database.Migrate(); 
 
 app.Run();
