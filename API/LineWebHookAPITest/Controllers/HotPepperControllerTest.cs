@@ -87,8 +87,7 @@ public class HotPepperControllerTest : TestBase
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
         var hotPepperRepository = new HotPepperRepository(DbContext);
         var hotPepperService = new HotPepperService(Configuration, hotPepperRepository, Env, http);
-        var baseControllerRepository = new BaseControllerRepository(DbContext);
-        var hotPepperController = new HotPepperController(hotPepperService, Env,baseControllerRepository);
+        var hotPepperController = new HotPepperController(hotPepperService);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
@@ -130,8 +129,8 @@ public class HotPepperControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Today, logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, logs[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].UpdatedAt.Date);
     }
     
     /// <summary>
@@ -169,8 +168,7 @@ public class HotPepperControllerTest : TestBase
         var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
         var hotPepperRepository = new HotPepperRepository(DbContext);
         var hotPepperService = new HotPepperService(Configuration, hotPepperRepository, Env, http);
-        var baseControllerRepository = new BaseControllerRepository(DbContext);
-        var hotPepperController = new HotPepperController(hotPepperService, Env,baseControllerRepository);
+        var hotPepperController = new HotPepperController(hotPepperService);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
@@ -190,98 +188,7 @@ public class HotPepperControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Today, logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, logs[0].UpdatedAt.Date);
-    }
-
-    /// <summary>
-    /// プロダクトモード
-    /// 正常終了 
-    /// </summary>
-    [Fact]
-    public async Task PostGourmetLocationAsyncTestProduction()
-    {
-        var hotPepperGourmetResponseDto = new HotPepperGourmetResponseDto()
-        {
-            Results = new HotPepperGourmetResponseDto.Result()
-            {
-                Shops = []
-            }
-        };
-
-        var dto = new GourmetGettingDto()
-        {
-            Events =
-            [
-                new ()
-                {
-                    ReplyToken = "replyToken",
-                    Message = new LocationMessage()
-                    {
-                        Latitude = 35.681236,
-                        Longitude = 139.767125
-                    }
-                }
-            ]
-        };
-
-        Env.EnvironmentName = "Production";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperService = new HotPepperService(Configuration, hotPepperRepository, Env, http);
-        var baseControllerRepository = new BaseControllerRepository(DbContext);
-        var hotPepperController = new HotPepperController(hotPepperService, Env,baseControllerRepository);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
-
-        Assert.IsType<OkResult>(res);
-    }
-
-    /// <summary>
-    /// プロダクトモード
-    /// 200だけど実はエラー
-    /// </summary>
-    [Theory]
-    [InlineData("1000")]
-    [InlineData("2000")]
-    [InlineData("3000")]
-    public async Task PostGourmetLocationAsyncTestProductionStatusException(string code)
-    {
-        var hotPepperGourmetResponseDto = new HotPepperGourmetResponseDto()
-        {
-            Results = new HotPepperGourmetResponseDto.Result()
-            {
-                Error = new HotPepperErrorResponseDto.ErrorInfo()
-                {
-                    Code = code,
-                    Message = "Bad Request"
-                }
-            }
-        };
-
-        var dto = new GourmetGettingDto()
-        {
-            Events =
-            [
-                new ()
-                {
-                    ReplyToken = "replyToken",
-                    Message = new LocationMessage()
-                    {
-                        Latitude = 35.681236,
-                        Longitude = 139.767125
-                    }
-                }
-            ]
-        };
-
-        Env.EnvironmentName = "Production";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
-        var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperService = new HotPepperService(Configuration, hotPepperRepository, Env, http);
-        var baseControllerRepository = new BaseControllerRepository(DbContext);
-        var hotPepperController = new HotPepperController(hotPepperService, Env,baseControllerRepository);
-        var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
-
-        Assert.IsType<OkResult>(res);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].UpdatedAt.Date);
     }
 }

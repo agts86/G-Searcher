@@ -93,8 +93,7 @@ public class YahooControllerTest : TestBase
         var http = new HttpAdapterMock(local);
         var yahooRepository = new YahooRepository(DbContext);
         var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
-        var baseControllerRepository = new BaseControllerRepository(DbContext);
-        var yahooController = new YahooController(yahooService, Env, baseControllerRepository);
+        var yahooController = new YahooController(yahooService);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -136,8 +135,8 @@ public class YahooControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Today, logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, logs[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].UpdatedAt.Date);
     }
     
     /// <summary>
@@ -169,8 +168,7 @@ public class YahooControllerTest : TestBase
         var http = new HttpAdapterMock(local);
         var yahooRepository = new YahooRepository(DbContext);
         var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
-        var baseControllerRepository = new BaseControllerRepository(DbContext);
-        var yahooController = new YahooController(yahooService, Env, baseControllerRepository);
+        var yahooController = new YahooController(yahooService);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -190,42 +188,7 @@ public class YahooControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Today, logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, logs[0].UpdatedAt.Date);
-    }
-
-    /// <summary>
-    /// プロダクトモード
-    /// 正常終了 
-    /// </summary>
-    [Fact]
-    public async Task PostLocalAsyncTestProduction()
-    {
-        var local = new LocalDto();
-        var dto = new GourmetGettingDto()
-        {
-            Events =
-            [
-                new ()
-                {
-                    ReplyToken = "replyToken",
-                    Message = new LocationMessage()
-                    {
-                        Latitude = 35.681236,
-                        Longitude = 139.767125
-                    }
-                }
-            ]
-        };
-
-        Env.EnvironmentName = "Production";
-        var http = new HttpAdapterMock(local);
-        var yahooRepository = new YahooRepository(DbContext);
-        var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
-        var baseControllerRepository = new BaseControllerRepository(DbContext);
-        var yahooController = new YahooController(yahooService, Env, baseControllerRepository);
-        var res = await yahooController.PostLocalAsync(dto,"0106");
-
-        Assert.IsType<OkResult>(res);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].UpdatedAt.Date);
     }
 }

@@ -4,7 +4,6 @@ using LineWebHookAPI.Models.Services.Yahoo;
 using System.ComponentModel.DataAnnotations;
 using LineWebHookAPI.Validations;
 using LineWebHookAPI.Models.Dto.Line.Hook;
-using LineWebHookAPI.Models.DB.Repositories;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -13,23 +12,12 @@ namespace LineWebHookAPI.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/yahoo")]
-public class YahooController
-(
-    IYahooService yahooService,
-    IHostEnvironment env,
-    BaseControllerRepository baseControllerRepository
-) : LineWebHookAPIController(baseControllerRepository)
+public class YahooController(IYahooService yahooService) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
     public IYahooService YahooService { get; protected set; } = yahooService;
-
-    /// <summary>
-    /// 環境情報
-    /// </summary>
-    /// <value></value>
-    public IHostEnvironment Env { get; protected set; } = env;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
@@ -45,6 +33,6 @@ public class YahooController
         [FromQuery] [MaxLength(7)] [HalfNumeric] string genreCode)
     {
         var res = await YahooService.PostLocalAsync(gourmetGettingDto,genreCode);
-            return Ok(res);
+        return Ok(res);
     }
 }

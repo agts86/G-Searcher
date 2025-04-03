@@ -10,7 +10,6 @@ namespace LineWebHookAPI.Models.DB.Tables;
 [JsonConverter(typeof(RealMoldConverter<Meta>))]
 public abstract class Meta
 {
-
     /// <summary>
     /// 日本のタイムゾーン
     /// </summary>

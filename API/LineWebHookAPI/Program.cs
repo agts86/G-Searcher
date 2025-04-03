@@ -30,7 +30,6 @@ builder.Services.AddScoped<IManagedService, ManagedService>();
 builder.Services.AddScoped<YahooRepositoryBase, YahooRepository>();
 builder.Services.AddScoped<HotPepperRepositoryBase, HotPepperRepository>();
 builder.Services.AddScoped<ManagedRepositoryBase, ManagedRepository>();
-builder.Services.AddScoped<BaseControllerRepository, BaseControllerRepository>();
 builder.Services.AddScoped<MiddleWareRepositoryBase, MiddleWareRepository>();
 
 // Enumを文字列として扱う
