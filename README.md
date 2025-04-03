@@ -21,11 +21,12 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 ■ DB
 
--   Sqlite（本格的にやるなら移行したい）
+-   PostgreSQL
 
 ■ クラウド
 
--   Back4App（コスト次第でAws LambdaかAzure CloudFunctionsに移行する）
+-   WEB:Back4App（コスト次第でAws LambdaかAzure CloudFunctionsに移行する）
+-   DB:Supabase
 
 ■ コンテナ
 
@@ -60,7 +61,7 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
   ```
   {
     "ConnectionStrings": {
-      "DefaultConnection": "Data Source=LineWebHookAPI.db"
+      "PostgreSQLConnection": "{docker-compose使わない場合は任意に設定)}"
     },
     "HotPepper": {
       "Url": "https://webservice.recruit.co.jp/hotpepper/{0}/v1/?key={1}&format=json",
@@ -73,7 +74,7 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
     },
     "Yahoo": {
       "Url": "https://map.yahooapis.jp/search/local/V1/{0}?appid={1}&output=json&detail=full",
-      "Key": ""
+      "Key": "{取得したYOLPのAPIキー)"
     }
   }
   ``` 
@@ -95,5 +96,12 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 7. 確認
 
   https://localhost:5001/swagger/index.html
+
+8. DBマイグレード(初回だけ)
+  ```
+      docker-compose exec backend bash
+      cd src/
+      dotnet ef database update
+  ```
 
 
