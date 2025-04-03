@@ -44,15 +44,7 @@ public class YahooController
         [FromBody] GourmetGettingDto gourmetGettingDto,
         [FromQuery] [MaxLength(7)] [HalfNumeric] string genreCode)
     {
-        if (Env.IsDevelopment())
-        {
-            var res = await YahooService.PostLocalAsync(gourmetGettingDto,genreCode);
+        var res = await YahooService.PostLocalAsync(gourmetGettingDto,genreCode);
             return Ok(res);
-        }
-        else
-        {
-            _ = RunTaskAsync(YahooService.PostLocalAsync(gourmetGettingDto,genreCode));
-            return Ok();
-        }
     }
 }
