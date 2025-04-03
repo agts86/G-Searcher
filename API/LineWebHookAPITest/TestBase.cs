@@ -9,6 +9,11 @@ namespace LineWebHookAPITest;
 public abstract class TestBase
 {
     /// <summary>
+    /// 日本のタイムゾーン
+    /// </summary>
+    protected const int JapanKind = 9;
+
+    /// <summary>
     /// DB
     /// </summary>
     protected LineWebHookContext DbContext { get; set; } = new LineWebHookContext

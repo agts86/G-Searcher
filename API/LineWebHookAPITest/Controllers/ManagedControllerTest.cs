@@ -37,12 +37,12 @@ public class ManagedControllerTest : TestBase
         Assert.Equal(2, content.Length);
         Assert.Equal(0, content[0].Lat);
         Assert.Equal(1, content[0].Lng);
-        Assert.Equal(DateTime.Today, content[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, content[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[0].UpdatedAt.Date);
         Assert.Equal(1, content[1].Lat);
         Assert.Equal(0, content[1].Lng);
-        Assert.Equal(DateTime.Today, content[1].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, content[1].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[1].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[1].UpdatedAt.Date);
     }
 
     [Fact]
@@ -70,11 +70,11 @@ public class ManagedControllerTest : TestBase
         var content = (result as OkObjectResult).Value as GourmetWordLog[];
         Assert.Equal(2, content.Length);
         Assert.Equal("二郎系", content[0].Text);
-        Assert.Equal(DateTime.Today, content[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, content[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[0].UpdatedAt.Date);
         Assert.Equal("家系", content[1].Text);
-        Assert.Equal(DateTime.Today, content[1].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, content[1].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[1].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[1].UpdatedAt.Date);
     }
 
     [Fact]
@@ -102,10 +102,10 @@ public class ManagedControllerTest : TestBase
         var content = (result as OkObjectResult).Value as ErrorLog[];
         Assert.Equal(2, content.Length);
         Assert.Equal("Error1", content[0].Contents);
-        Assert.Equal(DateTime.Today, content[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, content[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[0].UpdatedAt.Date);
         Assert.Equal("Error2", content[1].Contents);
-        Assert.Equal(DateTime.Today, content[1].CreatedAt.Date);
-        Assert.Equal(DateTime.Today, content[1].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[1].CreatedAt.Date);
+        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), content[1].UpdatedAt.Date);
     }
 }
