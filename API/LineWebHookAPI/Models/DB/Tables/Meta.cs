@@ -23,7 +23,7 @@ public abstract class Meta
     [Column("CreatedAt")]
     public DateTime CreatedAt 
     {
-        get => _createdAt.AddHours(JapanKind);
+        get => _createdAt.ToUniversalTime().AddHours(JapanKind);
         set => _createdAt = value.ToUniversalTime();
     }
     /// <summary>
@@ -34,7 +34,7 @@ public abstract class Meta
     [Column("UpdatedAt")]
     public DateTime UpdatedAt 
     {
-        get => _updatedAt.AddHours(JapanKind);
+        get => _updatedAt.ToUniversalTime().AddHours(JapanKind);
         set => _updatedAt = value.ToUniversalTime();
     }
 }

@@ -129,8 +129,8 @@ public class HotPepperControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today, logs[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today, logs[0].UpdatedAt.Date);
     }
     
     /// <summary>
@@ -188,7 +188,7 @@ public class HotPepperControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Today.ToUniversalTime().AddHours(JapanKind), logs[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Today, logs[0].CreatedAt.Date);
+        Assert.Equal(DateTime.Today, logs[0].UpdatedAt.Date);
     }
 }
