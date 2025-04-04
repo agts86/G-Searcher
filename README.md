@@ -100,7 +100,6 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 8. DBマイグレード(初回だけ)
   ```
       docker-compose exec backend bash
-      cd src/
       dotnet ef database update
   ```
 
