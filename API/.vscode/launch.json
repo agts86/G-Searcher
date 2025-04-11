@@ -23,8 +23,8 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000",
-                "ASPNETCORE_Kestrel__Certificates__Default__Path": "${env:USERPROFILE}/.aspnet/https/WslLocalHost.pfx",
-                "ASPNETCORE_Kestrel__Certificates__Default__Password": "WslLocalHost"
+                "ASPNETCORE_Kestrel__Certificates__Default__Path": "${env:USERPROFILE}/.aspnet/https/WslLocalhost.pfx",
+                "ASPNETCORE_Kestrel__Certificates__Default__Password": "WslLocalhost"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
