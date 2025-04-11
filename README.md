@@ -47,6 +47,8 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 ## 実行方法
 
 1. 証明書の発行
+      
+   ※WSLで利用する場合WSL側とホスト側の改行コードが違う場合がありますので実行環境側の改行コードに適宜変換してください
    1. Powershellが使える場合
       
       `API/Dev-Certs-Link.ps1`をホスト側にコピーして管理者権限で実行
@@ -64,7 +66,7 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
       .\Dev-Certs-Link.bat
       ```
 
-2. 設定ファイルの作成
+3. 設定ファイルの作成
 
 `appsettings.json`をコピーし`appsettings.Development.json`にリネームして以下を修正
   ```
