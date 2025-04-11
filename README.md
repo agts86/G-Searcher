@@ -44,18 +44,27 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 2. YOLP APIのキーを取得済み
 3. Line公式アカウント、Line Developerアカウント開設済み（デバッグ時は不要）
 
-## 実行方法(WindowsOSでWSL上で動かす想定)
+## 実行方法
 
-1. .NETSDKのインストール(Windows端末で)
+1. 証明書の発行
+   1. Powershellが使える場合
+      
+      `API/Dev-Certs-Link.ps1`をホスト側にコピーして管理者権限で実行
+      
+      ```
+      （必要に応じて）Unblock-File -Path . "{配置したPath}"
+      （必要に応じて）Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+      .\Dev-Certs-Link.ps1
+      ```
+   3. Windows端末でホスト側に.NETがインストールされている場合
+      
+      `API/Dev-Certs-Link.bat`をホスト側にコピーして管理者権限で実行
+      
+      ```
+      .\Dev-Certs-Link.bat
+      ```
 
-  https://dotnet.microsoft.com/ja-jp/download
-
-2. 証明書の発行(Windows端末で)
-  ```
-      cd /API
-      Dev-Certs-Link.bat
-  ```
-3. 設定ファイルの作成
+2. 設定ファイルの作成
 
 `appsettings.json`をコピーし`appsettings.Development.json`にリネームして以下を修正
   ```
@@ -79,25 +88,25 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
   }
   ``` 
 
-4. ビルド
+3. ビルド
    
   ```
       docker-compose build
   ```    
-5. コンテナ起動（実行）
+4. コンテナ起動（実行）
   ```
       docker-compose up -d
   ``` 
-6. コンテナ停止
+5. コンテナ停止
   ```
       docker-compose down
   ``` 
 
-7. 確認
+6. 確認
 
   https://localhost:5001/swagger/index.html
 
-8. DBマイグレード(初回だけ)
+7. DBマイグレード(初回だけ)
   ```
       docker-compose exec backend bash
       dotnet ef database update
