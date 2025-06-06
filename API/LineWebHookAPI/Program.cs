@@ -37,7 +37,7 @@ builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Ad
 // EFCoreの設定
 builder.Services.AddDbContext<LineWebHookContext>
 (
-    options => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"))
+    options => options.UseInMemoryDatabase("LineWebHookDB")
 );
 
 var app = builder.Build();
