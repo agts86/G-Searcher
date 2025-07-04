@@ -16,9 +16,8 @@ namespace LineWebHookAPI.Controllers;
 [Route("api/yahoo")]
 public class YahooController
 (
-    IConfiguration configuration,
     IYahooRepository yahooRepository,
-    IHostEnvironment env,
+    IWebHostEnvironment env,
     IYahooHttp yahooHttp,
     ILineHttp lineHttp
 ) : ControllerBase
@@ -26,7 +25,7 @@ public class YahooController
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public YahooService YahooService { get; protected set; } = new YahooService(configuration, yahooRepository, env, yahooHttp, lineHttp);
+    public YahooService YahooService { get; protected set; } = new YahooService(yahooRepository, env, yahooHttp, lineHttp);
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する

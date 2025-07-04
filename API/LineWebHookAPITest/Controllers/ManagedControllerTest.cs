@@ -2,7 +2,6 @@ using LineWebHookAPI.Constants;
 using LineWebHookAPI.Controllers;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
-using LineWebHookAPI.Models.Services.Managed;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LineWebHookAPITest.Controllers;

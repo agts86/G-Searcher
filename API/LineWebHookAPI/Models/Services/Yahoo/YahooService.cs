@@ -13,9 +13,8 @@ namespace LineWebHookAPI.Models.Services.Yahoo;
 /// </summary>
 public class YahooService
 (
-    IConfiguration configuration,
     IYahooRepository yahooPepperRepository,
-    IHostEnvironment env,
+    IWebHostEnvironment env,
     IYahooHttp yahooHttp,
     ILineHttp lineHttp
 )
@@ -26,14 +25,9 @@ public class YahooService
     protected IYahooRepository YahooPepperRepository { get; set; } = yahooPepperRepository;
 
     /// <summary>
-    /// 設定情報
-    /// </summary>
-    private IConfiguration Configuration { get; } = configuration;
-
-    /// <summary>
     /// 環境情報
     /// </summary>
-    private IHostEnvironment Env { get; } = env;
+    private IWebHostEnvironment Env { get; } = env;
 
     /// <summary>
     /// HotPepperAPI操作クラス

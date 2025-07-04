@@ -11,7 +11,6 @@ using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 using LineWebHookAPI.Controllers;
-using LineWebHookAPI.Models.Services.HotPeppers;
 using LineWebHookAPI.Models.DB.Repositories;
 
 namespace LineWebHookAPITest.Controllers;
@@ -87,7 +86,7 @@ public class HotPepperControllerTest : TestBase
         var hotPepperHttp = new HotPepperHttpMock(hotPepperGourmetResponseDto);
         var lineHttpMock = new LineHttpMock();
         var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperController = new HotPepperController(Configuration, hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
+        var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
@@ -168,7 +167,7 @@ public class HotPepperControllerTest : TestBase
         var hotPepperHttp = new HotPepperHttpMock(hotPepperGourmetResponseDto);
         var lineHttpMock = new LineHttpMock();
         var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperController = new HotPepperController(Configuration, hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
+        var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);

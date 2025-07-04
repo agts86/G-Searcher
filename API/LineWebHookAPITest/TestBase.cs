@@ -3,6 +3,7 @@ using LineWebHookAPI.Models.DB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Hosting;
 
 namespace LineWebHookAPITest;
 
@@ -24,29 +25,19 @@ public abstract class TestBase
     );
 
     /// <summary>
-    /// 設定情報
-    /// </summary>
-    protected IConfiguration Configuration { get; } = new ConfigurationBuilder()
-    .AddInMemoryCollection(new Dictionary<string, string>
-    {
-        { "Line:Url", "https://api.line.me/v2/bot/message/{0}" }
-    })
-    .Build();
-
-    /// <summary>
     /// 環境情報
     /// </summary>
-    protected IHostEnvironment Env { get; } = new HostEnvironment();
+    protected IWebHostEnvironment Env { get; } = new WebHostEnvironment();
 
     /// <summary>
     /// IHostEnvironment実装クラス
     /// </summary>
-    protected class HostEnvironment : IHostEnvironment
+    protected class WebHostEnvironment : IWebHostEnvironment
     {
         /// <summary>
         /// 実行状態
         /// </summary>
-        public string EnvironmentName { get; set; } 
+        public string EnvironmentName { get; set; }
 
         /// <summary>
         /// アプリケーション名
@@ -62,5 +53,15 @@ public abstract class TestBase
         /// ファイルプロバイダ
         /// </summary> 
         public IFileProvider ContentRootFileProvider { get; set; }
+
+        /// <summary>
+        /// WebRootPath
+        /// </summary>
+        public string WebRootPath { get; set; }
+
+        /// <summary>
+        /// WebRootFileProvider
+        /// </summary>
+        public IFileProvider WebRootFileProvider { get; set; }
     }
 }

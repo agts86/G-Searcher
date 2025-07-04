@@ -15,9 +15,8 @@ namespace LineWebHookAPI.Controllers;
 [Route("api/hot-pepper")]
 public class HotPepperController
 (
-    IConfiguration configuration,
     IHotPepperRepository hotPepperRepository,
-    IHostEnvironment env,
+    IWebHostEnvironment env,
     IHotPepperHttp hotPepperHttp,
     ILineHttp lineHttp
 ) : ControllerBase
@@ -25,7 +24,7 @@ public class HotPepperController
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public HotPepperService HotPepperService { get; protected set; } = new HotPepperService(configuration, hotPepperRepository, env, hotPepperHttp, lineHttp);
+    public HotPepperService HotPepperService { get; protected set; } = new HotPepperService(hotPepperRepository, env, hotPepperHttp, lineHttp);
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
