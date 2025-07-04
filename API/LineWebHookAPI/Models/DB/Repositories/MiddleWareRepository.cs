@@ -3,31 +3,41 @@ using LineWebHookAPI.Models.Exceptions;
 
 namespace LineWebHookAPI.Models.DB.Repositories;
 
-public abstract class MiddleWareRepositoryBase(LineWebHookContext dbContext) : Repository(dbContext)
+public interface IMiddleWareRepository
 {
     /// <summary>
     /// エラーログを作成する
     /// </summary>
     /// <param name="ex">例外</param>
-    public abstract Task CreateErrorLogAsync(Exception ex);
+    Task CreateErrorLogAsync(Exception ex);
 
     /// <summary>
     /// エラーログを作成する
     /// </summary>
     /// <param name="ex">例外</param>
-    public abstract Task CreateErrorLogAsync(ResponseError error);
+    Task CreateErrorLogAsync(ResponseError error);
+
+    /// <summary>
+    /// データベースの変更を保存する
+    /// </summary>
+    Task SaveChangesAsync();
 }
 
 /// <summary>
 /// ミドルウェア用リポジトリ
 /// </summary>
-public class MiddleWareRepository(LineWebHookContext dbContext) : MiddleWareRepositoryBase(dbContext)
+public class MiddleWareRepository(LineWebHookContext dbContext) : IMiddleWareRepository
 {
+    /// <summary>
+    /// EFCoreのコンテキスト
+    /// </summary>
+    private LineWebHookContext DbContext { get; } = dbContext;
+
     /// <summary>
     /// エラーログを作成する
     /// </summary>
     /// <param name="ex">例外</param>
-    public override async Task CreateErrorLogAsync(Exception ex)
+    public async Task CreateErrorLogAsync(Exception ex)
     {
         var responseError = new ResponseError(ex.Message);
         var errorLog = new ErrorLog
@@ -42,7 +52,7 @@ public class MiddleWareRepository(LineWebHookContext dbContext) : MiddleWareRepo
     /// エラーログを作成する
     /// </summary>
     /// <param name="ex">例外</param>
-    public override async Task CreateErrorLogAsync(ResponseError error)
+    public async Task CreateErrorLogAsync(ResponseError error)
     {
         var errorLog = new ErrorLog
         {
@@ -50,5 +60,13 @@ public class MiddleWareRepository(LineWebHookContext dbContext) : MiddleWareRepo
             Contents = error.Message
         };
         await DbContext.ErrorLogs.AddAsync(errorLog);
+    }
+
+    /// <summary>
+    /// データベースの変更を保存する
+    /// </summary>
+    public async Task SaveChangesAsync()
+    {
+        await DbContext.SaveChangesAsync();
     }
 }

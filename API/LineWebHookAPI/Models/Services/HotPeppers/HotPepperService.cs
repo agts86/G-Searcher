@@ -15,7 +15,7 @@ namespace LineWebHookAPI.Models.Services.HotPeppers;
 public class HotPepperService
 (
     IConfiguration configuration,
-    HotPepperRepositoryBase hotPepperRepository,
+    IHotPepperRepository hotPepperRepository,
     IHostEnvironment env,
     IHotPepperHttp hotPepperHttp,
     ILineHttp lineHttp
@@ -24,7 +24,7 @@ public class HotPepperService
     /// <summary>
     /// リポジトリ
     /// </summary>
-    protected HotPepperRepositoryBase HotPepperRepository { get; set; } = hotPepperRepository;
+    protected IHotPepperRepository HotPepperRepository { get; set; } = hotPepperRepository;
 
     /// <summary>
     /// 設定情報

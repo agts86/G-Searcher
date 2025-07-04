@@ -6,31 +6,41 @@ namespace LineWebHookAPI.Models.DB.Repositories;
 /// <summary>
 /// HotPepperコントローラー用リポジトリ
 /// </summary>
-public abstract class HotPepperRepositoryBase(LineWebHookContext dbContext) : Repository(dbContext)
+public interface IHotPepperRepository
 {
     /// <summary>
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    public abstract Task CreateGourmetLogAsync(Message message);
+    Task CreateGourmetLogAsync(Message message);
+
+    /// <summary>
+    /// データベースの変更を保存する
+    /// </summary>
+    Task SaveChangesAsync();
 }
 
 /// <summary>
 /// HotPepperコントローラー用リポジトリ
 /// </summary>
-public class HotPepperRepository(LineWebHookContext dbContext) : HotPepperRepositoryBase(dbContext)
+public class HotPepperRepository(LineWebHookContext dbContext) : IHotPepperRepository
 {
+    /// <summary>
+    /// EFCoreのコンテキスト
+    /// </summary>
+    private LineWebHookContext DbContext { get; } = dbContext;
+
     /// <summary>
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    public override async Task CreateGourmetLogAsync(Message message)
+    public async Task CreateGourmetLogAsync(Message message)
     {
-        if(message is LocationMessage locationMessage)
+        if (message is LocationMessage locationMessage)
         {
             await CreateGourmetLogAsync(locationMessage);
         }
-        else if(message is TextMessage textMessage)
+        else if (message is TextMessage textMessage)
         {
             await CreateGourmetLogAsync(textMessage);
         }
@@ -63,5 +73,14 @@ public class HotPepperRepository(LineWebHookContext dbContext) : HotPepperReposi
             Text = message.Text
         };
         await DbContext.GourmetWordLogs.AddAsync(log);
+    }
+    
+    
+    /// <summary>
+    /// 保存する
+    /// </summary>
+    public async Task SaveChangesAsync()
+    {
+        await DbContext.SaveChangesAsync();
     }
 }

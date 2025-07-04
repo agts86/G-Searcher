@@ -20,10 +20,10 @@ builder.Services.AddOpenApi();
 // 以下DI
 builder.Services.AddTransient<Middleware>();
 builder.Services.AddScoped<LineSignatureFilter>();
-builder.Services.AddScoped<YahooRepositoryBase, YahooRepository>();
-builder.Services.AddScoped<HotPepperRepositoryBase, HotPepperRepository>();
-builder.Services.AddScoped<ManagedRepositoryBase, ManagedRepository>();
-builder.Services.AddScoped<MiddleWareRepositoryBase, MiddleWareRepository>();
+builder.Services.AddScoped<IYahooRepository, YahooRepository>();
+builder.Services.AddScoped<IHotPepperRepository, HotPepperRepository>();
+builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
+builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
 builder.Services.AddHttpClient<ILineHttp, LineHttp>();
 builder.Services.AddHttpClient<IYahooHttp, YahooHttp>();
 builder.Services.AddHttpClient<IHotPepperHttp, HotPepperHttp>();

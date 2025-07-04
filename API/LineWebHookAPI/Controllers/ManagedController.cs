@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Models.Services.Managed;
 using LineWebHookAPI.Constants;
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.Http;
+
 
 namespace LineWebHookAPI.Controllers;
 
@@ -11,7 +11,7 @@ namespace LineWebHookAPI.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/managed")]
-public class ManagedController(ManagedRepositoryBase managedRepository) : ControllerBase
+public class ManagedController(IManagedRepository managedRepository) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック

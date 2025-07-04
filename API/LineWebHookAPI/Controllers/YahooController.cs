@@ -17,7 +17,7 @@ namespace LineWebHookAPI.Controllers;
 public class YahooController
 (
     IConfiguration configuration,
-    YahooRepositoryBase yahooRepository,
+    IYahooRepository yahooRepository,
     IHostEnvironment env,
     IYahooHttp yahooHttp,
     ILineHttp lineHttp

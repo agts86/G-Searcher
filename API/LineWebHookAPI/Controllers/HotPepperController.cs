@@ -16,7 +16,7 @@ namespace LineWebHookAPI.Controllers;
 public class HotPepperController
 (
     IConfiguration configuration,
-    HotPepperRepositoryBase hotPepperRepository,
+    IHotPepperRepository hotPepperRepository,
     IHostEnvironment env,
     IHotPepperHttp hotPepperHttp,
     ILineHttp lineHttp

@@ -7,12 +7,12 @@ namespace LineWebHookAPI.Models.Services.Managed;
 /// <summary>
 /// 管理用コントローラーのビジネスロジック
 /// </summary>
-public class ManagedService(ManagedRepositoryBase managedRepository)
+public class ManagedService(IManagedRepository managedRepository)
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    public ManagedRepositoryBase ManagedRepository { get; protected set; } = managedRepository;
+    public IManagedRepository ManagedRepository { get; protected set; } = managedRepository;
 
     /// <summary>
     /// LineChatBotの実行ログを取得する

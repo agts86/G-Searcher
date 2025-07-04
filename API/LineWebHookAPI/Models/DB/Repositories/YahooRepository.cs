@@ -6,31 +6,41 @@ namespace LineWebHookAPI.Models.DB.Repositories;
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public abstract class YahooRepositoryBase(LineWebHookContext dbContext) : Repository(dbContext)
+public interface IYahooRepository
 {
     /// <summary>
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    public abstract Task CreateGourmetLogAsync(Message message);
+    Task CreateGourmetLogAsync(Message message);
+
+    /// <summary>
+    /// データベースの変更を保存する
+    /// </summary>
+    Task SaveChangesAsync();
 }
 
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public class YahooRepository(LineWebHookContext dbContext) : YahooRepositoryBase(dbContext)
+public class YahooRepository(LineWebHookContext dbContext) : IYahooRepository
 {
+    /// <summary>
+    /// EFCoreのコンテキスト
+    /// </summary>
+    protected LineWebHookContext DbContext { get; } = dbContext;
+
     /// <summary>
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    public override async Task CreateGourmetLogAsync(Message message)
+    public async Task CreateGourmetLogAsync(Message message)
     {
-        if(message is LocationMessage locationMessage)
+        if (message is LocationMessage locationMessage)
         {
             await CreateGourmetLogAsync(locationMessage);
         }
-        else if(message is TextMessage textMessage)
+        else if (message is TextMessage textMessage)
         {
             await CreateGourmetLogAsync(textMessage);
         }
@@ -63,5 +73,13 @@ public class YahooRepository(LineWebHookContext dbContext) : YahooRepositoryBase
             Text = message.Text
         };
         await DbContext.GourmetWordLogs.AddAsync(log);
+    }
+    
+    /// <summary>
+    /// データベースの変更を保存する
+    /// </summary>
+    public async Task SaveChangesAsync()
+    {
+        await DbContext.SaveChangesAsync();
     }
 }
