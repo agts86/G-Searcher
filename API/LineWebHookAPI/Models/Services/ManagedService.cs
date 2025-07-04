@@ -2,7 +2,7 @@ using LineWebHookAPI.Constants;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
 
-namespace LineWebHookAPI.Models.Services.Managed;
+namespace LineWebHookAPI.Models.Services;
 
 /// <summary>
 /// 管理用コントローラーのビジネスロジック

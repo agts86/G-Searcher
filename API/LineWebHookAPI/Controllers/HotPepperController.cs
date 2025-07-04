@@ -1,4 +1,4 @@
-using LineWebHookAPI.Models.Services.HotPeppers;
+using LineWebHookAPI.Models.Services;
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Constants.HotPepper;

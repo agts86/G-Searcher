@@ -4,25 +4,26 @@ using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.Dto.Line.API.Requests;
 using LineWebHookAPI.Constants.Line.API;
+using LineWebHookAPI.Constants.HotPepper;
 using LineWebHookAPI.Models.Dto.Line.Hook;
 
-namespace LineWebHookAPI.Models.Services.Yahoo;
+namespace LineWebHookAPI.Models.Services;
 
 /// <summary>
-/// YahooBコントローラーのビジネスロジック
+/// ホットペッパーコントローラーのビジネスロジック
 /// </summary>
-public class YahooService
+public class HotPepperService
 (
-    IYahooRepository yahooPepperRepository,
+    IHotPepperRepository hotPepperRepository,
     IWebHostEnvironment env,
-    IYahooHttp yahooHttp,
+    IHotPepperHttp hotPepperHttp,
     ILineHttp lineHttp
 )
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    protected IYahooRepository YahooPepperRepository { get; set; } = yahooPepperRepository;
+    protected IHotPepperRepository HotPepperRepository { get; set; } = hotPepperRepository;
 
     /// <summary>
     /// 環境情報
@@ -32,7 +33,7 @@ public class YahooService
     /// <summary>
     /// HotPepperAPI操作クラス
     /// </summary>
-    protected IYahooHttp YahooHttp { get; set; } = yahooHttp;
+    protected IHotPepperHttp HotPepperHttp { get; set; } = hotPepperHttp;
 
     /// <summary>
     /// LineMessagingAPI操作クラス
@@ -40,21 +41,21 @@ public class YahooService
     protected ILineHttp LineHttp { get; set; } = lineHttp;
 
     /// <summary>
-    /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
+    /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Reply[]> PostLocalAsync(GourmetGettingDto gourmetGettingDto, string genreCode)
+    public async Task<Reply[]> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto, GenreCode genreCode)
     {
         var replies = new List<Reply>();
 
         foreach (var e in gourmetGettingDto.Events ?? [])
         {
-            await YahooPepperRepository.CreateGourmetLogAsync(e.Message);
-            await YahooPepperRepository.SaveChangesAsync();
+            await HotPepperRepository.CreateGourmetLogAsync(e.Message);
+            await HotPepperRepository.SaveChangesAsync();
 
-            var gourmet = await YahooHttp.GetLocateAsync(e.Message, genreCode);
-            var columns = gourmet.ToCarouselTemplateColumns();
+            var gourmet = await HotPepperHttp.GetGourmetAsync(e.Message, genreCode);
+            var columns = gourmet.Results.ToCarouselTemplateColumns();
 
             replies.Add
             (
@@ -86,4 +87,3 @@ public class YahooService
         return [.. replies];
     }
 }
-

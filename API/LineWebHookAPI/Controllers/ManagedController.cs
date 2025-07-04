@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using LineWebHookAPI.Models.Services.Managed;
+using LineWebHookAPI.Models.Services;
 using LineWebHookAPI.Constants;
 using LineWebHookAPI.Models.DB.Repositories;
 

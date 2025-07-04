@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Configurations;
-using LineWebHookAPI.Models.Services.Yahoo;
+using LineWebHookAPI.Models.Services;
 using System.ComponentModel.DataAnnotations;
 using LineWebHookAPI.Validations;
 using LineWebHookAPI.Models.Dto.Line.Hook;
