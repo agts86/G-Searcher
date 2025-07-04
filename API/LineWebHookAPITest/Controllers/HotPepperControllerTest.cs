@@ -84,10 +84,10 @@ public class HotPepperControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
+        var hotPepperHttp = new HotPepperHttpMock(hotPepperGourmetResponseDto);
+        var lineHttpMock = new LineHttpMock();
         var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperService = new HotPepperService(Configuration, hotPepperRepository, Env, http);
-        var hotPepperController = new HotPepperController(hotPepperService);
+        var hotPepperController = new HotPepperController(Configuration, hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
@@ -165,10 +165,10 @@ public class HotPepperControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var http = new HttpAdapterMock(hotPepperGourmetResponseDto);
+        var hotPepperHttp = new HotPepperHttpMock(hotPepperGourmetResponseDto);
+        var lineHttpMock = new LineHttpMock();
         var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperService = new HotPepperService(Configuration, hotPepperRepository, Env, http);
-        var hotPepperController = new HotPepperController(hotPepperService);
+        var hotPepperController = new HotPepperController(Configuration, hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);

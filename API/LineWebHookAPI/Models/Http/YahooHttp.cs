@@ -4,11 +4,33 @@ using LineWebHookAPI.Models.Dto.Yahoo;
 
 namespace LineWebHookAPI.Models.Http;
 
+public interface IYahooHttp
+{
+    /// <summary>
+    /// グルメAPIを実行して結果を取得する
+    /// </summary>
+    /// <param name="message">位置情報</param>
+    /// <param name="genreCode">ジャンルコード</param>
+    /// <returns>実行結果</returns>
+    Task<LocalDto> GetLocateAsync(Message message, string genreCode);
+}
+
 /// <summary>
 /// YahooAPI用のHTTPクライアント
 /// </summary>
-public class YahooHttp(IHttpAdapter http,IConfiguration configuration) : ApiClient(http, configuration)
+public class YahooHttp(HttpClient httpClient, IConfiguration configuration) : IYahooHttp
 {
+
+    /// <summary>
+    /// HttpClient
+    /// </summary>
+    private HttpAdapter Http { get; } = new HttpAdapter(httpClient);
+
+    /// <summary>
+    /// 設定情報
+    /// </summary>
+    private IConfiguration Configuration { get; } = configuration;
+
     /// <summary>
     /// グルメAPIを実行して結果を取得する
     /// </summary>

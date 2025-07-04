@@ -7,25 +7,7 @@ namespace LineWebHookAPI.Models.Services.Managed;
 /// <summary>
 /// 管理用コントローラーのビジネスロジック
 /// </summary>
-public interface IManagedService
-{
-    /// <summary>
-    /// LineChatBotの実行ログを取得する
-    /// </summary>
-    /// <returns>LineChatBotの実行ログ</returns>
-    Task<Meta[]> GetGourmetLogsAsync(MessageTypes messageType);
-
-    /// <summary>
-    /// エラーログを取得する
-    /// </summary>
-    /// <returns>エラーログ</returns>
-    Task<ErrorLog[]> GetErrorLogAsync();
-}
-
-/// <summary>
-/// 管理用コントローラーのビジネスロジック
-/// </summary>
-public class ManagedService(ManagedRepositoryBase managedRepository) : IManagedService
+public class ManagedService(ManagedRepositoryBase managedRepository)
 {
     /// <summary>
     /// リポジトリ

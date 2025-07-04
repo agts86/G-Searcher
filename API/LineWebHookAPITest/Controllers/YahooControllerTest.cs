@@ -90,10 +90,10 @@ public class YahooControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var http = new HttpAdapterMock(local);
+        var yahooHttp = new YahooHttpMock(local);
+        var lineHttpMock = new LineHttpMock();
         var yahooRepository = new YahooRepository(DbContext);
-        var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
-        var yahooController = new YahooController(yahooService);
+        var yahooController = new YahooController(Configuration, yahooRepository, Env, yahooHttp, lineHttpMock);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -165,10 +165,10 @@ public class YahooControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var http = new HttpAdapterMock(local);
+        var yahooHttp = new YahooHttpMock(local);
+        var lineHttpMock = new LineHttpMock();
         var yahooRepository = new YahooRepository(DbContext);
-        var yahooService = new YahooService(Configuration, yahooRepository, Env, http);
-        var yahooController = new YahooController(yahooService);
+        var yahooController = new YahooController(Configuration, yahooRepository, Env, yahooHttp, lineHttpMock);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);

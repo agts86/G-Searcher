@@ -4,17 +4,39 @@ using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 namespace LineWebHookAPI.Models.Http;
 
+
+public interface IHotPepperHttp
+{
+    /// <summary>
+    /// グルメAPIを実行して結果を取得する
+    /// </summary>
+    /// <param name="message">位置情報</param>
+    /// <param name="genreCode">ジャンルコード</param>
+    /// <returns>実行結果</returns>
+    Task<HotPepperGourmetResponseDto> GetGourmetAsync(Message message, GenreCode genreCode);
+}
+
 /// <summary>
 /// ホットペッパーAPI用のHTTPクライアント
 /// </summary>
-public class HotPepperHttp(IHttpAdapter http,IConfiguration configuration) : ApiClient(http, configuration)
+public class HotPepperHttp(HttpClient httpClient, IConfiguration configuration) : IHotPepperHttp
 {
+    /// <summary>
+    /// HttpClient
+    /// </summary>
+    protected HttpAdapter Http { get; } = new HttpAdapter(httpClient);
+
+    /// <summary>
+    /// 設定情報
+    /// </summary>
+    protected IConfiguration Configuration { get; } = configuration;
+
     /// <summary>
     /// グルメAPIを実行して結果を取得する
     /// </summary>
     /// <param name="dto">位置情報、ジャンルコード</param>
     /// <returns>実行結果</returns>
-    public async Task<HotPepperGourmetResponseDto> GetGourmetAsync(Message message,GenreCode genreCode)
+    public async Task<HotPepperGourmetResponseDto> GetGourmetAsync(Message message, GenreCode genreCode)
     {
         const int japanKind = 9;
         var hour = DateTime.UtcNow.AddHours(japanKind).Hour;

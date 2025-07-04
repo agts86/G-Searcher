@@ -12,20 +12,14 @@ namespace LineWebHookAPI.Models.Services.HotPeppers;
 /// <summary>
 /// ホットペッパーコントローラーのビジネスロジック
 /// </summary>
-public interface IHotPepperService
-{
-    /// <summary>
-    /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
-    /// </summary>
-    /// <param name="gourmetGettingDto">位置情報</param>
-    /// <returns>LineAPIにPostした内容</returns>
-    Task<Reply[]> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto, GenreCode genreCode);
-}
-
-/// <summary>
-/// ホットペッパーコントローラーのビジネスロジック
-/// </summary>
-public class HotPepperService(IConfiguration configuration, HotPepperRepositoryBase hotPepperRepository,IHostEnvironment env,IHttpAdapter http) : IHotPepperService
+public class HotPepperService
+(
+    IConfiguration configuration,
+    HotPepperRepositoryBase hotPepperRepository,
+    IHostEnvironment env,
+    IHotPepperHttp hotPepperHttp,
+    ILineHttp lineHttp
+)
 {
     /// <summary>
     /// リポジトリ
@@ -43,9 +37,14 @@ public class HotPepperService(IConfiguration configuration, HotPepperRepositoryB
     private IHostEnvironment Env { get; } = env;
 
     /// <summary>
-    /// Http操作クラス
+    /// HotPepperAPI操作クラス
     /// </summary>
-    protected IHttpAdapter Http { get; set; } = http;
+    protected IHotPepperHttp HotPepperHttp { get; set; } = hotPepperHttp;
+
+    /// <summary>
+    /// LineMessagingAPI操作クラス
+    /// </summary>
+    protected ILineHttp LineHttp { get; set; } = lineHttp;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
@@ -54,26 +53,24 @@ public class HotPepperService(IConfiguration configuration, HotPepperRepositoryB
     /// <returns>LineAPIにPostした内容</returns>
     public async Task<Reply[]> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto, GenreCode genreCode)
     {
-        var hotPepperHttp = new HotPepperHttp(Http, Configuration);
-        var lineHttp = new LineHttp(Http, Configuration);
         var replies = new List<Reply>();
 
-        foreach(var e in gourmetGettingDto.Events ?? [])
+        foreach (var e in gourmetGettingDto.Events ?? [])
         {
             await HotPepperRepository.CreateGourmetLogAsync(e.Message);
             await HotPepperRepository.SaveChangesAsync();
-            
-            var gourmet = await hotPepperHttp.GetGourmetAsync(e.Message, genreCode);
+
+            var gourmet = await HotPepperHttp.GetGourmetAsync(e.Message, genreCode);
             var columns = gourmet.Results.ToCarouselTemplateColumns();
-            
+
             replies.Add
             (
                 new Reply()
                 {
                     ReplyToken = e.ReplyToken,
-                    Messages = 
+                    Messages =
                     [
-                        columns.Length > 0 ? 
+                        columns.Length > 0 ?
                         new TemplateMessage()
                         {
                             AltText = "検索結果",
@@ -86,13 +83,13 @@ public class HotPepperService(IConfiguration configuration, HotPepperRepositoryB
                         {
                             Text = MessageTexts.NotFound
                         }
-                    ] 
+                    ]
                 }
             );
-        }   
-        
+        }
+
         // デバッグ実行時はエラーコード確定のため処理しない
-        if(!Env.IsDevelopment()) replies.ForEach(async x => await lineHttp.PostReplyAsync(x));
+        if (!Env.IsDevelopment()) replies.ForEach(async x => await LineHttp.PostReplyAsync(x));
         return [.. replies];
     }
 }

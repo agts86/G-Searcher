@@ -28,8 +28,7 @@ public class ManagedControllerTest : TestBase
         DbContext.GourmetLocationLogs.AddRange(gourmetLogs);
         await DbContext.SaveChangesAsync();
         var managedRepository = new ManagedRepository(DbContext);
-        var managedService = new ManagedService(managedRepository);
-        var controller = new ManagedController(managedService);
+        var controller = new ManagedController(managedRepository);
         var result = await controller.GetGourmetLogsAsync(MessageTypes.location);
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GourmetLocationLog[]>((result as OkObjectResult).Value);
@@ -62,8 +61,7 @@ public class ManagedControllerTest : TestBase
         DbContext.GourmetWordLogs.AddRange(gourmetLogs);
         await DbContext.SaveChangesAsync();
         var managedRepository = new ManagedRepository(DbContext);
-        var managedService = new ManagedService(managedRepository);
-        var controller = new ManagedController(managedService);
+        var controller = new ManagedController(managedRepository);
         var result = await controller.GetGourmetLogsAsync(MessageTypes.text);
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GourmetWordLog[]>((result as OkObjectResult).Value);
@@ -94,8 +92,7 @@ public class ManagedControllerTest : TestBase
         DbContext.ErrorLogs.AddRange(errorLogs);
         await DbContext.SaveChangesAsync();
         var managedRepository = new ManagedRepository(DbContext);
-        var managedService = new ManagedService(managedRepository);
-        var controller = new ManagedController(managedService);
+        var controller = new ManagedController(managedRepository);
         var result = await controller.GetErrorLogAsync();
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<ErrorLog[]>((result as OkObjectResult).Value);

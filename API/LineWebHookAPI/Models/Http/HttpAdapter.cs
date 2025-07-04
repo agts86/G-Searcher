@@ -4,50 +4,20 @@ using System.Text.Json;
 
 namespace LineWebHookAPI.Models.Http;
 
-public interface IHttpAdapter
-{
-    Task<T> GetAsync<T>(string url, AuthenticationHeaderValue authenticationHeaderValue = null) where T : class;
-
-    Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null) where T : class;
-}
-
 /// <summary>
 /// http操作クラス
 /// </summary>
-public class HttpAdapter : IHttpAdapter
+public class HttpAdapter(HttpClient httpClient)
 {
     /// <summary>
     /// HttpClientオブジェクト
     /// </summary>
-    protected HttpClient HttpClient { get;}
+    protected HttpClient HttpClient { get;} = httpClient;
 
     /// <summary>
     /// シリアライズオプション
     /// </summary>
     private JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
-    public HttpAdapter(int timeout = 100000)
-    {
-        HttpClient = new HttpClient
-        {
-            Timeout = TimeSpan.FromMilliseconds(timeout)
-        };
-    }
-
-    /// <summary>
-    /// コンストラクタ
-    /// CookieとかAllowRedirectとかはここで設定する
-    /// </summary>
-    public HttpAdapter(HttpMessageHandler httpMessageHandler, int timeout = 100000)
-    {
-        HttpClient = new HttpClient(httpMessageHandler)
-        {
-            Timeout = TimeSpan.FromMilliseconds(timeout)
-        };
-    }
 
     /// <summary>
     /// Getリクエストをする

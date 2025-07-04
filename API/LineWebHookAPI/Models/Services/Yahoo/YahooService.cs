@@ -11,20 +11,14 @@ namespace LineWebHookAPI.Models.Services.Yahoo;
 /// <summary>
 /// YahooBコントローラーのビジネスロジック
 /// </summary>
-public interface IYahooService
-{
-    /// <summary>
-    /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
-    /// </summary>
-    /// <param name="gourmetGettingDto">位置情報</param>
-    /// <returns>LineAPIにPostした内容</returns>
-    Task<Reply[]> PostLocalAsync(GourmetGettingDto gourmetGettingDto, string genreCode);
-}
-
-/// <summary>
-/// YahooBコントローラーのビジネスロジック
-/// </summary>
-public class YahooService(IConfiguration configuration, YahooRepositoryBase yahooPepperRepository,IHostEnvironment env,IHttpAdapter http) : IYahooService
+public class YahooService
+(
+    IConfiguration configuration,
+    YahooRepositoryBase yahooPepperRepository,
+    IHostEnvironment env,
+    IYahooHttp yahooHttp,
+    ILineHttp lineHttp
+)
 {
     /// <summary>
     /// リポジトリ
@@ -42,9 +36,14 @@ public class YahooService(IConfiguration configuration, YahooRepositoryBase yaho
     private IHostEnvironment Env { get; } = env;
 
     /// <summary>
-    /// Http操作クラス
+    /// HotPepperAPI操作クラス
     /// </summary>
-    protected IHttpAdapter Http { get; set; } = http;
+    protected IYahooHttp YahooHttp { get; set; } = yahooHttp;
+
+    /// <summary>
+    /// LineMessagingAPI操作クラス
+    /// </summary>
+    protected ILineHttp LineHttp { get; set; } = lineHttp;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
@@ -53,26 +52,24 @@ public class YahooService(IConfiguration configuration, YahooRepositoryBase yaho
     /// <returns>LineAPIにPostした内容</returns>
     public async Task<Reply[]> PostLocalAsync(GourmetGettingDto gourmetGettingDto, string genreCode)
     {
-        var yahooHttp = new YahooHttp(Http, Configuration);
-        var lineHttp = new LineHttp(Http, Configuration);
         var replies = new List<Reply>();
 
-        foreach(var e in gourmetGettingDto.Events ?? [])
+        foreach (var e in gourmetGettingDto.Events ?? [])
         {
             await YahooPepperRepository.CreateGourmetLogAsync(e.Message);
             await YahooPepperRepository.SaveChangesAsync();
-        
-            var gourmet = await yahooHttp.GetLocateAsync(e.Message, genreCode);        
+
+            var gourmet = await YahooHttp.GetLocateAsync(e.Message, genreCode);
             var columns = gourmet.ToCarouselTemplateColumns();
-            
+
             replies.Add
             (
                 new Reply()
                 {
                     ReplyToken = e.ReplyToken,
-                    Messages = 
+                    Messages =
                     [
-                        columns.Length > 0 ? 
+                        columns.Length > 0 ?
                         new TemplateMessage()
                         {
                             AltText = "検索結果",
@@ -85,13 +82,13 @@ public class YahooService(IConfiguration configuration, YahooRepositoryBase yaho
                         {
                             Text = MessageTexts.NotFound
                         }
-                    ] 
+                    ]
                 }
             );
-        }   
-    
+        }
+
         // デバッグ実行時はエラーコード確定のため処理しない
-        if(!Env.IsDevelopment()) replies.ForEach(async x => await lineHttp.PostReplyAsync(x));
+        if (!Env.IsDevelopment()) replies.ForEach(async x => await LineHttp.PostReplyAsync(x));
         return [.. replies];
     }
 }

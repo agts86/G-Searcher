@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Models.Services.Managed;
 using LineWebHookAPI.Constants;
+using LineWebHookAPI.Models.DB.Repositories;
+using LineWebHookAPI.Models.Http;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -9,12 +11,12 @@ namespace LineWebHookAPI.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/managed")]
-public class ManagedController(IManagedService managedService) : ControllerBase
+public class ManagedController(ManagedRepositoryBase managedRepository) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public IManagedService ManagedService { get; protected set; } = managedService;
+    public ManagedService ManagedService { get; protected set; } = new ManagedService(managedRepository);
 
     /// <summary>
     /// LineChatBotの位置情報検索実行ログを取得する
