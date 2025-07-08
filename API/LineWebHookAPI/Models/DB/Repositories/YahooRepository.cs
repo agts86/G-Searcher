@@ -1,5 +1,5 @@
+using LineDevSdk.DTOs.Commons.Messages;
 using LineWebHookAPI.Models.DB.Tables;
-using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 
 namespace LineWebHookAPI.Models.DB.Repositories;
 
@@ -12,7 +12,7 @@ public interface IYahooRepository
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    Task CreateGourmetLogAsync(Message message);
+    Task CreateGourmetLogAsync(IMessage message);
 
     /// <summary>
     /// データベースの変更を保存する
@@ -34,7 +34,7 @@ public class YahooRepository(LineWebHookContext dbContext) : IYahooRepository
     /// ログを作成する
     /// </summary>
     /// <param name="dto">位置情報メッセージ</param>
-    public async Task CreateGourmetLogAsync(Message message)
+    public async Task CreateGourmetLogAsync(IMessage message)
     {
         if (message is LocationMessage locationMessage)
         {

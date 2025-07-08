@@ -1,10 +1,13 @@
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
-using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
-using LineWebHookAPI.Models.Dto.Line.API.Requests;
 using LineWebHookAPI.Constants.Line.API;
-using LineWebHookAPI.Models.Dto.Line.Hook;
+using LineDevSdk.Https;
+using LineDevSdk.DTOs.MessagingAPIs;
+using LineDevSdk.DTOs.Commons.Messages.Templates;
+using LineDevSdk.Dtos.Commons.Messages;
+using LineDevSdk.DTOs.Commons.Messages;
+using LineDevSdk.DTOs.WebHooks;
+using LineDevSdk.DTOs.WebHooks.Events;
 
 namespace LineWebHookAPI.Models.Services;
 
@@ -16,7 +19,8 @@ public class YahooService
     IYahooRepository yahooPepperRepository,
     IWebHostEnvironment env,
     IYahooHttp yahooHttp,
-    ILineHttp lineHttp
+    ILineHttp lineHttp,
+    IConfiguration configuration
 )
 {
     /// <summary>
@@ -39,28 +43,31 @@ public class YahooService
     /// </summary>
     protected ILineHttp LineHttp { get; set; } = lineHttp;
 
+    protected IConfiguration Configuration { get; } = configuration;
+
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Reply[]> PostLocalAsync(GourmetGettingDto gourmetGettingDto, string genreCode)
+    public async Task<Reply[]> PostLocalAsync(WebHook gourmetGettingDto, string genreCode)
     {
         var replies = new List<Reply>();
 
         foreach (var e in gourmetGettingDto.Events ?? [])
         {
-            await YahooPepperRepository.CreateGourmetLogAsync(e.Message);
+            if (e is not MessageEvent messageEvent) continue;
+            await YahooPepperRepository.CreateGourmetLogAsync(messageEvent.Message);
             await YahooPepperRepository.SaveChangesAsync();
 
-            var gourmet = await YahooHttp.GetLocateAsync(e.Message, genreCode);
+            var gourmet = await YahooHttp.GetLocateAsync(messageEvent.Message, genreCode);
             var columns = gourmet.ToCarouselTemplateColumns();
 
             replies.Add
             (
                 new Reply()
                 {
-                    ReplyToken = e.ReplyToken,
+                    ReplyToken = messageEvent.ReplyToken,
                     Messages =
                     [
                         columns.Length > 0 ?
@@ -82,7 +89,16 @@ public class YahooService
         }
 
         // デバッグ実行時はエラーコード確定のため処理しない
-        if (!Env.IsDevelopment()) replies.ForEach(async x => await LineHttp.PostReplyAsync(x));
+        if (!Env.IsDevelopment())
+            replies.ForEach
+            (
+                async x => await LineHttp.PostReplyAsync
+                (
+                    x,
+                    string.Format(Configuration.GetValue<string>("Line:Url"), "reply"),
+                    Configuration.GetValue<string>("Line:Token")
+                )
+            );
         return [.. replies];
     }
 }

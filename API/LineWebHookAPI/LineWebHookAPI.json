@@ -41,17 +41,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GourmetGettingDto"
+                "$ref": "#/components/schemas/WebHook"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/GourmetGettingDto"
+                "$ref": "#/components/schemas/WebHook"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/GourmetGettingDto"
+                "$ref": "#/components/schemas/WebHook"
               }
             }
           },
@@ -120,17 +120,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GourmetGettingDto"
+                "$ref": "#/components/schemas/WebHook"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/GourmetGettingDto"
+                "$ref": "#/components/schemas/WebHook"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/GourmetGettingDto"
+                "$ref": "#/components/schemas/WebHook"
               }
             }
           },
@@ -155,13 +155,10 @@
         },
         "nullable": true
       },
-      "GourmetEvent": {
+      "Event": {
         "required": [
-          "type",
           "mode",
-          "webhookEventId",
-          "replyToken",
-          "message"
+          "webhookEventId"
         ],
         "type": "object",
         "properties": {
@@ -186,48 +183,8 @@
           },
           "deliveryContext": {
             "$ref": "#/components/schemas/DeliveryContextInfo"
-          },
-          "replyToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "message": {
-            "$ref": "#/components/schemas/Message"
           }
         }
-      },
-      "GourmetGettingDto": {
-        "type": "object",
-        "properties": {
-          "destination": {
-            "type": "string",
-            "nullable": true
-          },
-          "events": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GourmetEvent"
-            },
-            "nullable": true
-          }
-        }
-      },
-      "Message": {
-        "required": [
-          "id"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "nullable": true
       },
       "UserSource": {
         "required": [
@@ -246,6 +203,22 @@
           }
         },
         "nullable": true
+      },
+      "WebHook": {
+        "type": "object",
+        "properties": {
+          "destination": {
+            "type": "string",
+            "nullable": true
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Event"
+            },
+            "nullable": true
+          }
+        }
       }
     }
   },

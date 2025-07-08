@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.DB.Repositories;
+using LineDevSdk.Configurations;
+using LineDevSdk.Https;
 
 var builder = WebApplication.CreateBuilder(args);
 

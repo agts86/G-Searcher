@@ -1,5 +1,6 @@
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
+using LineDevSdk.DTOs.Commons.Messages.Actions;
+using LineDevSdk.DTOs.Commons.Messages.Templates;
+
 
 namespace LineWebHookAPI.Models.Dto.Yahoo;
 

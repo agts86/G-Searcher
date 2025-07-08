@@ -1,17 +1,18 @@
-using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPI.Models.Dto.HotPeppers;
 using LineWebHookAPITest.Mocks.Models.Http;
 using Microsoft.AspNetCore.Mvc;
-using LineWebHookAPI.Models.Dto.Line.API.Requests;
-using LineWebHookAPI.Models.Dto.Line.API.Messages;
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Constants.HotPepper;
-using LineWebHookAPI.Models.Dto.Line.Hook;
 using LineWebHookAPI.Controllers;
 using LineWebHookAPI.Models.DB.Repositories;
+using LineDevSdk.DTOs.MessagingAPIs;
+using LineDevSdk.Dtos.Commons.Messages;
+using LineDevSdk.DTOs.Commons.Messages.Templates;
+using LineDevSdk.DTOs.Commons.Messages.Actions;
+using LineDevSdk.DTOs.Commons.Messages;
+using LineDevSdk.DTOs.WebHooks;
+using LineDevSdk.DTOs.WebHooks.Events;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -66,11 +67,11 @@ public class HotPepperControllerTest : TestBase
             }
         };
 
-        var dto = new GourmetGettingDto()
+        var dto = new WebHook()
         {
             Events =
             [
-                new ()
+                new MessageEvent()
                 {
                     ReplyToken = "replyToken",
                     Message = new LocationMessage()
@@ -86,7 +87,7 @@ public class HotPepperControllerTest : TestBase
         var hotPepperHttp = new HotPepperHttpMock(hotPepperGourmetResponseDto);
         var lineHttpMock = new LineHttpMock();
         var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
+        var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock,Configuration);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);
@@ -147,11 +148,11 @@ public class HotPepperControllerTest : TestBase
             }
         };
 
-        var dto = new GourmetGettingDto()
+        var dto = new WebHook()
         {
             Events =
             [
-                new ()
+                new MessageEvent()
                 {
                     ReplyToken = "replyToken",
                     Message = new LocationMessage()
@@ -167,7 +168,7 @@ public class HotPepperControllerTest : TestBase
         var hotPepperHttp = new HotPepperHttpMock(hotPepperGourmetResponseDto);
         var lineHttpMock = new LineHttpMock();
         var hotPepperRepository = new HotPepperRepository(DbContext);
-        var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock);
+        var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock,Configuration);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
 
         Assert.IsType<OkObjectResult>(res);

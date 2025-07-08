@@ -1,11 +1,14 @@
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
-using LineWebHookAPI.Models.Dto.Line.API.Messages;
 using LineWebHookAPI.Models.Http;
-using LineWebHookAPI.Models.Dto.Line.API.Requests;
-using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Constants.HotPepper;
-using LineWebHookAPI.Models.Dto.Line.Hook;
+using LineDevSdk.Https;
+using LineDevSdk.DTOs.MessagingAPIs;
+using LineDevSdk.DTOs.Commons.Messages.Templates;
+using LineDevSdk.Dtos.Commons.Messages;
+using LineDevSdk.DTOs.Commons.Messages;
+using LineDevSdk.DTOs.WebHooks;
+using LineDevSdk.DTOs.WebHooks.Events;
+using LineWebHookAPI.Constants.Line.API;
 
 namespace LineWebHookAPI.Models.Services;
 
@@ -17,7 +20,8 @@ public class HotPepperService
     IHotPepperRepository hotPepperRepository,
     IWebHostEnvironment env,
     IHotPepperHttp hotPepperHttp,
-    ILineHttp lineHttp
+    ILineHttp lineHttp,
+    IConfiguration configuration
 )
 {
     /// <summary>
@@ -40,28 +44,31 @@ public class HotPepperService
     /// </summary>
     protected ILineHttp LineHttp { get; set; } = lineHttp;
 
+    protected IConfiguration Configuration { get; } = configuration;
+
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Reply[]> PostGourmetLocationAsync(GourmetGettingDto gourmetGettingDto, GenreCode genreCode)
+    public async Task<Reply[]> PostGourmetLocationAsync(WebHook gourmetGettingDto, GenreCode genreCode)
     {
         var replies = new List<Reply>();
 
         foreach (var e in gourmetGettingDto.Events ?? [])
         {
-            await HotPepperRepository.CreateGourmetLogAsync(e.Message);
+            if (e is not MessageEvent messageEvent) continue;
+            await HotPepperRepository.CreateGourmetLogAsync(messageEvent.Message);
             await HotPepperRepository.SaveChangesAsync();
 
-            var gourmet = await HotPepperHttp.GetGourmetAsync(e.Message, genreCode);
+            var gourmet = await HotPepperHttp.GetGourmetAsync(messageEvent.Message, genreCode);
             var columns = gourmet.Results.ToCarouselTemplateColumns();
 
             replies.Add
             (
                 new Reply()
                 {
-                    ReplyToken = e.ReplyToken,
+                    ReplyToken = messageEvent.ReplyToken,
                     Messages =
                     [
                         columns.Length > 0 ?
@@ -83,7 +90,16 @@ public class HotPepperService
         }
 
         // デバッグ実行時はエラーコード確定のため処理しない
-        if (!Env.IsDevelopment()) replies.ForEach(async x => await LineHttp.PostReplyAsync(x));
+        if (!Env.IsDevelopment())
+            replies.ForEach
+            (
+                async x => await LineHttp.PostReplyAsync
+                (
+                    x,
+                    string.Format(Configuration.GetValue<string>("Line:Url"), "reply"),
+                    Configuration.GetValue<string>("Line:Token")
+                )
+            );
         return [.. replies];
     }
 }

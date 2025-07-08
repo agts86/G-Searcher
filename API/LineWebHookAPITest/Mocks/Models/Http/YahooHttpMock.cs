@@ -1,4 +1,4 @@
-using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
+using LineDevSdk.DTOs.Commons.Messages;
 using LineWebHookAPI.Models.Dto.Yahoo;
 using LineWebHookAPI.Models.Http;
 
@@ -8,7 +8,7 @@ public class YahooHttpMock(LocalDto getLocateAsyncMock = null) : IYahooHttp
 {
     private LocalDto GetLocateAsyncMock { get; } = getLocateAsyncMock;
 
-    public async Task<LocalDto> GetLocateAsync(Message message, string genreCode)
+    public async Task<LocalDto> GetLocateAsync(IMessage message, string genreCode)
     {
         return await Task.Run(() => GetLocateAsyncMock);
     }

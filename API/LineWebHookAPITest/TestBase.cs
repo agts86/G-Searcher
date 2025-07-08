@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Models.DB;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace LineWebHookAPITest;
 
@@ -28,6 +27,9 @@ public abstract class TestBase
     /// 環境情報
     /// </summary>
     protected IWebHostEnvironment Env { get; } = new WebHostEnvironment();
+
+    protected IConfiguration Configuration { get; } = new ConfigurationBuilder()
+        .Build();
 
     /// <summary>
     /// IHostEnvironment実装クラス

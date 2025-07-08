@@ -18,4 +18,9 @@
   <ItemGroup>
     <ProjectReference Include="..\LineWebHookAPI\LineWebHookAPI.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="LineDevSdk">
+      <HintPath>../LineWebHookAPI/lib/LineDevSdk.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

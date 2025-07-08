@@ -1,10 +1,11 @@
 using LineWebHookAPI.Models.Services;
 using Microsoft.AspNetCore.Mvc;
-using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Constants.HotPepper;
-using LineWebHookAPI.Models.Dto.Line.Hook;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.Http;
+using LineDevSdk.Https;
+using LineDevSdk.Configurations;
+using LineDevSdk.DTOs.WebHooks;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -18,13 +19,14 @@ public class HotPepperController
     IHotPepperRepository hotPepperRepository,
     IWebHostEnvironment env,
     IHotPepperHttp hotPepperHttp,
-    ILineHttp lineHttp
+    ILineHttp lineHttp,
+    IConfiguration configuration
 ) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public HotPepperService HotPepperService { get; protected set; } = new HotPepperService(hotPepperRepository, env, hotPepperHttp, lineHttp);
+    public HotPepperService HotPepperService { get; protected set; } = new HotPepperService(hotPepperRepository, env, hotPepperHttp, lineHttp, configuration);
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ホットペッパーAPIを実行し返答する
@@ -34,7 +36,7 @@ public class HotPepperController
     /// <returns>LineAPIにPostした内容</returns>
     [HttpPost("gourmet/location")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] GourmetGettingDto gourmetGettingDto, [FromQuery] GenreCode genreCode)
+    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] WebHook gourmetGettingDto, [FromQuery] GenreCode genreCode)
     {
         var res = await HotPepperService.PostGourmetLocationAsync(gourmetGettingDto, genreCode);
         return Ok(res);

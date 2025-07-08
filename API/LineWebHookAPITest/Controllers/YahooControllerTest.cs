@@ -1,16 +1,17 @@
-using LineWebHookAPI.Models.Dto.Line.Hook.Messages;
 using LineWebHookAPITest.Mocks.Models.Http;
 using Microsoft.AspNetCore.Mvc;
-using LineWebHookAPI.Models.Dto.Line.API.Requests;
-using LineWebHookAPI.Models.Dto.Line.API.Messages;
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Templates;
-using LineWebHookAPI.Models.Dto.Line.API.Messages.Actions;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
-using LineWebHookAPI.Models.Dto.Line.Hook;
 using LineWebHookAPI.Models.Dto.Yahoo;
 using LineWebHookAPI.Controllers;
 using LineWebHookAPI.Models.DB.Repositories;
+using LineDevSdk.DTOs.Commons.Messages;
+using LineDevSdk.DTOs.MessagingAPIs;
+using LineDevSdk.Dtos.Commons.Messages;
+using LineDevSdk.DTOs.Commons.Messages.Templates;
+using LineDevSdk.DTOs.Commons.Messages.Actions;
+using LineDevSdk.DTOs.WebHooks;
+using LineDevSdk.DTOs.WebHooks.Events;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -72,11 +73,11 @@ public class YahooControllerTest : TestBase
             ]
         };
 
-        var dto = new GourmetGettingDto()
+        var dto = new WebHook()
         {
             Events =
             [
-                new ()
+                new MessageEvent()
                 {
                     ReplyToken = "replyToken",
                     Message = new LocationMessage()
@@ -92,7 +93,7 @@ public class YahooControllerTest : TestBase
         var yahooHttp = new YahooHttpMock(local);
         var lineHttpMock = new LineHttpMock();
         var yahooRepository = new YahooRepository(DbContext);
-        var yahooController = new YahooController(yahooRepository, Env, yahooHttp, lineHttpMock);
+        var yahooController = new YahooController(yahooRepository, Env, yahooHttp, lineHttpMock, Configuration);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
@@ -147,11 +148,11 @@ public class YahooControllerTest : TestBase
     {
         var local = new LocalDto();
 
-        var dto = new GourmetGettingDto()
+        var dto = new WebHook()
         {
             Events =
             [
-                new ()
+                new MessageEvent()
                 {
                     ReplyToken = "replyToken",
                     Message = new LocationMessage()
@@ -167,7 +168,7 @@ public class YahooControllerTest : TestBase
         var yahooHttp = new YahooHttpMock(local);
         var lineHttpMock = new LineHttpMock();
         var yahooRepository = new YahooRepository(DbContext);
-        var yahooController = new YahooController(yahooRepository, Env, yahooHttp, lineHttpMock);
+        var yahooController = new YahooController(yahooRepository, Env, yahooHttp, lineHttpMock, Configuration);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         Assert.IsType<OkObjectResult>(res);
