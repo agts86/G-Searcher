@@ -89,11 +89,7 @@ public class HotPepperControllerTest : TestBase
         var hotPepperRepository = new HotPepperRepository(DbContext);
         var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock,Configuration);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
-
-        Assert.IsType<OkObjectResult>(res);
-        Assert.IsType<Reply[]>((res as OkObjectResult).Value);
-
-        var contents = (res as OkObjectResult).Value as Reply[];
+        var contents = Assert.IsType<Reply[]>(res.Value);
         Assert.Single(contents);
         Assert.Equal("replyToken", contents[0].ReplyToken);
         Assert.Single(contents[0].Messages);
@@ -170,11 +166,8 @@ public class HotPepperControllerTest : TestBase
         var hotPepperRepository = new HotPepperRepository(DbContext);
         var hotPepperController = new HotPepperController(hotPepperRepository, Env, hotPepperHttp, lineHttpMock,Configuration);
         var res = await hotPepperController.PostGourmetLocationAsync(dto,GenreCode.G013);
-
-        Assert.IsType<OkObjectResult>(res);
-        Assert.IsType<Reply[]>((res as OkObjectResult).Value);
-
-        var contents = (res as OkObjectResult).Value as Reply[];
+        
+        var contents = Assert.IsType<Reply[]>(res.Value);
         Assert.Single(contents);
         Assert.Equal("replyToken", contents[0].ReplyToken);
         Assert.Single(contents[0].Messages);

@@ -7,6 +7,7 @@ using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.Http;
 using LineDevSdk.Https;
 using LineDevSdk.DTOs.WebHooks;
+using LineDevSdk.DTOs.MessagingAPIs;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -37,12 +38,12 @@ public class YahooController
     /// <returns>LineAPIにPostした内容</returns>
     [HttpPost("local")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<IActionResult> PostLocalAsync
+    public async Task<ActionResult<Reply[]>> PostLocalAsync
     (
         [FromBody] WebHook gourmetGettingDto,
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode)
     {
         var res = await YahooService.PostLocalAsync(gourmetGettingDto, genreCode);
-        return Ok(res);
+        return res;
     }
 }
