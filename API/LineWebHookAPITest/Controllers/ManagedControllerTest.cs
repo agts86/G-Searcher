@@ -93,8 +93,9 @@ public class ManagedControllerTest : TestBase
         var managedRepository = new ManagedRepository(DbContext);
         var controller = new ManagedController(managedRepository);
         var result = await controller.GetErrorLogAsync();
-
-        var content = Assert.IsType<ErrorLog[]>(result.Value);
+        Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<ErrorLog[]>((result as OkObjectResult).Value);
+        var content = (result as OkObjectResult).Value as ErrorLog[];
         Assert.Equal(2, content.Length);
         Assert.Equal("Error1", content[0].Contents);
         Assert.Equal(DateTime.Now.ToUniversalTime().AddHours(JapanKind).Date, content[0].CreatedAt.Date);

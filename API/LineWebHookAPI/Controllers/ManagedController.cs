@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Models.Services;
 using LineWebHookAPI.Constants;
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.DB.Tables;
 
 
 namespace LineWebHookAPI.Controllers;
@@ -35,9 +34,9 @@ public class ManagedController(IManagedRepository managedRepository) : Controlle
     /// </summary>
     /// <returns>エラーログ</returns>
     [HttpGet("error-log")]
-    public async Task<ActionResult<ErrorLog[]>> GetErrorLogAsync()
+    public async Task<IActionResult> GetErrorLogAsync()
     {
         var res = await ManagedService.GetErrorLogAsync();
-        return res;
+        return Ok(res);
     }
 }

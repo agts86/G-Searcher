@@ -6,7 +6,6 @@ using LineWebHookAPI.Models.Http;
 using LineDevSdk.Https;
 using LineDevSdk.Configurations;
 using LineDevSdk.DTOs.WebHooks;
-using LineDevSdk.DTOs.MessagingAPIs;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -37,9 +36,9 @@ public class HotPepperController
     /// <returns>LineAPIにPostした内容</returns>
     [HttpPost("gourmet/location")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<ActionResult<Reply[]>> PostGourmetLocationAsync([FromBody] WebHook gourmetGettingDto, [FromQuery] GenreCode genreCode)
+    public async Task<IActionResult> PostGourmetLocationAsync([FromBody] WebHook gourmetGettingDto, [FromQuery] GenreCode genreCode)
     {
         var res = await HotPepperService.PostGourmetLocationAsync(gourmetGettingDto, genreCode);
-        return res;
+        return Ok(res);
     }
 }

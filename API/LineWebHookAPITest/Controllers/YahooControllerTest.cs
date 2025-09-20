@@ -96,8 +96,10 @@ public class YahooControllerTest : TestBase
         var yahooController = new YahooController(yahooRepository, Env, yahooHttp, lineHttpMock, Configuration);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
-        var contents = Assert.IsType<Reply[]>(res.Value);
+        Assert.IsType<OkObjectResult>(res);
+        Assert.IsType<Reply[]>((res as OkObjectResult).Value);
 
+        var contents = (res as OkObjectResult).Value as Reply[];
         Assert.Single(contents);
         Assert.Equal("replyToken", contents[0].ReplyToken);
         Assert.Single(contents[0].Messages);
@@ -169,7 +171,10 @@ public class YahooControllerTest : TestBase
         var yahooController = new YahooController(yahooRepository, Env, yahooHttp, lineHttpMock, Configuration);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
-        var contents = Assert.IsType<Reply[]>(res.Value);
+        Assert.IsType<OkObjectResult>(res);
+        Assert.IsType<Reply[]>((res as OkObjectResult).Value);
+
+        var contents = (res as OkObjectResult).Value as Reply[];
         Assert.Single(contents);
         Assert.Equal("replyToken", contents[0].ReplyToken);
         Assert.Single(contents[0].Messages);
