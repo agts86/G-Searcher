@@ -9,12 +9,12 @@ namespace LineWebHookAPI.Configurations;
 /// ミドルウェア
 /// 例外はここで全て処理する
 /// </summary>
-public class Middleware(LineWebHookContext dbContext) : IMiddleware
+public class Middleware(IMiddleWareRepository repository) : IMiddleware
 {
     /// <summary>
     /// ミドルウェア用リポジトリ
     /// </summary>
-    public MiddleWareRepository Repository { get; } = new MiddleWareRepository(dbContext);
+    public IMiddleWareRepository Repository { get; } = repository;
 
     /// <summary>
     /// 例外処理
