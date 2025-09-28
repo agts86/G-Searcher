@@ -17,29 +17,27 @@ public class LineWebHookContext(DbContextOptions<LineWebHookContext> options) : 
     {
         modelBuilder.Entity<ErrorLog>(entity =>
         {
-            entity.HasKey(e => new {e.Id});
+            entity.HasKey(e => e.Id);
         });
         modelBuilder.Entity<GourmetLocationLog>(entity =>
         {
-            entity.HasKey(e => new {e.Id});
+            entity.HasKey(e => e.Id);
         });
         modelBuilder.Entity<GourmetWordLog>(entity =>
         {
-            entity.HasKey(e => new {e.Id});
+            entity.HasKey(e => e.Id);
         });
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        var saveChanges = Polymorphism.CreatePolymorphismArray<ISaveChanges>();
         foreach (var entry in ChangeTracker.Entries())
         {
             if (entry.Entity is not Meta meta) continue;
-
-            var saveChanges = Polymorphism.CreatePolymorphismArray<ISaveChanges>();
-                
             foreach (var saveChange in saveChanges)
             {
-                if(entry.State != saveChange.EntityState) continue;
+                if (entry.State != saveChange.EntityState) continue;
                 saveChange.ChangeMeta(meta);
             }
 
