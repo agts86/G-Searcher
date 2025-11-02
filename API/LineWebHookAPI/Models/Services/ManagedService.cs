@@ -12,7 +12,7 @@ public class ManagedService(IManagedRepository managedRepository)
     /// <summary>
     /// リポジトリ
     /// </summary>
-    public IManagedRepository ManagedRepository { get; protected set; } = managedRepository;
+    private IManagedRepository ManagedRepository { get; } = managedRepository;
 
     /// <summary>
     /// LineChatBotの実行ログを取得する

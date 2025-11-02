@@ -22,7 +22,7 @@ public class YahooService
     /// <summary>
     /// リポジトリ
     /// </summary>
-    protected IYahooRepository YahooRepository { get; set; } = yahooRepository;
+    private IYahooRepository YahooRepository { get; } = yahooRepository;
 
     /// <summary>
     /// 環境情報
@@ -32,7 +32,7 @@ public class YahooService
     /// <summary>
     /// 設定情報
     /// </summary>
-    protected IConfiguration Configuration { get; } = configuration;
+    private IConfiguration Configuration { get; } = configuration;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
