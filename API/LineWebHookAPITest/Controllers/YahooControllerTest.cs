@@ -1,4 +1,3 @@
-using LineWebHookAPITest.Mocks.Models.Http;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Models.Dto.Yahoo;
@@ -89,8 +88,8 @@ public class YahooControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var yahooHttp = new YahooHttpMock(local);
-        var lineHttpMock = new LineHttpMock();
+        var yahooHttp = CreateYahooHttpMock(local);
+        var lineHttpMock = CreateLineHttpMock();
         var yahooRepository = new YahooRepository(DbContext,yahooHttp,lineHttpMock);
         var yahooController = new YahooController(yahooRepository, Env, Configuration);
         var res = await yahooController.PostLocalAsync(dto,"0106");
@@ -162,8 +161,8 @@ public class YahooControllerTest : TestBase
         };
 
         Env.EnvironmentName = "Development";
-        var yahooHttp = new YahooHttpMock(local);
-        var lineHttpMock = new LineHttpMock();
+        var yahooHttp = CreateYahooHttpMock(local);
+        var lineHttpMock = CreateLineHttpMock();
         var yahooRepository = new YahooRepository(DbContext,yahooHttp,lineHttpMock);
         var yahooController = new YahooController(yahooRepository, Env, Configuration);
         var res = await yahooController.PostLocalAsync(dto,"0106");
