@@ -19,7 +19,7 @@ public abstract class TestBase
     protected LineWebHookContext DbContext { get; set; } = new LineWebHookContext
     (
         new DbContextOptionsBuilder<LineWebHookContext>()
-        .UseInMemoryDatabase(Guid.NewGuid().ToString())
+        .UseSqlite("Filename=:memory:")
         .Options
     );
 
@@ -30,6 +30,12 @@ public abstract class TestBase
 
     protected IConfiguration Configuration { get; } = new ConfigurationBuilder()
         .Build();
+
+    public TestBase()
+    {
+        DbContext.Database.OpenConnection();
+        DbContext.Database.EnsureCreated();
+    }
 
     /// <summary>
     /// IHostEnvironment実装クラス

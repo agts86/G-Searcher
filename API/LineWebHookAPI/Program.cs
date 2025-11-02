@@ -7,6 +7,7 @@ using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineDevSdk.Configurations;
 using LineDevSdk.Https;
+using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,9 +35,13 @@ builder.Services.AddHttpClient<IHotPepperHttp, HotPepperHttp>();
 // Enumを文字列として扱う
 builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // EFCoreの設定
+var keepAliveConnection = new SqliteConnection(builder.Configuration.GetConnectionString("SqliteConnection"));
+keepAliveConnection.Open();
+
 builder.Services.AddDbContext<LineWebHookContext>
 (
-    options => options.UseInMemoryDatabase("LineWebHookDB")
+    options =>
+    options.UseSqlite(keepAliveConnection)
 );
 
 var app = builder.Build();
@@ -46,6 +51,14 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
+}
+
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<LineWebHookContext>();
+var isMemory = dbContext.Database.GetDbConnection().ConnectionString == "DataSource=:memory:";
+if (isMemory)
+{
+    dbContext.Database.Migrate();
 }
 
 app.UseMiddleware<Middleware>();
