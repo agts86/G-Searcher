@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace LineWebHookAPI.Validations;
 
-public class HalfNumericAttribute : ValidationAttribute
+public partial class HalfNumericAttribute : ValidationAttribute
 {
-    private Regex Regex { get; } = new(@"^\d+$");
+    private Regex Regex { get; } = HalfNumeric();
 
     public override bool IsValid(object value)
     {
@@ -13,4 +13,7 @@ public class HalfNumericAttribute : ValidationAttribute
             return Regex.IsMatch(str);
         return true;
     }
+
+    [GeneratedRegex(@"^\d+$")]
+    private static partial Regex HalfNumeric();
 }
