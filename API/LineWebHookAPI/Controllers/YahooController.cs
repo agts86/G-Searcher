@@ -20,15 +20,13 @@ public class YahooController
 (
     IYahooRepository yahooRepository,
     IWebHostEnvironment env,
-    IYahooHttp yahooHttp,
-    ILineHttp lineHttp,
     IConfiguration configuration
 ) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public YahooService YahooService { get; protected set; } = new YahooService(yahooRepository, env, yahooHttp, lineHttp, configuration);
+    public YahooService YahooService { get; protected set; } = new YahooService(yahooRepository, env, configuration);
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する

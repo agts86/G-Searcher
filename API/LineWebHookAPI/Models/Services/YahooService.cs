@@ -1,7 +1,5 @@
 using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Constants.Line.API;
-using LineDevSdk.Https;
 using LineDevSdk.DTOs.MessagingAPIs;
 using LineDevSdk.DTOs.Commons.Messages.Templates;
 using LineDevSdk.Dtos.Commons.Messages;
@@ -16,17 +14,15 @@ namespace LineWebHookAPI.Models.Services;
 /// </summary>
 public class YahooService
 (
-    IYahooRepository yahooPepperRepository,
+    IYahooRepository yahooRepository,
     IWebHostEnvironment env,
-    IYahooHttp yahooHttp,
-    ILineHttp lineHttp,
     IConfiguration configuration
 )
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    protected IYahooRepository YahooPepperRepository { get; set; } = yahooPepperRepository;
+    protected IYahooRepository YahooRepository { get; set; } = yahooRepository;
 
     /// <summary>
     /// 環境情報
@@ -34,15 +30,8 @@ public class YahooService
     private IWebHostEnvironment Env { get; } = env;
 
     /// <summary>
-    /// HotPepperAPI操作クラス
+    /// 設定情報
     /// </summary>
-    protected IYahooHttp YahooHttp { get; set; } = yahooHttp;
-
-    /// <summary>
-    /// LineMessagingAPI操作クラス
-    /// </summary>
-    protected ILineHttp LineHttp { get; set; } = lineHttp;
-
     protected IConfiguration Configuration { get; } = configuration;
 
     /// <summary>
@@ -57,10 +46,10 @@ public class YahooService
         foreach (var e in gourmetGettingDto.Events ?? [])
         {
             if (e is not MessageEvent messageEvent) continue;
-            await YahooPepperRepository.CreateGourmetLogAsync(messageEvent.Message);
-            await YahooPepperRepository.SaveChangesAsync();
+            await YahooRepository.CreateGourmetLogAsync(messageEvent.Message);
+            await YahooRepository.SaveChangesAsync();
 
-            var gourmet = await YahooHttp.GetLocateAsync(messageEvent.Message, genreCode);
+            var gourmet = await YahooRepository.GetLocateAsync(messageEvent.Message, genreCode);
             var columns = gourmet.ToCarouselTemplateColumns();
 
             replies.Add
@@ -92,7 +81,7 @@ public class YahooService
         if (!Env.IsDevelopment())
             replies.ForEach
             (
-                async x => await LineHttp.PostReplyAsync
+                async x => await YahooRepository.PostReplyAsync
                 (
                     x,
                     string.Format(Configuration.GetValue<string>("Line:Url"), "reply"),

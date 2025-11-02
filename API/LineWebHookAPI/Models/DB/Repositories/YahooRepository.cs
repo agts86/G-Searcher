@@ -1,5 +1,9 @@
 using LineDevSdk.DTOs.Commons.Messages;
+using LineDevSdk.DTOs.MessagingAPIs;
+using LineDevSdk.Https;
 using LineWebHookAPI.Models.DB.Tables;
+using LineWebHookAPI.Models.Dto.Yahoo;
+using LineWebHookAPI.Models.Http;
 
 namespace LineWebHookAPI.Models.DB.Repositories;
 
@@ -15,6 +19,22 @@ public interface IYahooRepository
     Task CreateGourmetLogAsync(IMessage message);
 
     /// <summary>
+    /// グルメAPIを実行して結果を取得する
+    /// </summary>
+    /// <param name="message">位置情報</param>
+    /// <param name="genreCode">ジャンルコード</param>
+    /// <returns>実行結果</returns>
+    Task<LocalDto> GetLocateAsync(IMessage message, string genreCode);
+    
+    /// <summary>
+    /// LineAPIに返信を送信する
+    /// </summary>
+    /// <param name="Reply">返答内容</param>
+    /// <param name="endPointUrl">エンドポイント</param>
+    /// <param name="token">トークン</param>
+    Task PostReplyAsync(Reply Reply, string endPointUrl, string token);
+
+    /// <summary>
     /// データベースの変更を保存する
     /// </summary>
     Task SaveChangesAsync();
@@ -23,12 +43,22 @@ public interface IYahooRepository
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public class YahooRepository(LineWebHookContext dbContext) : IYahooRepository
+public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp, ILineHttp lineHttp) : IYahooRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト
     /// </summary>
     protected LineWebHookContext DbContext { get; } = dbContext;
+
+    /// <summary>
+    /// YOLPAPI操作クラス
+    /// </summary>
+    protected IYahooHttp YahooHttp { get; set; } = yahooHttp;
+
+    /// <summary>
+    /// LineMessagingAPI操作クラス
+    /// </summary>
+    protected ILineHttp LineHttp { get; set; } = lineHttp;
 
     /// <summary>
     /// ログを作成する
@@ -73,6 +103,28 @@ public class YahooRepository(LineWebHookContext dbContext) : IYahooRepository
             Text = message.Text
         };
         await DbContext.GourmetWordLogs.AddAsync(log);
+    }
+
+    /// <summary>
+    /// グルメAPIを実行して結果を取得する
+    /// </summary>
+    /// <param name="message">位置情報</param>
+    /// <param name="genreCode">ジャンルコード</param>
+    /// <returns>実行結果</returns>
+    public Task<LocalDto> GetLocateAsync(IMessage message, string genreCode)
+    {
+        return YahooHttp.GetLocateAsync(message, genreCode);
+    }
+
+    /// <summary>
+    /// LineAPIに返信を送信する
+    /// </summary>
+    /// <param name="Reply">返答内容</param>
+    /// <param name="endPointUrl">エンドポイント</param>
+    /// <param name="token">トークン</param>
+    public Task PostReplyAsync(Reply Reply, string endPointUrl, string token)
+    {
+        return LineHttp.PostReplyAsync(Reply, endPointUrl, token);
     }
     
     /// <summary>
