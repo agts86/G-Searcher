@@ -24,12 +24,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddTransient<Middleware>();
 builder.Services.AddScoped<LineSignatureFilter>();
 builder.Services.AddScoped<IYahooRepository, YahooRepository>();
-builder.Services.AddScoped<IHotPepperRepository, HotPepperRepository>();
 builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
 builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
 builder.Services.AddHttpClient<ILineHttp, LineHttp>();
 builder.Services.AddHttpClient<IYahooHttp, YahooHttp>();
-builder.Services.AddHttpClient<IHotPepperHttp, HotPepperHttp>();
 
 
 // Enumを文字列として扱う

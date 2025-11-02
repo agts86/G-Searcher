@@ -5,91 +5,6 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/hot-pepper/gourmet/location": {
-      "post": {
-        "tags": [
-          "HotPepper"
-        ],
-        "parameters": [
-          {
-            "name": "genreCode",
-            "in": "query",
-            "schema": {
-              "enum": [
-                "G001",
-                "G002",
-                "G003",
-                "G004",
-                "G005",
-                "G006",
-                "G007",
-                "G008",
-                "G009",
-                "G010",
-                "G011",
-                "G012",
-                "G013",
-                "G014",
-                "G015",
-                "G016",
-                "G017"
-              ]
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WebHook"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WebHook"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/WebHook"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reply"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reply"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Reply"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/managed/gourmet/{messageType}": {
       "get": {
         "tags": [
@@ -353,9 +268,6 @@
     }
   },
   "tags": [
-    {
-      "name": "HotPepper"
-    },
     {
       "name": "Managed"
     },
