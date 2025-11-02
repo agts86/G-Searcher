@@ -21,12 +21,11 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 ■ DB
 
--   PostgreSQL
+-   Sqlite
 
 ■ クラウド
 
--   WEB:Back4App（コスト次第でAws LambdaかAzure CloudFunctionsに移行する）
--   DB:Supabase
+-   Azure AppService
 
 ■ コンテナ
 
@@ -34,15 +33,13 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 ■ その他<br>
 
--   HotPepper API
 -   YOLP API
 -   Line Messaging API
 
 ## 前提
 
-1. HotPepperAPIのキーを取得済み
-2. YOLP APIのキーを取得済み
-3. Line公式アカウント、Line Developerアカウント開設済み（デバッグ時は不要）
+1. YOLP APIのキーを取得済み
+2. Line公式アカウント、Line Developerアカウント開設済み（デバッグ時は不要）
 
 ## 実行方法
 
@@ -73,10 +70,6 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
   {
     "ConnectionStrings": {
       "PostgreSQLConnection": "{docker-compose使わない場合は任意に設定)}"
-    },
-    "HotPepper": {
-      "Url": "https://webservice.recruit.co.jp/hotpepper/{0}/v1/?key={1}&format=json",
-      "Key": {取得したHotPepperのAPIキー)
     },
     "Line": {
       "Url": "https://api.line.me/v2/bot/message/{0}",
