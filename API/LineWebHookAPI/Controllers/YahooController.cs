@@ -25,6 +25,13 @@ public class YahooController
     /// </summary>
     private IYahooService YahooService { get; } = yahooService;
 
+    /// <summary>
+    /// ラインフックからの位置情報を受け取り、ジョブキューに登録する
+    /// </summary>
+    /// <param name="gourmetGettingDto">位置情報</param>
+    /// <param name="genreCode">ジャンルコード</param>
+    /// <param name="queue">ジョブキュー</param>
+    /// <returns></returns>
     [HttpPost("local/accept")]
     [ServiceFilter(typeof(LineSignatureFilter))]
     public async Task<IActionResult> AcceptLocalAsync(
@@ -32,17 +39,15 @@ public class YahooController
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode,
         [FromServices] IBackgroundJobQueue<YahooLocalJob> queue)
     {
-        var jobId = Guid.NewGuid().ToString();
-
-        await queue.EnqueueAsync(new YahooLocalJob
+        var job = new YahooLocalJob
         (
-            jobId,
             gourmetGettingDto,
             genreCode
-        ));
+        );
+        await queue.EnqueueAsync(job);
 
         // ここでは実処理しないで即返す
-        return Accepted(new { jobId });
+        return Accepted(new { job.Id });
     }
 
     /// <summary>

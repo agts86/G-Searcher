@@ -1,15 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using LineDevSdk.DTOs.WebHooks;
 
 namespace LineWebHookAPI.Models.Dto.Yahoo;
 
-public class YahooLocalJob(string id, WebHook webHook, string genreCode)
+/// <summary>
+/// Yahoo!ローカルサーチジョブ
+/// </summary>
+public class YahooLocalJob(WebHook webHook, string genreCode)
 {
-    public string Id { get; } = id;
+    /// <summary>
+    /// ジョブのID
+    /// </summary>
+    public string Id { get; } = Guid.NewGuid().ToString();
 
+    /// <summary>
+    /// WebHookの情報
+    /// </summary>
     public WebHook WebHook { get; set; } = webHook;
+
+    /// <summary>
+    /// ジャンルコード
+    /// </summary>
     public string GenreCode { get; } = genreCode;
 }
