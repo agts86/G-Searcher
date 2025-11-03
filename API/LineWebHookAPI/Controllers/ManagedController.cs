@@ -8,7 +8,7 @@ using LineWebHookAPI.Models.DB.Tables;
 namespace LineWebHookAPI.Controllers;
 
 /// <summary>
-/// ホットペッパー関連API
+/// ログ取得用関連API
 /// </summary>
 [ApiController]
 [Route("api/managed")]
