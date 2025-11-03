@@ -22,9 +22,7 @@ public class ManagedService(IManagedRepository managedRepository)
     {
         if(messageType == MessageTypes.location)
             return await ManagedRepository.FetchGourmetLocationLogsAsync();
-        else if (messageType == MessageTypes.text)
-            return await ManagedRepository.FetchGourmetWordLogsAsync();
-        return [];
+        return await ManagedRepository.FetchGourmetWordLogsAsync();
     }
 
     /// <summary>

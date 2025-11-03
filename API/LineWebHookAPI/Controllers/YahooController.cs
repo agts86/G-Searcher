@@ -3,11 +3,10 @@ using LineDevSdk.Configurations;
 using LineWebHookAPI.Models.Services;
 using System.ComponentModel.DataAnnotations;
 using LineWebHookAPI.Validations;
-using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Models.Http;
-using LineDevSdk.Https;
 using LineDevSdk.DTOs.WebHooks;
 using LineDevSdk.DTOs.MessagingAPIs;
+using LineWebHookAPI.Models.Job;
+using LineWebHookAPI.Models.Dto.Yahoo;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -18,15 +17,33 @@ namespace LineWebHookAPI.Controllers;
 [Route("api/yahoo")]
 public class YahooController
 (
-    IYahooRepository yahooRepository,
-    IWebHostEnvironment env,
-    IConfiguration configuration
+    IYahooService yahooService
 ) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public YahooService YahooService { get; protected set; } = new YahooService(yahooRepository, env, configuration);
+    private IYahooService YahooService { get; } = yahooService;
+
+    [HttpPost("local/accept")]
+    [ServiceFilter(typeof(LineSignatureFilter))]
+    public async Task<IActionResult> AcceptLocalAsync(
+        [FromBody] WebHook gourmetGettingDto,
+        [FromQuery][MaxLength(7)][HalfNumeric] string genreCode,
+        [FromServices] IBackgroundJobQueue<YahooLocalJob> queue)
+    {
+        var jobId = Guid.NewGuid().ToString();
+
+        await queue.EnqueueAsync(new YahooLocalJob
+        (
+            jobId,
+            gourmetGettingDto,
+            genreCode
+        ));
+
+        // ここでは実処理しないで即返す
+        return Accepted(new { jobId });
+    }
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する

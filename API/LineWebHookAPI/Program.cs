@@ -8,6 +8,9 @@ using LineWebHookAPI.Models.DB.Repositories;
 using LineDevSdk.Configurations;
 using LineDevSdk.Https;
 using Microsoft.Data.Sqlite;
+using LineWebHookAPI.Models.Services;
+using LineWebHookAPI.Models.Job;
+using LineWebHookAPI.Models.Dto.Yahoo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,9 @@ builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
 builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
 builder.Services.AddHttpClient<ILineHttp, LineHttp>();
 builder.Services.AddHttpClient<IYahooHttp, YahooHttp>();
+builder.Services.AddScoped<IYahooService, YahooService>();
+builder.Services.AddSingleton<IBackgroundJobQueue<YahooLocalJob>, BackgroundJobQueue<YahooLocalJob>>();
+builder.Services.AddHostedService<YahooBackgroundService>();
 
 
 // Enumを文字列として扱う

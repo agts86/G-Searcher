@@ -9,15 +9,26 @@ using LineDevSdk.DTOs.WebHooks.Events;
 
 namespace LineWebHookAPI.Models.Services;
 
+public interface IYahooService
+{
+    /// <summary>
+    /// ラインフックからの位置情報を受け取り、YahooAPIを実行し返答する
+    /// </summary>
+    /// <param name="gourmetGettingDto">位置情報</param>
+    /// <param name="genreCode">ジャンルコード</param>
+    /// <returns>LineAPIにPostした内容</returns>
+    Task<Reply[]> PostLocalAsync(WebHook gourmetGettingDto, string genreCode);
+}
+
 /// <summary>
 /// YahooBコントローラーのビジネスロジック
 /// </summary>
-public class YahooService
+public class YahooService 
 (
     IYahooRepository yahooRepository,
     IWebHostEnvironment env,
     IConfiguration configuration
-)
+): IYahooService
 {
     /// <summary>
     /// リポジトリ

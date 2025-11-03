@@ -68,6 +68,48 @@
         }
       }
     },
+    "/api/yahoo/local/accept": {
+      "post": {
+        "tags": [
+          "Yahoo"
+        ],
+        "parameters": [
+          {
+            "name": "genreCode",
+            "in": "query",
+            "schema": {
+              "maxLength": 7,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebHook"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebHook"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebHook"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/yahoo/local": {
       "post": {
         "tags": [
