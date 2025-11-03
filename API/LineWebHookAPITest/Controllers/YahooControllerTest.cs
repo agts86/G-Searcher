@@ -10,6 +10,7 @@ using LineDevSdk.DTOs.Commons.Messages.Templates;
 using LineDevSdk.DTOs.Commons.Messages.Actions;
 using LineDevSdk.DTOs.WebHooks;
 using LineDevSdk.DTOs.WebHooks.Events;
+using LineWebHookAPI.Models.Services;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -90,8 +91,9 @@ public class YahooControllerTest : TestBase
         Env.EnvironmentName = "Development";
         var yahooHttp = CreateYahooHttpMock(local);
         var lineHttpMock = CreateLineHttpMock();
-        var yahooRepository = new YahooRepository(DbContext,yahooHttp,lineHttpMock);
-        var yahooController = new YahooController(yahooRepository, Env, Configuration);
+        var yahooRepository = new YahooRepository(DbContext, yahooHttp, lineHttpMock);
+        var yahooService = new YahooService(yahooRepository, Env, Configuration);
+        var yahooController = new YahooController(yahooService);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         var contents = Assert.IsType<Reply[]>(res.Value);
@@ -163,8 +165,9 @@ public class YahooControllerTest : TestBase
         Env.EnvironmentName = "Development";
         var yahooHttp = CreateYahooHttpMock(local);
         var lineHttpMock = CreateLineHttpMock();
-        var yahooRepository = new YahooRepository(DbContext,yahooHttp,lineHttpMock);
-        var yahooController = new YahooController(yahooRepository, Env, Configuration);
+        var yahooRepository = new YahooRepository(DbContext, yahooHttp, lineHttpMock);
+        var yahooService = new YahooService(yahooRepository, Env, Configuration);
+        var yahooController = new YahooController(yahooService);
         var res = await yahooController.PostLocalAsync(dto,"0106");
 
         var contents = Assert.IsType<Reply[]>(res.Value);
