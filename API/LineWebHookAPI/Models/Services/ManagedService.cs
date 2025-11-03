@@ -4,10 +4,25 @@ using LineWebHookAPI.Models.DB.Tables;
 
 namespace LineWebHookAPI.Models.Services;
 
+public interface IManagedService
+{
+    /// <summary>
+    /// LineChatBotの実行ログを取得する
+    /// </summary>
+    /// <returns>LineChatBotの実行ログ</returns>
+    Task<Meta[]> GetGourmetLogsAsync(MessageTypes messageType);
+
+    /// <summary>
+    /// エラーログを取得する
+    /// </summary>
+    /// <returns>エラーログ</returns>
+    Task<ErrorLog[]> GetErrorLogAsync();
+}
+
 /// <summary>
 /// 管理用コントローラーのビジネスロジック
 /// </summary>
-public class ManagedService(IManagedRepository managedRepository)
+public class ManagedService(IManagedRepository managedRepository) : IManagedService
 {
     /// <summary>
     /// リポジトリ
@@ -20,7 +35,7 @@ public class ManagedService(IManagedRepository managedRepository)
     /// <returns>LineChatBotの実行ログ</returns>
     public async Task<Meta[]> GetGourmetLogsAsync(MessageTypes messageType)
     {
-        if(messageType == MessageTypes.location)
+        if (messageType == MessageTypes.location)
             return await ManagedRepository.FetchGourmetLocationLogsAsync();
         return await ManagedRepository.FetchGourmetWordLogsAsync();
     }

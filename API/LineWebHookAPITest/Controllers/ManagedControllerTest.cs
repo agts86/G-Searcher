@@ -2,6 +2,7 @@ using LineWebHookAPI.Constants;
 using LineWebHookAPI.Controllers;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
+using LineWebHookAPI.Models.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LineWebHookAPITest.Controllers;
@@ -27,7 +28,8 @@ public class ManagedControllerTest : TestBase
         DbContext.GourmetLocationLogs.AddRange(gourmetLogs);
         await DbContext.SaveChangesAsync();
         var managedRepository = new ManagedRepository(DbContext);
-        var controller = new ManagedController(managedRepository);
+        var managedService = new ManagedService(managedRepository);
+        var controller = new ManagedController(managedService);
         var result = await controller.GetGourmetLogsAsync(MessageTypes.location);
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GourmetLocationLog[]>((result as OkObjectResult).Value);
@@ -60,7 +62,8 @@ public class ManagedControllerTest : TestBase
         DbContext.GourmetWordLogs.AddRange(gourmetLogs);
         await DbContext.SaveChangesAsync();
         var managedRepository = new ManagedRepository(DbContext);
-        var controller = new ManagedController(managedRepository);
+        var managedService = new ManagedService(managedRepository);
+        var controller = new ManagedController(managedService);
         var result = await controller.GetGourmetLogsAsync(MessageTypes.text);
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GourmetWordLog[]>((result as OkObjectResult).Value);
@@ -91,7 +94,8 @@ public class ManagedControllerTest : TestBase
         DbContext.ErrorLogs.AddRange(errorLogs);
         await DbContext.SaveChangesAsync();
         var managedRepository = new ManagedRepository(DbContext);
-        var controller = new ManagedController(managedRepository);
+        var managedService = new ManagedService(managedRepository);
+        var controller = new ManagedController(managedService);
         var result = await controller.GetErrorLogAsync();
 
         var content = Assert.IsType<ErrorLog[]>(result.Value);

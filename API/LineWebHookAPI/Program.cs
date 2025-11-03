@@ -32,6 +32,7 @@ builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
 builder.Services.AddHttpClient<ILineHttp, LineHttp>();
 builder.Services.AddHttpClient<IYahooHttp, YahooHttp>();
 builder.Services.AddScoped<IYahooService, YahooService>();
+builder.Services.AddScoped<IManagedService, ManagedService>();
 builder.Services.AddSingleton<IBackgroundJobQueue<YahooLocalJob>, BackgroundJobQueue<YahooLocalJob>>();
 builder.Services.AddHostedService<YahooBackgroundService>();
 

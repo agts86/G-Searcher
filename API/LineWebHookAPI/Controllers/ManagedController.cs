@@ -12,12 +12,12 @@ namespace LineWebHookAPI.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/managed")]
-public class ManagedController(IManagedRepository managedRepository) : ControllerBase
+public class ManagedController(IManagedService managedService) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    public ManagedService ManagedService { get; protected set; } = new ManagedService(managedRepository);
+    private IManagedService ManagedService { get; } = managedService;
 
     /// <summary>
     /// LineChatBotの位置情報検索実行ログを取得する
