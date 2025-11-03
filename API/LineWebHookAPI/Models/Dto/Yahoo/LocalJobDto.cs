@@ -5,7 +5,7 @@ namespace LineWebHookAPI.Models.Dto.Yahoo;
 /// <summary>
 /// Yahoo!ローカルサーチジョブ
 /// </summary>
-public class YahooLocalJob(WebHook webHook, string genreCode)
+public class LocalJobDto(WebHook webHook, string genreCode)
 {
     /// <summary>
     /// ジョブのID
@@ -15,7 +15,7 @@ public class YahooLocalJob(WebHook webHook, string genreCode)
     /// <summary>
     /// WebHookの情報
     /// </summary>
-    public WebHook WebHook { get; set; } = webHook;
+    public WebHook WebHook { get; } = webHook;
 
     /// <summary>
     /// ジャンルコード

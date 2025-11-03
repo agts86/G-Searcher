@@ -37,9 +37,9 @@ public class YahooController
     public async Task<IActionResult> AcceptLocalAsync(
         [FromBody] WebHook gourmetGettingDto,
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode,
-        [FromServices] IBackgroundJobQueue<YahooLocalJob> queue)
+        [FromServices] IBackgroundJobQueue<LocalJobDto> queue)
     {
-        var job = new YahooLocalJob
+        var job = new LocalJobDto
         (
             gourmetGettingDto,
             genreCode
