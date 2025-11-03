@@ -13,7 +13,7 @@ public class YahooBackgroundService(IServiceProvider sp, IBackgroundJobQueue<Yah
         await foreach (var job in Queue.ReadAllAsync(stoppingToken))
         {
             using var scope = ServiceProvider.CreateScope();
-            var yahooService = scope.ServiceProvider.GetRequiredService<YahooService>();
+            var yahooService = scope.ServiceProvider.GetRequiredService<IYahooService>();
             await yahooService.PostLocalAsync(job.WebHook, job.GenreCode);
         }
     }
