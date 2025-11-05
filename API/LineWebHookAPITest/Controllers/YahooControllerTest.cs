@@ -90,8 +90,8 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var yahooHttp = CreateYahooHttpMock(local);
-        var lineHttpMock = CreateLineHttpMock();
-        var yahooRepository = new YahooRepository(DbContext, yahooHttp, lineHttpMock);
+        var LineMessagingClientMock = CreateLineMessagingClientMock();
+        var yahooRepository = new YahooRepository(DbContext, yahooHttp, LineMessagingClientMock);
         var yahooService = new YahooService(yahooRepository, Env, Configuration);
         var yahooController = new YahooController(yahooService);
         var res = await yahooController.PostLocalAsync(dto,"0106");
@@ -164,8 +164,8 @@ public class YahooControllerTest : TestBase
 
         Env.EnvironmentName = "Development";
         var yahooHttp = CreateYahooHttpMock(local);
-        var lineHttpMock = CreateLineHttpMock();
-        var yahooRepository = new YahooRepository(DbContext, yahooHttp, lineHttpMock);
+        var LineMessagingClientMock = CreateLineMessagingClientMock();
+        var yahooRepository = new YahooRepository(DbContext, yahooHttp, LineMessagingClientMock);
         var yahooService = new YahooService(yahooRepository, Env, Configuration);
         var yahooController = new YahooController(yahooService);
         var res = await yahooController.PostLocalAsync(dto,"0106");

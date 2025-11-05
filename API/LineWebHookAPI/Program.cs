@@ -29,7 +29,7 @@ builder.Services.AddScoped<LineSignatureFilter>();
 builder.Services.AddScoped<IYahooRepository, YahooRepository>();
 builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
 builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
-builder.Services.AddHttpClient<ILineHttp, LineHttp>();
+builder.Services.AddHttpClient<ILineMessagingClient, LineMessagingClient>();
 builder.Services.AddHttpClient<IYahooHttp, YahooHttp>();
 builder.Services.AddScoped<IYahooService, YahooService>();
 builder.Services.AddScoped<IManagedService, ManagedService>();

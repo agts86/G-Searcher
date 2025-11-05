@@ -92,12 +92,7 @@ public class YahooService
         if (!Env.IsDevelopment())
             replies.ForEach
             (
-                async x => await YahooRepository.PostReplyAsync
-                (
-                    x,
-                    string.Format(Configuration.GetValue<string>("Line:Url"), "reply"),
-                    Configuration.GetValue<string>("Line:Token")
-                )
+                async x => await YahooRepository.PostReplyAsync(x, Configuration.GetValue<string>("Line:Token"))
             );
         return [.. replies];
     }

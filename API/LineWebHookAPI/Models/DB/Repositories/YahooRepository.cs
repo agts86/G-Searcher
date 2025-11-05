@@ -32,7 +32,7 @@ public interface IYahooRepository
     /// <param name="Reply">返答内容</param>
     /// <param name="endPointUrl">エンドポイント</param>
     /// <param name="token">トークン</param>
-    Task PostReplyAsync(Reply Reply, string endPointUrl, string token);
+    Task PostReplyAsync(Reply Reply, string token);
 
     /// <summary>
     /// データベースの変更を保存する
@@ -43,7 +43,7 @@ public interface IYahooRepository
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp, ILineHttp lineHttp) : IYahooRepository
+public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp, ILineMessagingClient LineMessagingClient) : IYahooRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト
@@ -53,12 +53,12 @@ public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp,
     /// <summary>
     /// YOLPAPI操作クラス
     /// </summary>
-    protected IYahooHttp YahooHttp { get; set; } = yahooHttp;
+    protected IYahooHttp YahooHttp { get; } = yahooHttp;
 
     /// <summary>
     /// LineMessagingAPI操作クラス
     /// </summary>
-    protected ILineHttp LineHttp { get; set; } = lineHttp;
+    protected ILineMessagingClient LineMessagingClient { get; } = LineMessagingClient;
 
     /// <summary>
     /// ログを作成する
@@ -122,9 +122,9 @@ public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp,
     /// <param name="Reply">返答内容</param>
     /// <param name="endPointUrl">エンドポイント</param>
     /// <param name="token">トークン</param>
-    public Task PostReplyAsync(Reply Reply, string endPointUrl, string token)
+    public Task PostReplyAsync(Reply Reply, string token)
     {
-        return LineHttp.PostReplyAsync(Reply, endPointUrl, token);
+        return LineMessagingClient.PostReplyAsync(Reply, token);
     }
     
     /// <summary>

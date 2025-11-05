@@ -62,15 +62,15 @@ public abstract class TestBase
     }
 
     /// <summary>
-    /// LineHttpのモックを作成します。
+    /// LineMessagingClientのモックを作成します。
     /// </summary>
-    /// <returns>LineHttpのモック</returns>
-    protected static ILineHttp CreateLineHttpMock()
+    /// <returns>LineMessagingClientのモック</returns>
+    protected static ILineMessagingClient CreateLineMessagingClientMock()
     {
-        var lineHttpMock = new Mock<ILineHttp>();
-        lineHttpMock.Setup(x => x.PostReplyAsync(It.IsAny<Reply>(), It.IsAny<string>(), It.IsAny<string>()))
+        var LineMessagingClientMock = new Mock<ILineMessagingClient>();
+        LineMessagingClientMock.Setup(x => x.PostReplyAsync(It.IsAny<Reply>(), It.IsAny<string>()))
             .Returns(Task.CompletedTask);
-        return lineHttpMock.Object;
+        return LineMessagingClientMock.Object;
     }
 
     /// <summary>
