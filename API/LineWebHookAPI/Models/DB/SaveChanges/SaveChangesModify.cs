@@ -19,6 +19,6 @@ public class SaveChangesModify: ISaveChanges
     /// <param name="meta">メタデータ</param>
     public void ChangeMeta(Meta meta)
     {
-        meta.UpdatedAt = DateTime.Now;
+        meta.UpdatedAt = DateTime.UtcNow;
     }
 }
