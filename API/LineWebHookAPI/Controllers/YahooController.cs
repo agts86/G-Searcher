@@ -7,14 +7,16 @@ using LineDevSdk.DTOs.WebHooks;
 using LineDevSdk.DTOs.MessagingAPIs;
 using LineWebHookAPI.Models.Job;
 using LineWebHookAPI.Models.Dto.Yahoo;
+using Asp.Versioning;
 
 namespace LineWebHookAPI.Controllers;
 
 /// <summary>
 /// Yahoo関連API
 /// </summary>
+[ApiVersion("1")]
 [ApiController]
-[Route("api/yahoo")]
+[Route("api/v{version:apiVersion}/yahoo")]
 public class YahooController
 (
     IYahooService yahooService

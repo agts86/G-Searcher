@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using LineWebHookAPI.Models.Services;
 using LineWebHookAPI.Constants;
-using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
+using Asp.Versioning;
 
 
 namespace LineWebHookAPI.Controllers;
@@ -10,8 +10,9 @@ namespace LineWebHookAPI.Controllers;
 /// <summary>
 /// ログ取得用関連API
 /// </summary>
+[ApiVersion("1")]
 [ApiController]
-[Route("api/managed")]
+[Route("api/v{version:apiVersion}/managed")]
 public class ManagedController(IManagedService managedService) : ControllerBase
 {
     /// <summary>
