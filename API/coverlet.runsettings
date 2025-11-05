@@ -1,0 +1,19 @@
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!-- 属性で除外 -->
+          <ExcludeByAttribute>
+            ExcludeFromCodeCoverageAttribute
+            ,GeneratedCodeAttribute
+            ,CompilerGeneratedAttribute
+          </ExcludeByAttribute>
+          <Exclude>[System.Text.RegularExpressions.Generated]*</Exclude>
+          <ExcludeByFile>**/System.Text.RegularExpressions/**</ExcludeByFile>
+          <ExcludeByFile>**/*.g.cs</ExcludeByFile>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

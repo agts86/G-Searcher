@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace LineWebHookAPI.Validations;
@@ -16,6 +15,5 @@ public partial class HalfNumericAttribute : ValidationAttribute
     }
 
     [GeneratedRegex(@"^\d+$")]
-    [ExcludeFromCodeCoverage]
     private static partial Regex HalfNumeric();
 }
