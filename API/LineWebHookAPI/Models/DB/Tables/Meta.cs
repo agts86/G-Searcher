@@ -18,7 +18,6 @@ public abstract class Meta
     [Column("CreatedAt")]
     public DateTime CreatedAt
     {
-        // 返すときはローカル（Kind=Local）
         get => GetLocalDateTime(_createdAt);
         set => _createdAt = GetUtcDateTime(value);
     }
@@ -49,11 +48,8 @@ public abstract class Meta
     /// <returns>UTC日時</returns>
     private static DateTime GetUtcDateTime(DateTime value)
     {
-        return value.Kind switch
-        {
-            DateTimeKind.Utc => value,
-            DateTimeKind.Local => value.ToUniversalTime(),
-            _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
-        };
+        return value.Kind == DateTimeKind.Unspecified
+        ? DateTime.SpecifyKind(value, DateTimeKind.Utc)
+        : value.ToUniversalTime();
     }
 }

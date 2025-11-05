@@ -133,8 +133,8 @@ public class YahooControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Now.ToUniversalTime().AddHours(JapanKind).Date, logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Now.ToUniversalTime().AddHours(JapanKind).Date, logs[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Now, logs[0].CreatedAt, TimeSpan.FromMinutes(1));
+        Assert.Equal(DateTime.Now, logs[0].UpdatedAt, TimeSpan.FromMinutes(1));
     }
     
     /// <summary>
@@ -184,7 +184,7 @@ public class YahooControllerTest : TestBase
         Assert.Single(logs);
         Assert.Equal(35.681236, logs[0].Lat);
         Assert.Equal(139.767125, logs[0].Lng);
-        Assert.Equal(DateTime.Now.ToUniversalTime().AddHours(JapanKind).Date, logs[0].CreatedAt.Date);
-        Assert.Equal(DateTime.Now.ToUniversalTime().AddHours(JapanKind).Date, logs[0].UpdatedAt.Date);
+        Assert.Equal(DateTime.Now, logs[0].CreatedAt, TimeSpan.FromMinutes(1));
+        Assert.Equal(DateTime.Now, logs[0].UpdatedAt, TimeSpan.FromMinutes(1));
     }
 }
