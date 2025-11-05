@@ -37,12 +37,12 @@ public class ManagedControllerTest : TestBase
         Assert.Equal(2, content.Length);
         Assert.Equal(0, content[0].Lat);
         Assert.Equal(1, content[0].Lng);
-        Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromSeconds(1));
-        Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[0].CreatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[0].UpdatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
         Assert.Equal(1, content[1].Lat);
         Assert.Equal(0, content[1].Lng);
-        Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromSeconds(1));
-        Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[1].CreatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[1].UpdatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -70,11 +70,11 @@ public class ManagedControllerTest : TestBase
         var content = (result as OkObjectResult).Value as GourmetWordLog[];
         Assert.Equal(2, content.Length);
         Assert.Equal("二郎系", content[0].Text);
-        Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromSeconds(1));
-        Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[0].CreatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[0].UpdatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
         Assert.Equal("家系", content[1].Text);
-        Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromSeconds(1));
-        Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[1].CreatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[1].UpdatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -101,10 +101,10 @@ public class ManagedControllerTest : TestBase
         var content = Assert.IsType<ErrorLog[]>(result.Value);
         Assert.Equal(2, content.Length);
         Assert.Equal("Error1", content[0].Contents);
-        Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromSeconds(1));
-        Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[0].CreatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[0].UpdatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
         Assert.Equal("Error2", content[1].Contents);
-        Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromSeconds(1));
-        Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[1].CreatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
+        Assert.Equal(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc), DateTime.SpecifyKind(content[1].UpdatedAt, DateTimeKind.Utc), TimeSpan.FromSeconds(1));
     }
 }
