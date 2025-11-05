@@ -72,7 +72,6 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
       "PostgreSQLConnection": "{docker-compose使わない場合は任意に設定)}"
     },
     "Line": {
-      "Url": "https://api.line.me/v2/bot/message/{0}",
       "Token": {取得したLine Developersのチャネルアクセストークン),
       "ChannelSecret": {取得したLine 公式アカウントのチャンネルシークレット)
     },
