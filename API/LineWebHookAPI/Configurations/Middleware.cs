@@ -1,5 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using LineWebHookAPI.Models.DB;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.Exceptions;
 
@@ -9,6 +9,7 @@ namespace LineWebHookAPI.Configurations;
 /// ミドルウェア
 /// 例外はここで全て処理する
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class Middleware(IMiddleWareRepository repository) : IMiddleware
 {
     /// <summary>
@@ -21,26 +22,26 @@ public class Middleware(IMiddleWareRepository repository) : IMiddleware
     /// </summary>
     /// <param name="httpContext">HTTP 要求</param>
     /// <param name="next">HTTP 要求を処理できる関数</param>
-    public async Task InvokeAsync(HttpContext httpContext,RequestDelegate next)
+    public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
     {
         try
         {
             // Line署名検証でFromBody以外でも使うので再読み込み可能にしておく
-            httpContext.Request.EnableBuffering(); 
+            httpContext.Request.EnableBuffering();
             await next(httpContext);
         }
-        catch(StatusCodeException ex)
+        catch (StatusCodeException ex)
         {
             await Repository.CreateErrorLogAsync(ex.Error);
             await Repository.SaveChangesAsync();
-            await ResponseErrorAsync(httpContext,ex.StatusCode,ex.Error);
+            await ResponseErrorAsync(httpContext, ex.StatusCode, ex.Error);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await Repository.CreateErrorLogAsync(ex);
             await Repository.SaveChangesAsync();
             var error = new ResponseError("An error occurred while processing your request.");
-            await ResponseErrorAsync(httpContext,HttpStatusCode.InternalServerError,error);
+            await ResponseErrorAsync(httpContext, HttpStatusCode.InternalServerError, error);
         }
     }
 
