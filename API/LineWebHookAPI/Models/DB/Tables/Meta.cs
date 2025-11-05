@@ -11,30 +11,49 @@ namespace LineWebHookAPI.Models.DB.Tables;
 public abstract class Meta
 {
     /// <summary>
-    /// 日本のタイムゾーン
-    /// </summary>
-    private const int JapanKind = 9;
-
-    /// <summary>
     /// 登録日時
     /// </summary>
     private DateTime _createdAt;
-    
+
     [Column("CreatedAt")]
-    public DateTime CreatedAt 
+    public DateTime CreatedAt
     {
-        get => _createdAt.ToUniversalTime().AddHours(JapanKind);
-        set => _createdAt = value.ToUniversalTime();
+        // 返すときはローカル（Kind=Local）
+        get => GetLocalDateTime(_createdAt);
+        set => _createdAt = GetUtcDateTime(value);
     }
+
     /// <summary>
     /// 更新日時
     /// </summary>
     private DateTime _updatedAt;
-    
+
     [Column("UpdatedAt")]
-    public DateTime UpdatedAt 
+    public DateTime UpdatedAt
     {
-        get => _updatedAt.ToUniversalTime().AddHours(JapanKind);
-        set => _updatedAt = value.ToUniversalTime();
+        get => GetLocalDateTime(_updatedAt);
+        set => _updatedAt = GetUtcDateTime(value);
+    }
+
+    /// <summary>
+    /// ローカル日時に変換する
+    /// </summary>
+    /// <param name="value">日時</param>
+    /// <returns>ローカル日時</returns>
+    private static DateTime GetLocalDateTime(DateTime value) => DateTime.SpecifyKind(value, DateTimeKind.Utc).ToLocalTime();
+
+    /// <summary>
+    /// UTC日時に変換する
+    /// </summary>
+    /// <param name="value">日時</param>
+    /// <returns>UTC日時</returns>
+    private static DateTime GetUtcDateTime(DateTime value)
+    {
+        return value.Kind switch
+        {
+            DateTimeKind.Utc => value,
+            DateTimeKind.Local => value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+        };
     }
 }
