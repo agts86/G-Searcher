@@ -14,6 +14,6 @@ public partial class HalfNumericAttribute : ValidationAttribute
         return true;
     }
 
-    [GeneratedRegex(@"^\d+$")]
+    [GeneratedRegex(@"^[0-9]+$")]
     private static partial Regex HalfNumeric();
 }
