@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace LineWebHookAPI.Models.Exceptions;
@@ -6,6 +7,7 @@ namespace LineWebHookAPI.Models.Exceptions;
 /// ステータスコード例外の基底クラス
 /// 基本的400台を想定
 /// </summary>
+[ExcludeFromCodeCoverage]
 public abstract class StatusCodeException(ResponseError error) : Exception
 {
     /// <summary>

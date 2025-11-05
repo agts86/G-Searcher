@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace LineWebHookAPI.Models.Exceptions;
@@ -5,6 +6,7 @@ namespace LineWebHookAPI.Models.Exceptions;
 /// <summary>
 /// BadRequest例外
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class BadRequestException(ResponseError error) : StatusCodeException(error)
 {
     /// <summary>

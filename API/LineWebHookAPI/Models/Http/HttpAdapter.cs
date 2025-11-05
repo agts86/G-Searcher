@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -7,12 +8,13 @@ namespace LineWebHookAPI.Models.Http;
 /// <summary>
 /// http操作クラス
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class HttpAdapter(HttpClient httpClient)
 {
     /// <summary>
     /// HttpClientオブジェクト
     /// </summary>
-    protected HttpClient HttpClient { get;} = httpClient;
+    protected HttpClient HttpClient { get; } = httpClient;
 
     /// <summary>
     /// シリアライズオプション
@@ -43,7 +45,7 @@ public class HttpAdapter(HttpClient httpClient)
     /// <param name="contentType">ContentType</param>
     /// <param name="authenticationHeaderValue">basic認証</param>
     /// <returns>レスポンス結果</returns>
-    public async Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null)  where T : class
+    public async Task<T> PostAsync<T, Tbody>(string url, Tbody body, AuthenticationHeaderValue authenticationHeaderValue = null) where T : class
     {
         var request = new HttpRequestMessage
         {

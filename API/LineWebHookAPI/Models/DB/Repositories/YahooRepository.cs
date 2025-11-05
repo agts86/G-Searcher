@@ -43,7 +43,7 @@ public interface IYahooRepository
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp, ILineMessagingClient LineMessagingClient) : IYahooRepository
+public class YahooRepository(LineWebHookContext dbContext, IYahooClient YahooClient, ILineMessagingClient LineMessagingClient) : IYahooRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト
@@ -53,7 +53,7 @@ public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp,
     /// <summary>
     /// YOLPAPI操作クラス
     /// </summary>
-    protected IYahooHttp YahooHttp { get; } = yahooHttp;
+    protected IYahooClient YahooClient { get; } = YahooClient;
 
     /// <summary>
     /// LineMessagingAPI操作クラス
@@ -113,7 +113,7 @@ public class YahooRepository(LineWebHookContext dbContext, IYahooHttp yahooHttp,
     /// <returns>実行結果</returns>
     public Task<LocalDto> GetLocateAsync(IMessage message, string genreCode)
     {
-        return YahooHttp.GetLocateAsync(message, genreCode);
+        return YahooClient.GetLocateAsync(message, genreCode);
     }
 
     /// <summary>

@@ -45,7 +45,7 @@ public class Program
         builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
         builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
         builder.Services.AddHttpClient<ILineMessagingClient, LineMessagingClient>();
-        builder.Services.AddHttpClient<IYahooHttp, YahooHttp>();
+        builder.Services.AddHttpClient<IYahooClient, YahooClient>();
         builder.Services.AddScoped<IYahooService, YahooService>();
         builder.Services.AddScoped<IManagedService, ManagedService>();
         builder.Services.AddSingleton<IBackgroundJobQueue<LocalJobDto>, BackgroundJobQueue<LocalJobDto>>();

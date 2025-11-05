@@ -1,10 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using LineDevSdk.DTOs.Commons.Messages;
 using LineWebHookAPI.Constants.Yahoo;
 using LineWebHookAPI.Models.Dto.Yahoo;
 
 namespace LineWebHookAPI.Models.Http;
 
-public interface IYahooHttp
+public interface IYahooClient
 {
     /// <summary>
     /// グルメAPIを実行して結果を取得する
@@ -18,7 +19,8 @@ public interface IYahooHttp
 /// <summary>
 /// YahooAPI用のHTTPクライアント
 /// </summary>
-public class YahooHttp(HttpClient httpClient, IConfiguration configuration) : IYahooHttp
+[ExcludeFromCodeCoverage]
+public class YahooClient(HttpClient httpClient, IConfiguration configuration) : IYahooClient
 {
 
     /// <summary>
@@ -56,7 +58,7 @@ public class YahooHttp(HttpClient httpClient, IConfiguration configuration) : IY
         else if (message is TextMessage textMessage)
         {
             var value = textMessage.Text.Replace('　', ' ');
-            ret =  $"&query={Uri.EscapeDataString(value)}";
+            ret = $"&query={Uri.EscapeDataString(value)}";
         }
         return ret;
     }

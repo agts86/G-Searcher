@@ -5,7 +5,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/managed/gourmet/{messageType}": {
+    "/api/v1/managed/gourmet/{messageType}": {
       "get": {
         "tags": [
           "Managed"
@@ -30,7 +30,7 @@
         }
       }
     },
-    "/api/managed/error-log": {
+    "/api/v1/managed/error-log": {
       "get": {
         "tags": [
           "Managed"
@@ -68,7 +68,7 @@
         }
       }
     },
-    "/api/yahoo/local/accept": {
+    "/api/v1/yahoo/local/accept": {
       "post": {
         "tags": [
           "Yahoo"
@@ -110,7 +110,7 @@
         }
       }
     },
-    "/api/yahoo/local": {
+    "/api/v1/yahoo/local": {
       "post": {
         "tags": [
           "Yahoo"

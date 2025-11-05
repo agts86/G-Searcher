@@ -49,16 +49,16 @@ public abstract class TestBase
     }
 
     /// <summary>
-    /// YahooHttpのモックを作成します。
+    /// YahooClientのモックを作成します。
     /// </summary>
     /// <param name="ret">返却値</param>
-    /// <returns>YahooHttpのモック</returns>
-    protected static IYahooHttp CreateYahooHttpMock(LocalDto ret)
+    /// <returns>YahooClientのモック</returns>
+    protected static IYahooClient CreateYahooClientMock(LocalDto ret)
     {
-        var yahooHttpMock = new Mock<IYahooHttp>();
-        yahooHttpMock.Setup(x => x.GetLocateAsync(It.IsAny<IMessage>(), It.IsAny<string>()))
+        var YahooClientMock = new Mock<IYahooClient>();
+        YahooClientMock.Setup(x => x.GetLocateAsync(It.IsAny<IMessage>(), It.IsAny<string>()))
             .ReturnsAsync(ret);
-        return yahooHttpMock.Object;
+        return YahooClientMock.Object;
     }
 
     /// <summary>
