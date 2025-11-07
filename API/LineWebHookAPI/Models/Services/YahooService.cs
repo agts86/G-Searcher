@@ -6,6 +6,8 @@ using LineDevSdk.Dtos.Commons.Messages;
 using LineDevSdk.DTOs.Commons.Messages;
 using LineDevSdk.DTOs.WebHooks;
 using LineDevSdk.DTOs.WebHooks.Events;
+using YahooDeveloperApiClient.YOLP.Request;
+using LineWebHookAPI.Extensions;
 
 namespace LineWebHookAPI.Models.Services;
 
@@ -59,8 +61,15 @@ public class YahooService
             if (e is not MessageEvent messageEvent) continue;
             await YahooRepository.CreateGourmetLogAsync(messageEvent.Message);
             await YahooRepository.SaveChangesAsync();
-
-            var gourmet = await YahooRepository.GetLocateAsync(messageEvent.Message, genreCode);
+            var localSearchRequest = new LocalSearchRequest()
+            {
+                Dist = 1,
+                Results = 20,
+                GenreCode = genreCode,
+                Detail = LocalSearchDetail.Full
+            };
+            localSearchRequest.MergeMessageInfo(messageEvent.Message);
+            var gourmet = await YahooRepository.GetLocalSearchResultAsync(localSearchRequest);
             var columns = gourmet.ToCarouselTemplateColumns();
 
             replies.Add

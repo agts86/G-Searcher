@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Constants.Line.API;
-using LineWebHookAPI.Models.Dto.Yahoo;
+using YahooDeveloperApiClient.YOLP.Response;
 using LineWebHookAPI.Controllers;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineDevSdk.DTOs.Commons.Messages;
@@ -11,6 +11,7 @@ using LineDevSdk.DTOs.Commons.Messages.Actions;
 using LineDevSdk.DTOs.WebHooks;
 using LineDevSdk.DTOs.WebHooks.Events;
 using LineWebHookAPI.Models.Services;
+using System.Text.Json;
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -23,49 +24,58 @@ public class YahooControllerTest : TestBase
     [Fact]
     public async Task PostLocalAsyncTestDevelopmentExistResult()
     {
-        var local = new LocalDto()
+        var local = new LocalSearchResult()
         {
             Feature = 
             [
-                new LocalDto.FeatureInfo()
+                new LocalSearchResult.FeatureInfo()
                 {
                     Gid = "gid1",
                     Name = "店舗1",
-                    Property = new LocalDto.FeatureInfo.PropertyInfo()
+                    Property = new LocalSearchResult.FeatureInfo.PropertyInfo()
                     {
                         Address = "住所1",
-                        Detail = new LocalDto.FeatureInfo.PropertyInfo.DetailInfo()
+                        Detail = new LocalSearchResult.FeatureInfo.PropertyInfo.DetailInfo()
                         {
                             Image1 = "写真1",
-                            YUrl = "URL1"
+                            Extra = new Dictionary<string, JsonElement>()
+                            {
+                                { "YUrl", JsonDocument.Parse("\"URL1\"").RootElement }
+                            }
                         }
                     }
                 },
-                new LocalDto.FeatureInfo()
+                new LocalSearchResult.FeatureInfo()
                 {
                     Gid = "gid1",
                     Name = "店舗1-1",
-                    Property = new LocalDto.FeatureInfo.PropertyInfo()
+                    Property = new LocalSearchResult.FeatureInfo.PropertyInfo()
                     {
                         Address = "住所1-1",
-                        Detail = new LocalDto.FeatureInfo.PropertyInfo.DetailInfo()
+                        Detail = new LocalSearchResult.FeatureInfo.PropertyInfo.DetailInfo()
                         {
                             Image1 = "写真1-1",
-                            YUrl = "URL1-1"
+                            Extra = new Dictionary<string, JsonElement>()
+                            {
+                                { "YUrl", JsonDocument.Parse("\"URL1-1\"").RootElement }
+                            }
                         }
                     }
                 },
-                new LocalDto.FeatureInfo()
+                new LocalSearchResult.FeatureInfo()
                 {
                     Gid = "gid2",
                     Name = "店舗2",
-                    Property = new LocalDto.FeatureInfo.PropertyInfo()
+                    Property = new LocalSearchResult.FeatureInfo.PropertyInfo()
                     {
                         Address = "住所2",
-                        Detail = new LocalDto.FeatureInfo.PropertyInfo.DetailInfo()
+                        Detail = new LocalSearchResult.FeatureInfo.PropertyInfo.DetailInfo()
                         {
                             Image1 = "写真2",
-                            YUrl = "URL2"
+                            Extra = new Dictionary<string, JsonElement>()
+                            {
+                                { "YUrl", JsonDocument.Parse("\"URL2\"").RootElement }
+                            }
                         }
                     }
                 }
@@ -144,7 +154,7 @@ public class YahooControllerTest : TestBase
     [Fact]
     public async Task PostLocalAsyncTestDevelopmentNotResult()
     {
-        var local = new LocalDto();
+        var local = new LocalSearchResult();
 
         var dto = new WebHook()
         {

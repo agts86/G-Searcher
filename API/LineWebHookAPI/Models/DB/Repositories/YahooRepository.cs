@@ -2,8 +2,9 @@ using LineDevSdk.DTOs.Commons.Messages;
 using LineDevSdk.DTOs.MessagingAPIs;
 using LineDevSdk.Https;
 using LineWebHookAPI.Models.DB.Tables;
-using LineWebHookAPI.Models.Dto.Yahoo;
-using LineWebHookAPI.Models.Http;
+using YahooDeveloperApiClient.YOLP;
+using YahooDeveloperApiClient.YOLP.Request;
+using YahooDeveloperApiClient.YOLP.Response;
 
 namespace LineWebHookAPI.Models.DB.Repositories;
 
@@ -24,7 +25,7 @@ public interface IYahooRepository
     /// <param name="message">位置情報</param>
     /// <param name="genreCode">ジャンルコード</param>
     /// <returns>実行結果</returns>
-    Task<LocalDto> GetLocateAsync(IMessage message, string genreCode);
+    Task<LocalSearchResult> GetLocalSearchResultAsync(LocalSearchRequest request);
     
     /// <summary>
     /// LineAPIに返信を送信する
@@ -43,7 +44,7 @@ public interface IYahooRepository
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public class YahooRepository(LineWebHookContext dbContext, IYahooClient YahooClient, ILineMessagingClient LineMessagingClient) : IYahooRepository
+public class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPClient, ILineMessagingClient LineMessagingClient) : IYahooRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト
@@ -53,7 +54,7 @@ public class YahooRepository(LineWebHookContext dbContext, IYahooClient YahooCli
     /// <summary>
     /// YOLPAPI操作クラス
     /// </summary>
-    protected IYahooClient YahooClient { get; } = YahooClient;
+    protected IYOLPClient YOLPClient { get; } = YOLPClient;
 
     /// <summary>
     /// LineMessagingAPI操作クラス
@@ -111,9 +112,9 @@ public class YahooRepository(LineWebHookContext dbContext, IYahooClient YahooCli
     /// <param name="message">位置情報</param>
     /// <param name="genreCode">ジャンルコード</param>
     /// <returns>実行結果</returns>
-    public Task<LocalDto> GetLocateAsync(IMessage message, string genreCode)
+    public async Task<LocalSearchResult> GetLocalSearchResultAsync(LocalSearchRequest request)
     {
-        return YahooClient.GetLocateAsync(message, genreCode);
+        return await YOLPClient.GetLocalSearchResultAsync(request);
     }
 
     /// <summary>

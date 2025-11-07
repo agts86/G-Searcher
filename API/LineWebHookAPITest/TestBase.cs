@@ -4,11 +4,11 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using LineWebHookAPI.Models.Http;
-using LineDevSdk.DTOs.Commons.Messages;
-using LineWebHookAPI.Models.Dto.Yahoo;
 using LineDevSdk.Https;
 using LineDevSdk.DTOs.MessagingAPIs;
+using YahooDeveloperApiClient.YOLP;
+using YahooDeveloperApiClient.YOLP.Request;
+using YahooDeveloperApiClient.YOLP.Response;
 namespace LineWebHookAPITest;
 
 public abstract class TestBase
@@ -53,10 +53,10 @@ public abstract class TestBase
     /// </summary>
     /// <param name="ret">返却値</param>
     /// <returns>YahooClientのモック</returns>
-    protected static IYahooClient CreateYahooClientMock(LocalDto ret)
+    protected static IYOLPClient CreateYahooClientMock(LocalSearchResult ret)
     {
-        var YahooClientMock = new Mock<IYahooClient>();
-        YahooClientMock.Setup(x => x.GetLocateAsync(It.IsAny<IMessage>(), It.IsAny<string>()))
+        var YahooClientMock = new Mock<IYOLPClient>();
+        YahooClientMock.Setup(x => x.GetLocalSearchResultAsync(It.IsAny<LocalSearchRequest>()))
             .ReturnsAsync(ret);
         return YahooClientMock.Object;
     }

@@ -23,5 +23,8 @@
     <Reference Include="LineDevSdk">
       <HintPath>../LineWebHookAPI/lib/LineDevSdk.dll</HintPath>
     </Reference>
+    <Reference Include="YahooDeveloperApiClient">
+      <HintPath>../LineWebHookAPI/lib/YahooDeveloperApiClient.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

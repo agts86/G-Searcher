@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using LineWebHookAPI.Models.DB;
-using LineWebHookAPI.Models.Http;
 using LineWebHookAPI.Models.DB.Repositories;
 using LineDevSdk.Configurations;
 using LineDevSdk.Https;
@@ -12,6 +11,7 @@ using LineWebHookAPI.Models.Services;
 using LineWebHookAPI.Models.Job;
 using LineWebHookAPI.Models.Dto.Yahoo;
 using System.Diagnostics.CodeAnalysis;
+using YahooDeveloperApiClient.Configuration;
 
 namespace LineWebHookAPI;
 [ExcludeFromCodeCoverage]
@@ -35,6 +35,13 @@ public class Program
                 options.SubstituteApiVersionInUrl = true;
             }
         );
+        builder.Services.AddYOLPClient
+        (
+            options =>
+            {
+                options.AppId = builder.Configuration.GetValue<string>("Yahoo:Key");
+            }
+        );  
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
@@ -45,7 +52,6 @@ public class Program
         builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
         builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
         builder.Services.AddHttpClient<ILineMessagingClient, LineMessagingClient>();
-        builder.Services.AddHttpClient<IYahooClient, YahooClient>();
         builder.Services.AddScoped<IYahooService, YahooService>();
         builder.Services.AddScoped<IManagedService, ManagedService>();
         builder.Services.AddSingleton<IBackgroundJobQueue<LocalJobDto>, BackgroundJobQueue<LocalJobDto>>();
