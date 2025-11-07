@@ -22,9 +22,6 @@ public static class LocalSearchRequestExtensions
             dto.Lon = locationMessage.Longitude;
         }
         else if (message is TextMessage textMessage)
-        {
-            var value = textMessage.Text.Replace('　', ' ');
-            dto.Query = Uri.EscapeDataString(value);
-        }
+            dto.Query = textMessage.Text.Replace('　', ' ');
     }
 }
