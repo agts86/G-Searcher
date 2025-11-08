@@ -48,7 +48,7 @@ public class YahooController
         );
         await queue.EnqueueAsync(job);
 
-        // ここでは実処理しないで即返す
+        await YahooService.AcceptLocalAsync(job);
         return Accepted(new { job.Id });
     }
 
