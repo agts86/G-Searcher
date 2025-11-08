@@ -41,4 +41,15 @@ public class ManagedController(IManagedService managedService) : ControllerBase
         var res = await ManagedService.GetErrorLogAsync();
         return res;
     }
+
+    /// <summary>
+    /// ジョブログを取得する
+    /// </summary>
+    /// <returns>ジョブログ</returns>
+    [HttpGet("job-log")]
+    public async Task<ActionResult<JobLog[]>> GetJobLogAsync()
+    {
+        var res = await ManagedService.GetJobLogAsync();
+        return res;
+    }
 }

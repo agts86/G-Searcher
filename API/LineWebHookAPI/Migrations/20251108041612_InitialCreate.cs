@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LineWebHookAPI.Migrations
 {
-    [ExcludeFromCodeCoverage]
     /// <inheritdoc />
-    public partial class LineWebHookAPI : Migration
+    [ExcludeFromCodeCoverage]
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,6 +55,22 @@ namespace LineWebHookAPI.Migrations
                 {
                     table.PrimaryKey("PK_GourmetWordLog", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "JobLog",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    IsSuccess = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Contents = table.Column<string>(type: "TEXT", nullable: false),
+                    Info = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobLog", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
@@ -68,6 +84,9 @@ namespace LineWebHookAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "GourmetWordLog");
+
+            migrationBuilder.DropTable(
+                name: "JobLog");
         }
     }
 }

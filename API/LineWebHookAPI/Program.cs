@@ -39,7 +39,7 @@ public class Program
         (
             options =>
             {
-                options.AppId = builder.Configuration.GetValue<string>("Yahoo:Key");
+                options.AppId = builder.Configuration.GetValue<string>("Yahoo:AppId");
             }
         );  
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -25,11 +25,12 @@ public class YahooBackgroundService(IServiceProvider sp, IBackgroundJobQueue<Loc
     /// <param name="ct">キャンセルトークン</param>
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        await foreach (var job in Queue.ReadAllAsync(ct))
+        try
         {
             using var scope = ServiceProvider.CreateScope();
             var yahooService = scope.ServiceProvider.GetRequiredService<IYahooService>();
-            await yahooService.PostLocalAsync(job.WebHook, job.GenreCode);
+            await yahooService.PostLocalJobAsync(Queue, ct);
         }
+        catch {}
     }
 }

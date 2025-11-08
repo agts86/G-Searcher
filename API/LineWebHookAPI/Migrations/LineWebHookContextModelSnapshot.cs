@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LineWebHookAPI.Migrations
 {
-    [DbContext(typeof(LineWebHookContext))]
     [ExcludeFromCodeCoverage]
+    [DbContext(typeof(LineWebHookContext))]
     partial class LineWebHookContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -94,6 +94,40 @@ namespace LineWebHookAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GourmetWordLog");
+                });
+
+            modelBuilder.Entity("LineWebHookAPI.Models.DB.Tables.JobLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("Contents")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Contents");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<string>("Info")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Info");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("IsSuccess");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobLog");
                 });
 #pragma warning restore 612, 618
         }

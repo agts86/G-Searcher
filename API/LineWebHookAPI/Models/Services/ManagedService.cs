@@ -17,6 +17,12 @@ public interface IManagedService
     /// </summary>
     /// <returns>エラーログ</returns>
     Task<ErrorLog[]> GetErrorLogAsync();
+
+    /// <summary>
+    /// ジョブログを取得する
+    /// </summary>
+    /// <returns>ジョブログ</returns>
+    Task<JobLog[]> GetJobLogAsync();
 }
 
 /// <summary>
@@ -47,5 +53,14 @@ public class ManagedService(IManagedRepository managedRepository) : IManagedServ
     public async Task<ErrorLog[]> GetErrorLogAsync()
     {
         return await ManagedRepository.FetchErrorLogsAsync();
+    }
+
+    /// <summary>
+    /// ジョブログを取得する
+    /// </summary>
+    /// <returns>ジョブログ</returns>
+    public async Task<JobLog[]> GetJobLogAsync()
+    {
+        return await ManagedRepository.FetchJobLogAsync();
     }
 }

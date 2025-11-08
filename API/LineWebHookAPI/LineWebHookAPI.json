@@ -68,6 +68,44 @@
         }
       }
     },
+    "/api/v1/managed/job-log": {
+      "get": {
+        "tags": [
+          "Managed"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobLog"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobLog"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobLog"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/yahoo/local/accept": {
       "post": {
         "tags": [
@@ -251,6 +289,39 @@
           "type": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "JobLog": {
+        "required": [
+          "isSuccess",
+          "contents",
+          "info"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "isSuccess": {
+            "type": "boolean"
+          },
+          "contents": {
+            "type": "string",
+            "nullable": true
+          },
+          "info": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using LineDevSdk.DTOs.WebHooks;
 
 namespace LineWebHookAPI.Models.Dto.Yahoo;
@@ -10,7 +11,7 @@ public class LocalJobDto(WebHook webHook, string genreCode)
     /// <summary>
     /// ジョブのID
     /// </summary>
-    public string Id { get; } = Guid.NewGuid().ToString();
+    public Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
     /// WebHookの情報
@@ -21,4 +22,6 @@ public class LocalJobDto(WebHook webHook, string genreCode)
     /// ジャンルコード
     /// </summary>
     public string GenreCode { get; } = genreCode;
+
+    public string GetBody() => JsonSerializer.Serialize(this);
 }

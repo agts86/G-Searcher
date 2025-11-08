@@ -1,7 +1,7 @@
-using LineDevSdk.DTOs.Commons.Messages;
 using LineDevSdk.DTOs.MessagingAPIs;
 using LineDevSdk.Https;
 using LineWebHookAPI.Models.DB.Tables;
+using Microsoft.EntityFrameworkCore;
 using YahooDeveloperApiClient.YOLP;
 using YahooDeveloperApiClient.YOLP.Request;
 using YahooDeveloperApiClient.YOLP.Response;
@@ -13,12 +13,6 @@ namespace LineWebHookAPI.Models.DB.Repositories;
 /// </summary>
 public interface IYahooRepository
 {
-    /// <summary>
-    /// ログを作成する
-    /// </summary>
-    /// <param name="dto">位置情報メッセージ</param>
-    Task CreateGourmetLogAsync(IMessage message);
-
     /// <summary>
     /// グルメAPIを実行して結果を取得する
     /// </summary>
@@ -39,6 +33,26 @@ public interface IYahooRepository
     /// データベースの変更を保存する
     /// </summary>
     Task SaveChangesAsync();
+
+    /// <summary>
+    /// ジョブログを作成する
+    /// </summary>
+    /// <param name="jobDto">ジョブログのデータ</param>
+    Task CreateAsync<T>(T data) where T : class;
+
+    /// <summary>
+    /// コンテキストを更新する
+    /// </summary>
+    /// <param name="data"></param>
+    /// <typeparam name="T"></typeparam>
+    void Update<T>(T data) where T : class;
+
+    /// <summary>
+    /// ジョブログを取得する
+    /// </summary>
+    /// <param name="jobId">ジョブログのID</param>
+    /// <returns>ジョブログ</returns>
+    Task<JobLog> FetchJobLogAsync(Guid jobId);
 }
 
 /// <summary>
@@ -62,51 +76,6 @@ public class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPClien
     protected ILineMessagingClient LineMessagingClient { get; } = LineMessagingClient;
 
     /// <summary>
-    /// ログを作成する
-    /// </summary>
-    /// <param name="dto">位置情報メッセージ</param>
-    public async Task CreateGourmetLogAsync(IMessage message)
-    {
-        if (message is LocationMessage locationMessage)
-        {
-            await CreateGourmetLogAsync(locationMessage);
-        }
-        else if (message is TextMessage textMessage)
-        {
-            await CreateGourmetLogAsync(textMessage);
-        }
-    }
-
-    /// <summary>
-    /// 位置情報ログを作成する
-    /// </summary>
-    /// <param name="dto">位置情報メッセージ</param>
-    private async Task CreateGourmetLogAsync(LocationMessage message)
-    {
-        var log = new GourmetLocationLog
-        {
-            Id = Guid.NewGuid(),
-            Lat = message.Latitude,
-            Lng = message.Longitude
-        };
-        await DbContext.GourmetLocationLogs.AddAsync(log);
-    }
-
-    /// <summary>
-    /// テキスト情報ログを作成する
-    /// </summary>
-    /// <param name="dto">位置情報メッセージ</param>
-    private async Task CreateGourmetLogAsync(TextMessage message)
-    {
-        var log = new GourmetWordLog
-        {
-            Id = Guid.NewGuid(),
-            Text = message.Text
-        };
-        await DbContext.GourmetWordLogs.AddAsync(log);
-    }
-
-    /// <summary>
     /// グルメAPIを実行して結果を取得する
     /// </summary>
     /// <param name="message">位置情報</param>
@@ -127,12 +96,40 @@ public class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPClien
     {
         return LineMessagingClient.PostReplyAsync(Reply, token);
     }
-    
+
     /// <summary>
     /// データベースの変更を保存する
     /// </summary>
     public async Task SaveChangesAsync()
     {
         await DbContext.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// データを登録する
+    /// </summary>
+    /// <typeparam name="T">データの型</typeparam>
+    public async Task CreateAsync<T>(T data) where T : class
+    {
+        await DbContext.AddAsync(data);
+    }
+
+    /// <summary>
+    /// データを更新する
+    /// </summary>
+    /// <typeparam name="T">データの型</typeparam>
+    public void Update<T>(T data) where T : class
+    {
+        DbContext.Update(data);
+    }
+
+    /// <summary>
+    /// ジョブログを取得する
+    /// </summary>
+    /// <param name="jobId">ジョブログのID</param>
+    /// <returns>ジョブログ</returns>
+    public async Task<JobLog> FetchJobLogAsync(Guid jobId)
+    {
+        return await DbContext.JobLogs.Where(j => j.Id == jobId).FirstOrDefaultAsync();
     }
 }
