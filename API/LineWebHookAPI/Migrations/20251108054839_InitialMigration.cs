@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,8 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LineWebHookAPI.Migrations
 {
     /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,8 +60,8 @@ namespace LineWebHookAPI.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     IsSuccess = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Contents = table.Column<string>(type: "TEXT", nullable: false),
-                    Info = table.Column<string>(type: "TEXT", nullable: false),
+                    Contents = table.Column<string>(type: "TEXT", nullable: true),
+                    Info = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },

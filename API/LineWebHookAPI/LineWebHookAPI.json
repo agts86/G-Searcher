@@ -294,9 +294,7 @@
       },
       "JobLog": {
         "required": [
-          "isSuccess",
-          "contents",
-          "info"
+          "isSuccess"
         ],
         "type": "object",
         "properties": {

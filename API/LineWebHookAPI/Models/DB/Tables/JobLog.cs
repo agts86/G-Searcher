@@ -27,13 +27,11 @@ public class JobLog : Meta
     /// リクエスト内容
     /// </summary>
     [Column("Contents")]
-    [Required]
     public string Contents { get; set; }
 
     /// <summary>
     /// 備考
     /// </summary>
     [Column("Info")]
-    [Required]
     public string Info { get; set; }
 }

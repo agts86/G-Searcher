@@ -12,6 +12,7 @@
           <Exclude>[System.Text.RegularExpressions.Generated]*</Exclude>
           <ExcludeByFile>**/System.Text.RegularExpressions/**</ExcludeByFile>
           <ExcludeByFile>**/*.g.cs</ExcludeByFile>
+          <ExcludeByFile>**/Migrations/**</ExcludeByFile>
         </Configuration>
       </DataCollector>
     </DataCollectors>

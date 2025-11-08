@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LineWebHookAPI.Migrations
 {
     [DbContext(typeof(LineWebHookContext))]
-    [Migration("20251108041612_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251108054839_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,7 +105,6 @@ namespace LineWebHookAPI.Migrations
                         .HasColumnName("Id");
 
                     b.Property<string>("Contents")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("Contents");
 
@@ -114,7 +113,6 @@ namespace LineWebHookAPI.Migrations
                         .HasColumnName("CreatedAt");
 
                     b.Property<string>("Info")
-                        .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("Info");
 
