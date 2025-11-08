@@ -3,8 +3,14 @@ name: ApiUniTest
 on:
   push:
     branches: [ "develop" ]
+    paths:
+      - 'API/**'    
+      - '.github/workflows/**'
   pull_request:
     branches: [ "develop" ]
+    paths:
+      - 'API/**'    
+      - '.github/workflows/**'
 
 jobs:
   test:
@@ -38,3 +44,4 @@ jobs:
                         -reporttypes:MarkdownSummary
     
         cat ./API/CoverageReport/Summary.md >> $GITHUB_STEP_SUMMARY
+

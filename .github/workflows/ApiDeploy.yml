@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - develop
+    paths:
+      - 'API/**'    
+      - '.github/workflows/**'
   workflow_dispatch:
 
 jobs:
@@ -64,4 +67,5 @@ jobs:
           package: .
 
           
+
 

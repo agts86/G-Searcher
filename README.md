@@ -76,8 +76,7 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
       "ChannelSecret": {取得したLine 公式アカウントのチャンネルシークレット)
     },
     "Yahoo": {
-      "Url": "https://map.yahooapis.jp/search/local/V1/{0}?appid={1}&output=json&detail=full",
-      "Key": "{取得したYOLPのAPIキー)"
+      "AppId": "{取得したYOLPのAPIキー)"
     }
   }
   ``` 
