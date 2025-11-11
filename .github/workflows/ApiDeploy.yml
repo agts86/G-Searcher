@@ -67,6 +67,7 @@ jobs:
           package: .
   wake-up:
     runs-on: ubuntu-latest
+    needs: deploy
     continue-on-error: true
     steps:
       - name: Ping health endpoint with retries
@@ -88,6 +89,7 @@ jobs:
           echo "All retries failed"; exit 1
 
           
+
 
 
 
