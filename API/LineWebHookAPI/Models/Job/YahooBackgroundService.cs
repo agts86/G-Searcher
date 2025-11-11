@@ -29,8 +29,9 @@ public class YahooBackgroundService(IServiceProvider sp, IBackgroundJobQueue<Loc
         {
             using var scope = ServiceProvider.CreateScope();
             var yahooService = scope.ServiceProvider.GetRequiredService<IYahooService>();
-            await yahooService.PostLocalJobAsync(Queue, ct);
+            // バックグラウンド処理は独立して実行（HTTPリクエストのキャンセルに影響されない）
+            await yahooService.PostLocalJobAsync(Queue, CancellationToken.None);
         }
-        catch {}
+        catch { }
     }
 }

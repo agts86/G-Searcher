@@ -1,13 +1,13 @@
-using Microsoft.AspNetCore.Mvc;
-using LineDevSdk.Configurations;
-using LineWebHookAPI.Models.Services;
 using System.ComponentModel.DataAnnotations;
-using LineWebHookAPI.Validations;
-using LineDevSdk.DTOs.WebHooks;
-using LineDevSdk.DTOs.MessagingAPIs;
-using LineWebHookAPI.Models.Job;
-using LineWebHookAPI.Models.Dto.Yahoo;
 using Asp.Versioning;
+using LineDevSdk.Configurations;
+using LineDevSdk.DTOs.MessagingAPIs;
+using LineDevSdk.DTOs.WebHooks;
+using LineWebHookAPI.Models.Dto.Yahoo;
+using LineWebHookAPI.Models.Job;
+using LineWebHookAPI.Models.Services;
+using LineWebHookAPI.Validations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LineWebHookAPI.Controllers;
 
@@ -36,17 +36,20 @@ public class YahooController
     /// <returns></returns>
     [HttpPost("local/accept")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<IActionResult> AcceptLocalAsync(
+    public async Task<IActionResult> AcceptLocalAsync
+    (
         [FromBody] WebHook gourmetGettingDto,
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode,
-        [FromServices] IBackgroundJobQueue<LocalJobDto> queue)
+        [FromServices] IBackgroundJobQueue<LocalJobDto> queue,
+         CancellationToken ct
+    )
     {
         var job = new LocalJobDto
         (
             gourmetGettingDto,
             genreCode
         );
-        await queue.EnqueueAsync(job);
+        await queue.EnqueueAsync(job, ct);
 
         await YahooService.AcceptLocalAsync(job);
         return Accepted(new { job.Id });
