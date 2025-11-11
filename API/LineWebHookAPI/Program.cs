@@ -78,7 +78,7 @@ public class Program
             app.MapOpenApi();
             app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
         }
-        app.MapGet("/healthz", () => Results.Ok("ok"));
+        app.MapGet("/health", () => Results.Ok("ok"));
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<LineWebHookContext>();
         var isMemory = dbContext.Database.GetDbConnection().ConnectionString == "DataSource=:memory:";
