@@ -1,16 +1,16 @@
-using LineWebHookAPI.Configurations;
-using System.Text.Json.Serialization;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
-using LineWebHookAPI.Models.DB;
-using LineWebHookAPI.Models.DB.Repositories;
+using System.Text.Json.Serialization;
 using LineDevSdk.Configurations;
 using LineDevSdk.Https;
-using Microsoft.Data.Sqlite;
-using LineWebHookAPI.Models.Services;
-using LineWebHookAPI.Models.Job;
+using LineWebHookAPI.Configurations;
+using LineWebHookAPI.Models.DB;
+using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.Dto.Yahoo;
-using System.Diagnostics.CodeAnalysis;
+using LineWebHookAPI.Models.Job;
+using LineWebHookAPI.Models.Services;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using YahooDeveloperApiClient.Configuration;
 
 namespace LineWebHookAPI;
@@ -41,7 +41,7 @@ public class Program
             {
                 options.AppId = builder.Configuration.GetValue<string>("Yahoo:AppId");
             }
-        );  
+        );
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
@@ -78,7 +78,7 @@ public class Program
             app.MapOpenApi();
             app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
         }
-
+        app.MapGet("/healthz", () => Results.Ok("ok"));
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<LineWebHookContext>();
         var isMemory = dbContext.Database.GetDbConnection().ConnectionString == "DataSource=:memory:";
