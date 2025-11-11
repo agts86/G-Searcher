@@ -40,8 +40,7 @@ public class YahooController
     (
         [FromBody] WebHook gourmetGettingDto,
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode,
-        [FromServices] IBackgroundJobQueue<LocalJobDto> queue,
-        CancellationToken ct
+        [FromServices] IBackgroundJobQueue<LocalJobDto> queue
     )
     {
         var job = new LocalJobDto
@@ -49,7 +48,7 @@ public class YahooController
             gourmetGettingDto,
             genreCode
         );
-        await queue.EnqueueAsync(job, ct);
+        await queue.EnqueueAsync(job);
 
         await YahooService.AcceptLocalAsync(job);
         return Accepted(new { job.Id });
