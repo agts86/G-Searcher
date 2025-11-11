@@ -41,7 +41,7 @@ public class YahooController
         [FromBody] WebHook gourmetGettingDto,
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode,
         [FromServices] IBackgroundJobQueue<LocalJobDto> queue,
-         CancellationToken ct
+        CancellationToken ct
     )
     {
         var job = new LocalJobDto
