@@ -1,16 +1,16 @@
-using LineWebHookAPI.Models.DB.Repositories;
-using LineWebHookAPI.Constants.Line.API;
-using LineDevSdk.DTOs.MessagingAPIs;
-using LineDevSdk.DTOs.Commons.Messages.Templates;
 using LineDevSdk.Dtos.Commons.Messages;
 using LineDevSdk.DTOs.Commons.Messages;
+using LineDevSdk.DTOs.Commons.Messages.Templates;
+using LineDevSdk.DTOs.MessagingAPIs;
 using LineDevSdk.DTOs.WebHooks;
 using LineDevSdk.DTOs.WebHooks.Events;
-using YahooDeveloperApiClient.YOLP.Request;
+using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Extensions;
-using LineWebHookAPI.Models.Dto.Yahoo;
+using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
+using LineWebHookAPI.Models.Dto.Yahoo;
 using LineWebHookAPI.Models.Job;
+using YahooDeveloperApiClient.YOLP.Request;
 
 namespace LineWebHookAPI.Models.Services;
 
@@ -41,12 +41,12 @@ public interface IYahooService
 /// <summary>
 /// YahooBコントローラーのビジネスロジック
 /// </summary>
-public class YahooService 
+public class YahooService
 (
     IYahooRepository yahooRepository,
     IWebHostEnvironment env,
     IConfiguration configuration
-): IYahooService
+) : IYahooService
 {
     /// <summary>
     /// リポジトリ
@@ -99,12 +99,12 @@ public class YahooService
                 errorMessage = ex.Message;
             }
             var log = await YahooRepository.FetchJobLogAsync(job.Id);
-            if(log is null) continue;
+            if (log is null) continue;
             log.IsSuccess = isSuccess;
             log.Info = errorMessage;
             YahooRepository.Update(log);
             await YahooRepository.SaveChangesAsync();
-            
+
         }
     }
 
@@ -130,7 +130,7 @@ public class YahooService
                 Dist = 1,
                 Results = 20,
                 GenreCode = genreCode,
-                Detail = LocalSearchDetail.Full
+                Detail = YdfDetailLevel.Full
             };
             localSearchRequest.MergeMessageInfo(messageEvent.Message);
             var gourmet = await YahooRepository.GetLocalSearchResultAsync(localSearchRequest);
