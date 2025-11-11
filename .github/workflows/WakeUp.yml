@@ -1,3 +1,5 @@
+name: WakeUp
+
 on:
   schedule:
     - cron: "*/10 * * * *"  # 5分おき（UTCベース）
