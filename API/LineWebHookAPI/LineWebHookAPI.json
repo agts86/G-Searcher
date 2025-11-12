@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.1",
+  "openapi": "3.0.1",
   "info": {
     "title": "LineWebHookAPI | v1",
     "version": "1.0.0"
@@ -16,7 +16,10 @@
             "in": "path",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/MessageTypes"
+              "enum": [
+                "location",
+                "text"
+              ]
             }
           }
         ],
@@ -212,18 +215,6 @@
           }
         }
       }
-    },
-    "/health": {
-      "get": {
-        "tags": [
-          "LineWebHookAPI"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -234,7 +225,8 @@
           "isRedelivery": {
             "type": "boolean"
           }
-        }
+        },
+        "nullable": true
       },
       "ErrorLog": {
         "required": [
@@ -247,10 +239,8 @@
             "format": "uuid"
           },
           "contents": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -270,33 +260,23 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "mode": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "timestamp": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int64"
           },
           "source": {
             "$ref": "#/components/schemas/UserSource"
           },
           "webhookEventId": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "deliveryContext": {
             "$ref": "#/components/schemas/DeliveryContextInfo"
@@ -307,10 +287,8 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -328,16 +306,12 @@
             "type": "boolean"
           },
           "contents": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "info": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -349,12 +323,6 @@
           }
         }
       },
-      "MessageTypes": {
-        "enum": [
-          "location",
-          "text"
-        ]
-      },
       "Reply": {
         "required": [
           "replyToken"
@@ -362,19 +330,15 @@
         "type": "object",
         "properties": {
           "replyToken": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "messages": {
-            "type": [
-              "null",
-              "array"
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/IMessage"
-            }
+            },
+            "nullable": true
           }
         }
       },
@@ -386,36 +350,29 @@
         "type": "object",
         "properties": {
           "userId": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "type": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "nullable": true
       },
       "WebHook": {
         "type": "object",
         "properties": {
           "destination": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string",
+            "nullable": true
           },
           "events": {
-            "type": [
-              "null",
-              "array"
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/Event"
-            }
+            },
+            "nullable": true
           }
         }
       }
@@ -427,9 +384,6 @@
     },
     {
       "name": "Yahoo"
-    },
-    {
-      "name": "LineWebHookAPI"
     }
   ]
 }
