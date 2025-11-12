@@ -15,37 +15,56 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read #This is required for actions/checkout
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.x'
-      - run: dotnet restore ./API/LineWebHookAPI/LineWebHookAPI.csproj
-      - run: dotnet build ./API/LineWebHookAPI/LineWebHookAPI.csproj -c Release --no-restore
-      - run: >
-          dotnet publish ./API/LineWebHookAPI/LineWebHookAPI.csproj -c Release
-          -r win-x64 --self-contained true
-          /p:PublishSingleFile=true
-          /p:IncludeAllContentForSelfExtract=true
-          -o ./publish
-      - uses: actions/upload-artifact@v4
-        with: { name: drop, path: ./publish/** }
+
+      - name: Build with dotnet
+        run: dotnet build ./API/LineWebHookAPI/LineWebHookAPI.csproj --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish ./API/LineWebHookAPI/LineWebHookAPI.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
   deploy:
     runs-on: windows-latest
     needs: build
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
     steps:
-      - uses: actions/download-artifact@v4
-        with: { name: drop, path: ./publish }
-      - uses: azure/login@v2
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_... }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_... }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_... }}
-      - uses: azure/webapps-deploy@v3
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
-          app-name: line-web-hook-api
-          slot-name: Production
-          package: ./publish
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_66E085E0FB724F6B8D456EC67F2148F7 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_93108C5E37134A96B342478DAA227AC5 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB1DAF1410C34B939B79B31E4779DAF7 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'line-web-hook-api'
+          slot-name: 'Production'
+          package: .
   wake-up:
     runs-on: ubuntu-latest
     needs: deploy
@@ -68,5 +87,4 @@ jobs:
             sleep 10
           done
           echo "All retries failed"; exit 1
-
 
