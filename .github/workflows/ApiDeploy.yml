@@ -30,7 +30,12 @@ jobs:
         run: dotnet build ./API/LineWebHookAPI/LineWebHookAPI.csproj --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./API/LineWebHookAPI/LineWebHookAPI.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: >
+          dotnet publish ./API/LineWebHookAPI/LineWebHookAPI.csproj -c Release
+          -r win-x64 --self-contained true
+          /p:PublishSingleFile=true
+          /p:IncludeAllContentForSelfExtract=true
+          -o ./publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -87,4 +92,5 @@ jobs:
             sleep 10
           done
           echo "All retries failed"; exit 1
+
 
