@@ -24,7 +24,7 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.x'
+          dotnet-version: '9.x'
 
       - name: Build with dotnet
         run: dotnet build ./API/LineWebHookAPI/LineWebHookAPI.csproj --configuration Release
@@ -87,4 +87,3 @@ jobs:
             sleep 10
           done
           echo "All retries failed"; exit 1
-
