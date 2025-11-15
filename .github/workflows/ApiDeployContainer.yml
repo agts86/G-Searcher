@@ -58,15 +58,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_93108C5E37134A96B342478DAA227AC5 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB1DAF1410C34B939B79B31E4779DAF7 }}
 
-      - name: Verify target app can be resolved
-        run: |
-          az account show --output table
-          az webapp show -n "${{ env.AZURE_WEBAPP_NAME }}" -g resouce-linux --subscription "${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB1DAF1410C34B939B79B31E4779DAF7 }}"
-
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: ${{ env.AZURE_WEBAPP_SLOT }}
-          resource-group-name: resouce-linux
           images: ${{ needs.build.outputs.image-uri }}
