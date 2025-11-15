@@ -63,4 +63,5 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: ${{ env.AZURE_WEBAPP_SLOT }}
+          resource-group-name: resouce-linux
           images: ${{ needs.build.outputs.image-uri }}
