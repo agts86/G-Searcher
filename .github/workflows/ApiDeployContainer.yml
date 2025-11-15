@@ -1,4 +1,7 @@
-name: Build and deploy container to Azure Web App - line-web-hook-api
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - line-webhook-api
 
 on:
   push:
@@ -9,58 +12,55 @@ on:
       - ".github/workflows/**"
   workflow_dispatch:
 
-env:
-  AZURE_WEBAPP_NAME: line-webhook-api
-  AZURE_WEBAPP_SLOT: Production
-  IMAGE_NAME: line-webhook-api
-  IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/line-webhook-api
-
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
-    outputs:
-      image-uri: ${{ steps.push.outputs.image-uri }}
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Build and push container image
-        id: push
-        run: |
-          IMAGE_TAG=${{ env.IMAGE_REPOSITORY }}:${{ github.sha }}
-          docker build API -f API/Dockerfile -t $IMAGE_TAG
-          docker push $IMAGE_TAG
-          echo "IMAGE_URI=$IMAGE_TAG" >> $GITHUB_ENV
-          echo "image-uri=$IMAGE_TAG" >> $GITHUB_OUTPUT
+      - name: Log in to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io/
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_1249EA26D34B43ABABA631281AB355E2 }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_B4245E9C627C41EBA8A11BC6D2017CFA }}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_1249EA26D34B43ABABA631281AB355E2 }}/agts86/line-webhook-api:${{ github.sha }}
+          file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
     permissions:
-      contents: read
-      id-token: write
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
+    needs: build
+    
     steps:
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_66E085E0FB724F6B8D456EC67F2148F7 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_93108C5E37134A96B342478DAA227AC5 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AB1DAF1410C34B939B79B31E4779DAF7 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E71D616C22464D59BD508DF8734C0065 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5C1C3087F8B24EA5B65FE099A54821E8 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6028128D7B7543BCA251028A10B73A8E }}
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          slot-name: ${{ env.AZURE_WEBAPP_SLOT }}
-          images: ${{ needs.build.outputs.image-uri }}
+          app-name: 'line-webhook-api'
+          slot-name: 'Production'
+          images: 'ghcr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_1249EA26D34B43ABABA631281AB355E2 }}/agts86/line-webhook-api:${{ github.sha }}'
+          
