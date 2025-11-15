@@ -37,7 +37,7 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_1249EA26D34B43ABABA631281AB355E2 }}/agts86/line-webhook-api:${{ github.sha }}
-          file: ./Dockerfile
+          file: ./API/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
