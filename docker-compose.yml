@@ -16,7 +16,7 @@ services:
       - ConnectionStrings__PostgreSQLConnection=Host=localhost;Database=postgres;Username=postgres;Password=postgres;SSL Mode=Disable;Trust Server Certificate=true
     network_mode: "host"
     volumes:
-      - ${HOME}/.aspnet/https:/https:ro
+      - ${USERPROFILE}/.aspnet/https:/https:ro
     depends_on:
       - postgres
 
