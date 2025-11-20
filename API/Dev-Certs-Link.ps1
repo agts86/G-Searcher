@@ -1,7 +1,11 @@
 $rootCertName = "LocalhostDevRootCA"
 $localhostCertName = "localhost"
 $pfxPassword = ConvertTo-SecureString -String "WslLocalhost" -Force -AsPlainText
-$pfxPath = "$env:USERPROFILE\.aspnet\https\WslLocalhost.pfx"
+$httpsDir = "$env:USERPROFILE\.aspnet\https"
+if (-not (Test-Path -Path $httpsDir)) {
+    New-Item -ItemType Directory -Path $httpsDir | Out-Null
+}
+$pfxPath = "$httpsDir\WslLocalhost.pfx"
 
 # 古い証明書を削除
 Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -like "*$rootCertName*" -or $_.Subject -like "*$localhostCertName*" } | Remove-Item -Force
