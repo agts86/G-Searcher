@@ -30,8 +30,18 @@ CREATE TABLE "GourmetWordLog" (
     CONSTRAINT "PK_GourmetWordLog" PRIMARY KEY ("Id")
 );
 
+CREATE TABLE "JobLog" (
+    "Id" uuid NOT NULL,
+    "IsSuccess" boolean NOT NULL,
+    "Contents" text,
+    "Info" text,
+    "CreatedAt" timestamp with time zone NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "PK_JobLog" PRIMARY KEY ("Id")
+);
+
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20250403122315_MigrationForPostgres', '9.0.3');
+VALUES ('20260208051306_InitialMigration', '10.0.0');
 
 COMMIT;
 
