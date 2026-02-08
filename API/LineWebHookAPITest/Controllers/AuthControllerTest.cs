@@ -6,7 +6,7 @@ using LineWebHookAPI.Models.Exceptions;
 using LineWebHookAPI.Models.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+
 
 namespace LineWebHookAPITest.Controllers;
 
@@ -15,7 +15,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public async Task LoginAsyncTestSuccess()
     {
-        var authService = new AuthService(CreateConfiguration());
+        var authService = new AuthService(Configuration);
         var controller = CreateController(authService);
         var request = new LoginRequestDto
         {
@@ -33,7 +33,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public async Task LoginAsyncTestFailure()
     {
-        var authService = new AuthService(CreateConfiguration());
+        var authService = new AuthService(Configuration);
         var controller = CreateController(authService);
         var request = new LoginRequestDto
         {
@@ -53,7 +53,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public void GetMeTest()
     {
-        var authService = new AuthService(CreateConfiguration());
+        var authService = new AuthService(Configuration);
         var controller = CreateController(authService);
         var claims = new List<Claim>
         {
@@ -73,7 +73,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public void GetMeTestUnauthorized()
     {
-        var authService = new AuthService(CreateConfiguration());
+        var authService = new AuthService(Configuration);
         var controller = CreateController(authService);
 
         var exception = Assert.Throws<UnauthorizedException>
@@ -87,7 +87,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public void LogoutTest()
     {
-        var authService = new AuthService(CreateConfiguration());
+        var authService = new AuthService(Configuration);
         var controller = CreateController(authService);
 
         var result = controller.Logout();
@@ -104,21 +104,5 @@ public class AuthControllerTest : TestBase
             HttpContext = new DefaultHttpContext()
         };
         return controller;
-    }
-
-    private static IConfiguration CreateConfiguration()
-    {
-        var values = new Dictionary<string, string>
-        {
-            { "Auth:AdminUserName", "admin" },
-            { "Auth:AdminPassword", "admin" },
-            { "Auth:JwtKey", "DevelopmentOnlyJwtKeyMustBeAtLeast32Chars" },
-            { "Auth:Issuer", "LineWebHookAPI" },
-            { "Auth:Audience", "LineWebHookAdmin" },
-            { "Auth:ExpiresMinutes", "120" }
-        };
-        return new ConfigurationBuilder()
-            .AddInMemoryCollection(values)
-            .Build();
     }
 }

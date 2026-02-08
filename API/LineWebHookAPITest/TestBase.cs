@@ -37,8 +37,19 @@ public abstract class TestBase
     /// 設定情報
     /// </summary>
     protected IConfiguration Configuration { get; } = new ConfigurationBuilder()
-        .Build();
-
+            .AddInMemoryCollection
+            (
+                new Dictionary<string, string>
+                {
+                    { "Auth:AdminUserName", "admin" },
+                    { "Auth:AdminPassword", "admin" },
+                    { "Auth:JwtKey", "DevelopmentOnlyJwtKeyMustBeAtLeast32Chars" },
+                    { "Auth:Issuer", "LineWebHookAPI" },
+                    { "Auth:Audience", "LineWebHookAdmin" },
+                    { "Auth:ExpiresMinutes", "120" }
+                }
+            )
+            .Build();
     /// <summary>
     /// テスト用の初期化処理を行います。
     /// </summary>
