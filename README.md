@@ -77,6 +77,14 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
     },
     "Yahoo": {
       "AppId": "{取得したYOLPのAPIキー)"
+    },
+    "Auth": {
+      "AdminUserName": "{管理画面の管理者ユーザー名}",
+      "AdminPassword": "{管理画面の管理者パスワード}",
+      "JwtKey": "{32文字以上の任意の秘密鍵}",
+      "Issuer": "LineWebHookAPI",
+      "Audience": "LineWebHookAdmin",
+      "ExpiresMinutes": 120
     }
   }
   ``` 
@@ -104,5 +112,4 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
       docker-compose exec backend bash
       dotnet ef database update
   ```
-
 

@@ -96,12 +96,17 @@
 - `ActionResult` で HTTP ステータスを明示する
 - 外部連携エラーは適切なステータスへ変換する（4xx/5xx）
 - `/health` など運用用エンドポイントは軽量に保つ
+- Controller の public メソッドは HTTP エンドポイントに限定する
+- Cookie 設定生成・レスポンス整形などの補助ロジックは `Configurations/` や `Utilities/` に分離する
+- 認証失敗や業務エラーは Service 層で `StatusCodeException` 派生例外を送出し、`Middleware` で HTTP レスポンスへ変換する
 
 ### ❌ やってはいけないこと
 
 - Controller で長い分岐・複雑ロジックを実装する
 - 例外をそのまま外に漏らす
 - 仕様化されていないレスポンス形を都度追加する
+- Controller 内に private helper メソッドを増やして関心事を混在させる
+- Controller で `Unauthorized()` / `BadRequest()` などのエラー応答を直接返す
 
 ## 8. 設計パターンと複雑度管理の自動適用
 
@@ -113,7 +118,7 @@
 - 条件に応じた生成が増える場合は Factory パターンを検討する
 - 名前や条件で処理を選ぶ場合は `IEnumerable<T>` + `FirstOrDefault` / `SingleOrDefault` パターンで分岐集中を避ける
 - ネストが深い場合はガード節（早期 return）で浅くする
-- メソッドの責務が複数にまたがる場合は private メソッドやサービス分割で責務を分離する
+- メソッドの責務が複数にまたがる場合は（Controller を除き）private メソッドやサービス分割で責務を分離する
 
 ### 🤖 自動判断基準
 

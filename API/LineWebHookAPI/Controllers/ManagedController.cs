@@ -3,6 +3,7 @@ using LineWebHookAPI.Models.Services;
 using LineWebHookAPI.Constants;
 using LineWebHookAPI.Models.DB.Tables;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace LineWebHookAPI.Controllers;
@@ -12,6 +13,7 @@ namespace LineWebHookAPI.Controllers;
 /// </summary>
 [ApiVersion("1")]
 [ApiController]
+[Authorize]
 [Route("api/v{version:apiVersion}/managed")]
 public class ManagedController(IManagedService managedService) : ControllerBase
 {
