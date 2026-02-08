@@ -1,0 +1,21 @@
+{
+  "name": "LineWebHookAPI",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.devcontainer.yml"
+  ],
+  "service": "backend",
+  "workspaceFolder": "/workspaces/LineWebHookAPI",
+  "remoteUser": "root",
+  "forwardPorts": [5000, 5001, 5432],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+  "postCreateCommand": "dotnet restore /workspaces/LineWebHookAPI/API/LineWebHookAPI/LineWebHookAPI.csproj"
+}

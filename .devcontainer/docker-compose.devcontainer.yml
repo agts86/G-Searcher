@@ -1,0 +1,15 @@
+services:
+  backend:
+    network_mode: bridge
+    command: ["sleep", "infinity"]
+    volumes:
+      - ..:/workspaces/LineWebHookAPI
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PostgreSQLConnection=Host=postgres;Database=postgres;Username=postgres;Password=postgres;SSL Mode=Disable;Trust Server Certificate=true
+    depends_on:
+      - postgres
+
+  postgres:
+    ports:
+      - 5432:5432
