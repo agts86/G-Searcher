@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace LineWebHookAPI.Validations;
 
+[ExcludeFromCodeCoverage]
 public partial class HalfNumericAttribute : ValidationAttribute
 {
     private Regex Regex { get; } = HalfNumeric();
