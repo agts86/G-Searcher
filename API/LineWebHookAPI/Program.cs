@@ -9,7 +9,6 @@ using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.Dto.Yahoo;
 using LineWebHookAPI.Models.Job;
 using LineWebHookAPI.Models.Services;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using YahooDeveloperApiClient.Configuration;
 
@@ -61,13 +60,9 @@ public class Program
         // Enumを文字列として扱う
         builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         // EFCoreの設定
-        var keepAliveConnection = new SqliteConnection(builder.Configuration.GetConnectionString("SqliteConnection"));
-        keepAliveConnection.Open();
-
         builder.Services.AddDbContext<LineWebHookContext>
         (
-            options =>
-            options.UseSqlite(keepAliveConnection)
+            options => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"))
         );
 
         var app = builder.Build();
@@ -79,13 +74,6 @@ public class Program
             app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
         }
         app.MapGet("/health", () => Results.Ok("ok"));
-        using var scope = app.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<LineWebHookContext>();
-        var isMemory = dbContext.Database.GetDbConnection().ConnectionString == "DataSource=:memory:";
-        if (isMemory)
-        {
-            dbContext.Database.Migrate();
-        }
 
         app.UseMiddleware<Middleware>();
 
