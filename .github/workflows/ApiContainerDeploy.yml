@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - develop
+    paths:
+      - 'API/**'
   workflow_dispatch:
 
 jobs:

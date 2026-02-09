@@ -4,13 +4,11 @@ on:
   push:
     branches: [ "develop" ]
     paths:
-      - 'API/**'    
-      - '.github/workflows/**'
+      - 'API/**'
   pull_request:
     branches: [ "develop" ]
     paths:
-      - 'API/**'    
-      - '.github/workflows/**'
+      - 'API/**'
 
 jobs:
   test:
