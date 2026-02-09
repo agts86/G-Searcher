@@ -117,7 +117,15 @@ public class Program
             app.MapOpenApi();
             app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
         }
-        app.MapGet("/health", () => Results.Ok("ok"));
+        app.MapGet
+        (
+            "/health",
+            async (LineWebHookContext dbContext, CancellationToken cancellationToken) =>
+            {
+                await dbContext.Database.ExecuteSqlRawAsync("SELECT 1", cancellationToken);
+                return Results.Ok("ok");
+            }
+        );
 
         app.UseMiddleware<Middleware>();
 
