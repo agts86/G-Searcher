@@ -1,9 +1,8 @@
-using LineDevSdk.Dtos.Commons.Messages;
-using LineDevSdk.DTOs.Commons.Messages;
-using LineDevSdk.DTOs.Commons.Messages.Templates;
-using LineDevSdk.DTOs.MessagingAPIs;
-using LineDevSdk.DTOs.WebHooks;
-using LineDevSdk.DTOs.WebHooks.Events;
+using LineDevSdk.DTO.Commons.Messages;
+using LineDevSdk.DTO.Commons.Messages.Templates;
+using LineDevSdk.DTO.MessagingAPIs;
+using LineDevSdk.DTO.WebHooks;
+using LineDevSdk.DTO.WebHooks.Events;
 using LineWebHookAPI.Constants.Line.API;
 using LineWebHookAPI.Extensions;
 using LineWebHookAPI.Models.DB.Repositories;

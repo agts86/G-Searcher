@@ -1,5 +1,5 @@
 using System.Text.Json;
-using LineDevSdk.DTOs.WebHooks;
+using LineDevSdk.DTO.WebHooks;
 
 namespace LineWebHookAPI.Models.Dto.Yahoo;
 

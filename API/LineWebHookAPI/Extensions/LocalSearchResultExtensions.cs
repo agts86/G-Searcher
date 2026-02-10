@@ -1,5 +1,5 @@
-using LineDevSdk.DTOs.Commons.Messages.Actions;
-using LineDevSdk.DTOs.Commons.Messages.Templates;
+using LineDevSdk.DTO.Commons.Messages.Actions;
+using LineDevSdk.DTO.Commons.Messages.Templates;
 using YahooDeveloperApiClient.YOLP.Response;
 
 namespace LineWebHookAPI.Extensions;

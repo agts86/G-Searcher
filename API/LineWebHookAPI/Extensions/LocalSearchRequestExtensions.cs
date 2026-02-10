@@ -1,4 +1,4 @@
-using LineDevSdk.DTOs.Commons.Messages;
+using LineDevSdk.DTO.Commons.Messages;
 using YahooDeveloperApiClient.YOLP.Request;
 
 namespace LineWebHookAPI.Extensions;

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using LineDevSdk.Jsons;
+using LineDevSdk.Converter;
 
 namespace LineWebHookAPI.Models.DB.Tables;
 

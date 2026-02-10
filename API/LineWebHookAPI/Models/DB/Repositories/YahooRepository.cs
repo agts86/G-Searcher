@@ -1,5 +1,5 @@
-using LineDevSdk.DTOs.MessagingAPIs;
-using LineDevSdk.Https;
+using LineDevSdk.DTO.MessagingAPIs;
+using LineDevSdk.Http;
 using LineWebHookAPI.Models.DB.Tables;
 using Microsoft.EntityFrameworkCore;
 using YahooDeveloperApiClient.YOLP;

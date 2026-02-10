@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using LineDevSdk.Configurations;
-using LineDevSdk.Https;
+using LineDevSdk.Http;
 using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Constants.Auth;
 using LineWebHookAPI.Models.DB;

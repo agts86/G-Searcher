@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Asp.Versioning;
 using LineDevSdk.Configurations;
-using LineDevSdk.DTOs.MessagingAPIs;
-using LineDevSdk.DTOs.WebHooks;
+using LineDevSdk.DTO.MessagingAPIs;
+using LineDevSdk.DTO.WebHooks;
 using LineWebHookAPI.Models.Dto.Yahoo;
 using LineWebHookAPI.Models.Job;
 using LineWebHookAPI.Models.Services;
