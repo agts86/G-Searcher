@@ -115,7 +115,6 @@ graph LR
 
     GH -->|Docker build/push（context: .）| GHCR
     GHCR -->|container deploy| Azure
-    GH -->|post-deploy wake-up<br/>GET KEEPALIVE_URL| Azure
 ```
 
 注記:
