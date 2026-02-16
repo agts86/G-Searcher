@@ -35,12 +35,12 @@ public class ManagedControllerTest : TestBase
         Assert.IsType<GourmetLocationLog[]>((result as OkObjectResult).Value);
         var content = (result as OkObjectResult).Value as GourmetLocationLog[];
         Assert.Equal(2, content.Length);
-        Assert.Equal(0, content[0].Lat);
-        Assert.Equal(1, content[0].Lng);
+        Assert.Equal(1, content[0].Lat);
+        Assert.Equal(0, content[0].Lng);
         Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromMinutes(1));
-        Assert.Equal(1, content[1].Lat);
-        Assert.Equal(0, content[1].Lng);
+        Assert.Equal(0, content[1].Lat);
+        Assert.Equal(1, content[1].Lng);
         Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromMinutes(1));
     }
@@ -69,10 +69,10 @@ public class ManagedControllerTest : TestBase
         Assert.IsType<GourmetWordLog[]>((result as OkObjectResult).Value);
         var content = (result as OkObjectResult).Value as GourmetWordLog[];
         Assert.Equal(2, content.Length);
-        Assert.Equal("二郎系", content[0].Text);
+        Assert.Equal("家系", content[0].Text);
         Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromMinutes(1));
-        Assert.Equal("家系", content[1].Text);
+        Assert.Equal("二郎系", content[1].Text);
         Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromMinutes(1));
     }
@@ -100,10 +100,10 @@ public class ManagedControllerTest : TestBase
 
         var content = Assert.IsType<ErrorLog[]>(result.Value);
         Assert.Equal(2, content.Length);
-        Assert.Equal("Error1", content[0].Contents);
+        Assert.Equal("Error2", content[0].Contents);
         Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromMinutes(1));
-        Assert.Equal("Error2", content[1].Contents);
+        Assert.Equal("Error1", content[1].Contents);
         Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromMinutes(1));
     }
@@ -135,14 +135,14 @@ public class ManagedControllerTest : TestBase
 
         var content = Assert.IsType<JobLog[]>(result.Value);
         Assert.Equal(2, content.Length);
-        Assert.True(content[0].IsSuccess);
-        Assert.Equal("job1", content[0].Contents);
-        Assert.Null(content[0].Info);
+        Assert.False(content[0].IsSuccess);
+        Assert.Equal("job2", content[0].Contents);
+        Assert.Equal("error", content[0].Info);
         Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromMinutes(1));
-        Assert.False(content[1].IsSuccess);
-        Assert.Equal("job2", content[1].Contents);
-        Assert.Equal("error", content[1].Info);
+        Assert.True(content[1].IsSuccess);
+        Assert.Equal("job1", content[1].Contents);
+        Assert.Null(content[1].Info);
         Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromMinutes(1));
     }

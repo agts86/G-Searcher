@@ -41,7 +41,7 @@ public class ManagedRepository(LineWebHookContext dbContext) : IManagedRepositor
     public async Task<GourmetLocationLog[]> FetchGourmetLocationLogsAsync()
     {
         return await DbContext.GourmetLocationLogs.AsNoTracking()
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .ToArrayAsync();
     }
 
@@ -52,7 +52,7 @@ public class ManagedRepository(LineWebHookContext dbContext) : IManagedRepositor
     public async Task<GourmetWordLog[]> FetchGourmetWordLogsAsync()
     {
         return await DbContext.GourmetWordLogs.AsNoTracking()
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .ToArrayAsync();
     }
 
@@ -63,7 +63,7 @@ public class ManagedRepository(LineWebHookContext dbContext) : IManagedRepositor
     public async Task<ErrorLog[]> FetchErrorLogsAsync()
     {
         return await DbContext.ErrorLogs.AsNoTracking()
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .ToArrayAsync();
     }
 
@@ -74,7 +74,7 @@ public class ManagedRepository(LineWebHookContext dbContext) : IManagedRepositor
     public async Task<JobLog[]> FetchJobLogAsync()
     {
         return await DbContext.JobLogs.AsNoTracking()
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .ToArrayAsync();
     }
 }
