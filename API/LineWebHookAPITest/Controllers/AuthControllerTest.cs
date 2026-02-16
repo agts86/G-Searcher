@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using LineWebHookAPI.Constants.Auth;
 using LineWebHookAPI.Controllers;
+using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.Dto.Auth;
 using LineWebHookAPI.Models.Exceptions;
 using LineWebHookAPI.Models.Services;
@@ -15,7 +16,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public async Task LoginAsyncTestSuccess()
     {
-        var authService = new AuthService(Configuration, DbContext);
+        var authService = CreateAuthService();
         var controller = CreateController(authService);
         var request = new LoginRequestDto
         {
@@ -34,7 +35,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public async Task LoginAsyncTestFailure()
     {
-        var authService = new AuthService(Configuration, DbContext);
+        var authService = CreateAuthService();
         var controller = CreateController(authService);
         var request = new LoginRequestDto
         {
@@ -54,7 +55,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public async Task RefreshAsyncTestSuccess()
     {
-        var authService = new AuthService(Configuration, DbContext);
+        var authService = CreateAuthService();
         var controller = CreateController(authService);
         var loginRequest = new LoginRequestDto
         {
@@ -75,7 +76,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public async Task RefreshAsyncTestUnauthorizedWhenRefreshCookieMissing()
     {
-        var authService = new AuthService(Configuration, DbContext);
+        var authService = CreateAuthService();
         var controller = CreateController(authService);
 
         var exception = await Assert.ThrowsAsync<UnauthorizedException>
@@ -89,7 +90,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public void GetMeTest()
     {
-        var authService = new AuthService(Configuration, DbContext);
+        var authService = CreateAuthService();
         var controller = CreateController(authService);
         var claims = new List<Claim>
         {
@@ -109,7 +110,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public void GetMeTestUnauthorized()
     {
-        var authService = new AuthService(Configuration, DbContext);
+        var authService = CreateAuthService();
         var controller = CreateController(authService);
 
         var exception = Assert.Throws<UnauthorizedException>
@@ -123,7 +124,7 @@ public class AuthControllerTest : TestBase
     [Fact]
     public async Task LogoutTest()
     {
-        var authService = new AuthService(Configuration, DbContext);
+        var authService = CreateAuthService();
         var controller = CreateController(authService);
 
         var result = await controller.LogoutAsync();
@@ -143,5 +144,11 @@ public class AuthControllerTest : TestBase
             }
         };
         return controller;
+    }
+
+    private IAuthService CreateAuthService()
+    {
+        var authRepository = new AuthRepository(DbContext);
+        return new AuthService(Configuration, authRepository);
     }
 }

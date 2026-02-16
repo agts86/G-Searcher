@@ -93,6 +93,7 @@ public class Program
         builder.Services.AddScoped<IYahooRepository, YahooRepository>();
         builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
         builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
+        builder.Services.AddScoped<IAuthRepository, AuthRepository>();
         builder.Services.AddHttpClient<ILineMessagingClient, LineMessagingClient>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IYahooService, YahooService>();

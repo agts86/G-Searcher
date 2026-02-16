@@ -2,11 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using LineWebHookAPI.Models.DB;
+using LineWebHookAPI.Models.DB.Repositories;
 using LineWebHookAPI.Models.DB.Tables;
 using LineWebHookAPI.Models.Dto.Auth;
 using LineWebHookAPI.Models.Exceptions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LineWebHookAPI.Models.Services;
@@ -61,7 +60,7 @@ public record AuthLoginResult
 /// <summary>
 /// 認証サービス
 /// </summary>
-public class AuthService(IConfiguration configuration, LineWebHookContext dbContext) : IAuthService
+public class AuthService(IConfiguration configuration, IAuthRepository authRepository) : IAuthService
 {
     /// <summary>
     /// 設定情報
@@ -69,9 +68,9 @@ public class AuthService(IConfiguration configuration, LineWebHookContext dbCont
     private IConfiguration Configuration { get; } = configuration;
 
     /// <summary>
-    /// DBコンテキスト
+    /// 認証用リポジトリ
     /// </summary>
-    private LineWebHookContext DbContext { get; } = dbContext;
+    private IAuthRepository AuthRepository { get; } = authRepository;
 
     /// <summary>
     /// 管理者ログインを実行する
@@ -94,9 +93,9 @@ public class AuthService(IConfiguration configuration, LineWebHookContext dbCont
         var (accessToken, accessTokenExpiresAt) = CreateAccessToken(request.UserName);
         var (refreshToken, refreshTokenHash, refreshTokenExpiresAt) = CreateRefreshToken();
 
-        await RevokeAllRefreshTokensByUserNameAsync(request.UserName);
+        await AuthRepository.RevokeAllRefreshTokensByUserNameAsync(request.UserName);
 
-        DbContext.RefreshTokens.Add
+        await AuthRepository.AddRefreshTokenAsync
         (
             new RefreshToken
             {
@@ -107,7 +106,7 @@ public class AuthService(IConfiguration configuration, LineWebHookContext dbCont
             }
         );
 
-        await DbContext.SaveChangesAsync();
+        await AuthRepository.SaveChangesAsync();
 
         return new AuthLoginResult
         (
@@ -130,22 +129,22 @@ public class AuthService(IConfiguration configuration, LineWebHookContext dbCont
             throw new UnauthorizedException(new ResponseError("Unauthorized."));
 
         var refreshTokenHash = GetTokenHash(refreshToken);
-        var storedToken = await DbContext.RefreshTokens.SingleOrDefaultAsync(x => x.TokenHash == refreshTokenHash);
+        var storedToken = await AuthRepository.FetchRefreshTokenByHashAsync(refreshTokenHash);
         if (storedToken is null)
             throw new UnauthorizedException(new ResponseError("Unauthorized."));
 
         if (storedToken.ExpiresAt <= DateTime.UtcNow)
         {
-            DbContext.RefreshTokens.Remove(storedToken);
-            await DbContext.SaveChangesAsync();
+            AuthRepository.RevokeRefreshToken(storedToken);
+            await AuthRepository.SaveChangesAsync();
             throw new UnauthorizedException(new ResponseError("Unauthorized."));
         }
 
         var (accessToken, accessTokenExpiresAt) = CreateAccessToken(storedToken.UserName);
         var (newRefreshToken, newRefreshTokenHash, refreshTokenExpiresAt) = CreateRefreshToken();
 
-        DbContext.RefreshTokens.Remove(storedToken);
-        DbContext.RefreshTokens.Add
+        AuthRepository.RevokeRefreshToken(storedToken);
+        await AuthRepository.AddRefreshTokenAsync
         (
             new RefreshToken
             {
@@ -155,7 +154,7 @@ public class AuthService(IConfiguration configuration, LineWebHookContext dbCont
                 ExpiresAt = refreshTokenExpiresAt.UtcDateTime
             }
         );
-        await DbContext.SaveChangesAsync();
+        await AuthRepository.SaveChangesAsync();
 
         return new AuthLoginResult
         (
@@ -177,12 +176,12 @@ public class AuthService(IConfiguration configuration, LineWebHookContext dbCont
             return;
 
         var refreshTokenHash = GetTokenHash(refreshToken);
-        var storedToken = await DbContext.RefreshTokens.SingleOrDefaultAsync(x => x.TokenHash == refreshTokenHash);
+        var storedToken = await AuthRepository.FetchRefreshTokenByHashAsync(refreshTokenHash);
         if (storedToken is null)
             return;
 
-        DbContext.RefreshTokens.Remove(storedToken);
-        await DbContext.SaveChangesAsync();
+        AuthRepository.RevokeRefreshToken(storedToken);
+        await AuthRepository.SaveChangesAsync();
     }
 
     /// <summary>
@@ -287,16 +286,4 @@ public class AuthService(IConfiguration configuration, LineWebHookContext dbCont
         return Convert.ToHexString(hash);
     }
 
-    /// <summary>
-    /// ユーザーの既存リフレッシュトークンを無効化する
-    /// </summary>
-    /// <param name="userName">ユーザー名</param>
-    private async Task RevokeAllRefreshTokensByUserNameAsync(string userName)
-    {
-        var tokens = await DbContext.RefreshTokens.Where(x => x.UserName == userName).ToListAsync();
-        if (tokens.Count == 0)
-            return;
-
-        DbContext.RefreshTokens.RemoveRange(tokens);
-    }
 }
