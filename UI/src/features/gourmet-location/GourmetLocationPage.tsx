@@ -15,7 +15,7 @@ import type { GourmetLocationLog } from '@/types/api';
 // SSR 無効化（react-leaflet は window 依存）
 const LocationMap = dynamic(
   () => import('@/components/map/LocationMap').then((m) => m.LocationMap),
-  { ssr: false, loading: () => <div className="h-96 animate-pulse rounded-lg bg-slate-200" /> },
+  { ssr: false, loading: () => <div className="h-72 animate-pulse rounded-lg bg-slate-200 sm:h-96" /> },
 );
 
 type TableProps = { pagedItems: GourmetLocationLog[]; currentPage: number };

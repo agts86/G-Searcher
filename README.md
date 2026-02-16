@@ -8,24 +8,20 @@ https://lin.ee/sOGflWx
 
 ## 作成の背景
 
-ナイツーや飲み会後の締めのラーメン屋を探すのに苦労したので作りました。<br/>
-UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line Messaging APIを使うことにしました<br/>
+ナイツーや飲み会後の締めのラーメン屋を探すのに苦労したので作りました。
 
 ## 使用技術
 
 ■ 言語・FW<br>
 
 -   C#：ASP.NET Core API
--   Bat
 -   TypeScript：Next.js
+-   Bat
+-   PowerShell
 
 ■ DB
 
--   Sqlite
-
-■ クラウド
-
--   Azure AppService
+-   postgres
 
 ■ コンテナ
 

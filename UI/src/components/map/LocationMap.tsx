@@ -25,7 +25,7 @@ export function LocationMap({ logs }: Props): React.ReactElement {
     : [35.6812, 139.7671]; // 東京をデフォルト中心に
 
   return (
-    <MapContainer center={center} zoom={12} className="h-96 w-full rounded-lg">
+    <MapContainer center={center} zoom={12} className="h-72 w-full rounded-lg sm:h-96">
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
