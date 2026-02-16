@@ -366,3 +366,12 @@ FodyWeavers.xsd
 appsettings.Development.json
 
 *.db*
+.next
+.pnpm-store/
+pnpm-debug.log*
+npm-debug.log*
+yarn-error.log*
+
+# keep source folders named "logs" under UI tracked
+!UI/src/**/logs/
+!UI/src/**/logs/**

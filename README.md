@@ -17,7 +17,7 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 -   C#：ASP.NET Core API
 -   Bat
--   TypeScript：Nuxt.js or Next.js(予定。後で利用履歴管理画面を作ろうかなて思ってます）
+-   TypeScript：Next.js
 
 ■ DB
 
@@ -103,13 +103,43 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
       docker-compose down
   ``` 
 
-6. 確認
+6. API確認
 
   https://localhost:5001/swagger/index.html
 
-7. DBマイグレード(初回だけ)
+7. UI確認
+
+  http://localhost:3000/login/
+
+8. DBマイグレード(初回だけ)
   ```
       docker-compose exec backend bash
       dotnet ef database update
   ```
 
+## UI 開発（HTTPS 維持）
+
+Next.js 開発サーバーは `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `https://localhost:5001`）へ中継する。  
+このとき TLS 検証は Node.js 側で行われるため、開発時は `NODE_EXTRA_CA_CERTS` の設定が必要。
+
+VSCode の `UI + API: 同時起動` を使う場合は、以下が自動で適用される。
+
+- `prepare-ui-dev-ca` タスクで `${USERPROFILE}/.aspnet/https/WslLocalhost.pfx` から `/tmp/linewebhook-cert/localhost-dev-root-ca.pem` を生成
+- `UI: Next.js dev` 起動時に `NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem` を設定
+
+VSCode を使わずに `UI` を起動する場合は、先に PEM を生成してから起動する。
+
+```bash
+mkdir -p /tmp/linewebhook-cert
+openssl pkcs12 -in "${USERPROFILE}/.aspnet/https/WslLocalhost.pfx" \
+  -nokeys -cacerts -passin pass:WslLocalhost \
+  -out /tmp/linewebhook-cert/localhost-dev-root-ca.pem
+
+cd UI
+NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem pnpm dev -- --port 3000
+```
+
+## デプロイ用コンテナ
+
+`Dockerfile` は multi-stage build で `UI` をビルドし、生成物（`UI/out`）を API コンテナの `wwwroot` に同梱する。  
+そのため、コンテナビルド時の context はリポジトリルート（`.`）を使用する。

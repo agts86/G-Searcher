@@ -34,6 +34,35 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
+        },
+        {
+            "name": "UI: Next.js dev",
+            "type": "node",
+            "request": "launch",
+            "preLaunchTask": "prepare-ui-dev",
+            "program": "${workspaceFolder}/UI/node_modules/next/dist/bin/next",
+            "args": ["dev"],
+            "cwd": "${workspaceFolder}/UI",
+            "runtimeExecutable": "node",
+            "env": {
+                "NODE_EXTRA_CA_CERTS": "/tmp/linewebhook-cert/localhost-dev-root-ca.pem"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "- Local:\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            },
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "UI + API: 同時起動",
+            "configurations": [
+                ".NET Core Launch (web)",
+                "UI: Next.js dev"
+            ]
         }
     ]
 }

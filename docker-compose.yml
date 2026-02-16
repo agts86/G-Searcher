@@ -1,12 +1,33 @@
 services:
+  ui:
+    container_name: ui
+    build:
+      context: ./UI
+      dockerfile: dockerfile.dev
+    working_dir: /app
+    command: >
+      sh -c "mkdir -p /tmp/linewebhook-cert &&
+      openssl pkcs12 -in /tmp/linewebhook-cert/WslLocalhost.pfx -nokeys -cacerts -passin pass:WslLocalhost -out /tmp/linewebhook-cert/localhost-dev-root-ca.pem &&
+      pnpm install --store-dir /tmp/pnpm-store &&
+      NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem pnpm exec next dev -p 3000 -H 0.0.0.0"
+    environment:
+      - TZ=Asia/Tokyo
+      - NODE_ENV=development
+      - CI=true
+      - API_BASE_URL=https://localhost:5001
+    network_mode: "host"
+    volumes:
+      - ./UI:/app
+      - ui_node_modules:/app/node_modules
+      - ${USERPROFILE}/.aspnet/https/WslLocalhost.pfx:/tmp/linewebhook-cert/WslLocalhost.pfx:ro
+    depends_on:
+      - backend
+
   backend:
     container_name: backend
     build:
       context: ./API
       dockerfile: Dockerfile.dev
-    ports:
-      - 5000:5000
-      - 5001:5001
     environment:
       - TZ=Asia/Tokyo
       - ASPNETCORE_ENVIRONMENT=Development
@@ -35,3 +56,4 @@ services:
 
 volumes:
   postgres_data:
+  ui_node_modules:

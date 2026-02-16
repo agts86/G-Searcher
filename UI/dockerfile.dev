@@ -1,0 +1,15 @@
+FROM node:24-bookworm-slim
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PNPM_HOME=/pnpm
+ENV PATH=${PNPM_HOME}:${PATH}
+
+RUN corepack enable \
+    && corepack prepare pnpm@10.26.0 --activate
+
+EXPOSE 3001

@@ -165,6 +165,19 @@ UI/
 - 実行時に Next.js Node サーバーを別プロセスで常駐させる前提にする
 - UI と API を別ホスト前提で固定してしまう
 
+## 9.1 開発時の HTTPS 連携（Next.js dev）
+
+### ✅ やるべきこと
+
+- 開発時は `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `https://localhost:5001`）へ中継する
+- Node.js 側の証明書検証に備えて `NODE_EXTRA_CA_CERTS` を設定する
+- VSCode 起動では `prepare-ui-dev-ca` タスクで `${USERPROFILE}/.aspnet/https/WslLocalhost.pfx` から CA PEM を生成し、`NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem` を使う
+
+### ❌ やってはいけないこと
+
+- `NODE_TLS_REJECT_UNAUTHORIZED=0` を常用する
+- 開発用に HTTP (`http://localhost:5000`) へ固定して、本来の HTTPS 構成を検証しない
+
 ## 10. 品質保証・必須コマンド
 
 コード修正後は必ず以下を実行する。

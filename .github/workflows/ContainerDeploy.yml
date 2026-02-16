@@ -9,6 +9,7 @@ on:
       - develop
     paths:
       - 'API/**'
+      - 'UI/**'
   workflow_dispatch:
 
 jobs:
@@ -34,10 +35,10 @@ jobs:
       - name: Build and push container image to registry
         uses: docker/build-push-action@v3
         with:
-          context: ./API
+          context: .
           push: true
           tags: ghcr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_CC27AF4F4BCC46F88F73421CB9088FB8 }}/agts86/line-webhook-api:${{ github.sha }}
-          file: ./API/Dockerfile
+          file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
