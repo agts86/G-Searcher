@@ -9,10 +9,8 @@
             ,GeneratedCodeAttribute
             ,CompilerGeneratedAttribute
           </ExcludeByAttribute>
-          <Exclude>[System.Text.RegularExpressions.Generated]*</Exclude>
-          <ExcludeByFile>**/System.Text.RegularExpressions/**</ExcludeByFile>
-          <ExcludeByFile>**/*.g.cs</ExcludeByFile>
-          <ExcludeByFile>**/Migrations/**</ExcludeByFile>
+          <Exclude>[System.Text.RegularExpressions.Generated]*,[LineWebHookAPI]LineWebHookAPI.Migrations.*</Exclude>
+          <ExcludeByFile>**/System.Text.RegularExpressions/**,**/*.g.cs,**/Migrations/*.cs,**/Migrations/**/*.cs</ExcludeByFile>
         </Configuration>
       </DataCollector>
     </DataCollectors>
