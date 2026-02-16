@@ -45,3 +45,23 @@ VALUES ('20260208051306_InitialMigration', '10.0.0');
 
 COMMIT;
 
+START TRANSACTION;
+CREATE TABLE "RefreshToken" (
+    "Id" uuid NOT NULL,
+    "UserName" text NOT NULL,
+    "TokenHash" text NOT NULL,
+    "ExpiresAt" timestamp with time zone NOT NULL,
+    "CreatedAt" timestamp with time zone NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "PK_RefreshToken" PRIMARY KEY ("Id")
+);
+
+CREATE INDEX "IX_RefreshToken_ExpiresAt" ON "RefreshToken" ("ExpiresAt");
+
+CREATE UNIQUE INDEX "IX_RefreshToken_TokenHash" ON "RefreshToken" ("TokenHash");
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20260216164039_AddRefreshToken', '10.0.0');
+
+COMMIT;
+

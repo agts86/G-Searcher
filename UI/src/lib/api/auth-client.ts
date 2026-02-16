@@ -5,6 +5,9 @@ export const authClient = {
   login: (req: LoginRequest): Promise<LoginResponse> =>
     apiClient.post<LoginResponse>('/auth/login', req),
 
+  refresh: (): Promise<LoginResponse> =>
+    apiClient.post<LoginResponse>('/auth/refresh', {}),
+
   logout: (): Promise<void> => apiClient.post<void>('/auth/logout', {}),
 
   me: (): Promise<MeResponse> => apiClient.get<MeResponse>('/auth/me'),

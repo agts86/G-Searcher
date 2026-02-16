@@ -2,6 +2,7 @@ using Asp.Versioning;
 using LineWebHookAPI.Configurations;
 using LineWebHookAPI.Constants.Auth;
 using LineWebHookAPI.Models.Dto.Auth;
+using LineWebHookAPI.Models.Exceptions;
 using LineWebHookAPI.Models.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,11 +36,47 @@ public class AuthController(IAuthService authService) : ControllerBase
         Response.Cookies.Append
         (
             AuthCookie.Name,
-            result.Token,
-            AuthCookieOptionsFactory.Create(result.ExpiresAt)
+            result.AccessToken,
+            AuthCookieOptionsFactory.Create(result.AccessTokenExpiresAt)
+        );
+        Response.Cookies.Append
+        (
+            AuthCookie.RefreshName,
+            result.RefreshToken,
+            AuthCookieOptionsFactory.Create(result.RefreshTokenExpiresAt)
         );
 
-        return new LoginResponseDto(result.UserName, result.ExpiresAt);
+        return new LoginResponseDto(result.UserName, result.AccessTokenExpiresAt);
+    }
+
+    /// <summary>
+    /// リフレッシュトークンで再認証を実行する
+    /// </summary>
+    /// <returns>ログイン結果</returns>
+    [AllowAnonymous]
+    [HttpPost("refresh")]
+    public async Task<ActionResult<LoginResponseDto>> RefreshAsync()
+    {
+        var hasRefreshToken = Request.Cookies.TryGetValue(AuthCookie.RefreshName, out var refreshToken);
+        if (!hasRefreshToken)
+            throw new UnauthorizedException(new ResponseError("Unauthorized."));
+
+        var result = await AuthService.RefreshAsync(refreshToken);
+
+        Response.Cookies.Append
+        (
+            AuthCookie.Name,
+            result.AccessToken,
+            AuthCookieOptionsFactory.Create(result.AccessTokenExpiresAt)
+        );
+        Response.Cookies.Append
+        (
+            AuthCookie.RefreshName,
+            result.RefreshToken,
+            AuthCookieOptionsFactory.Create(result.RefreshTokenExpiresAt)
+        );
+
+        return new LoginResponseDto(result.UserName, result.AccessTokenExpiresAt);
     }
 
     /// <summary>
@@ -47,9 +84,13 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// </summary>
     /// <returns>No Content</returns>
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> LogoutAsync()
     {
+        Request.Cookies.TryGetValue(AuthCookie.RefreshName, out var refreshToken);
+        await AuthService.LogoutAsync(refreshToken);
+
         Response.Cookies.Delete(AuthCookie.Name, AuthCookieOptionsFactory.Create(DateTimeOffset.UtcNow.AddDays(-1)));
+        Response.Cookies.Delete(AuthCookie.RefreshName, AuthCookieOptionsFactory.Create(DateTimeOffset.UtcNow.AddDays(-1)));
         return NoContent();
     }
 

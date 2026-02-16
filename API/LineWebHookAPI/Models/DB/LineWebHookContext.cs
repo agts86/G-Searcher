@@ -15,6 +15,8 @@ public class LineWebHookContext(DbContextOptions<LineWebHookContext> options) : 
 
     public virtual DbSet<JobLog> JobLogs { get; set; }
 
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ErrorLog>(entity =>
@@ -32,6 +34,12 @@ public class LineWebHookContext(DbContextOptions<LineWebHookContext> options) : 
         modelBuilder.Entity<JobLog>(entity =>
         {
             entity.HasKey(e => e.Id);
+        });
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.TokenHash).IsUnique();
+            entity.HasIndex(e => e.ExpiresAt);
         });
     }
 
@@ -51,4 +59,3 @@ public class LineWebHookContext(DbContextOptions<LineWebHookContext> options) : 
         return base.SaveChangesAsync(cancellationToken);
     }
 }
-

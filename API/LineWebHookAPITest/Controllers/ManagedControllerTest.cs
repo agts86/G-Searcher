@@ -107,4 +107,43 @@ public class ManagedControllerTest : TestBase
         Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromMinutes(1));
         Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromMinutes(1));
     }
+
+    [Fact]
+    public async Task GetJobLogAsyncTest()
+    {
+        var jobLogs = new JobLog[]
+        {
+            new()
+            {
+                IsSuccess = true,
+                Contents = "job1",
+                Info = null
+            },
+            new()
+            {
+                IsSuccess = false,
+                Contents = "job2",
+                Info = "error"
+            }
+        };
+        DbContext.JobLogs.AddRange(jobLogs);
+        await DbContext.SaveChangesAsync();
+        var managedRepository = new ManagedRepository(DbContext);
+        var managedService = new ManagedService(managedRepository);
+        var controller = new ManagedController(managedService);
+        var result = await controller.GetJobLogAsync();
+
+        var content = Assert.IsType<JobLog[]>(result.Value);
+        Assert.Equal(2, content.Length);
+        Assert.True(content[0].IsSuccess);
+        Assert.Equal("job1", content[0].Contents);
+        Assert.Null(content[0].Info);
+        Assert.Equal(DateTime.Now, content[0].CreatedAt, TimeSpan.FromMinutes(1));
+        Assert.Equal(DateTime.Now, content[0].UpdatedAt, TimeSpan.FromMinutes(1));
+        Assert.False(content[1].IsSuccess);
+        Assert.Equal("job2", content[1].Contents);
+        Assert.Equal("error", content[1].Info);
+        Assert.Equal(DateTime.Now, content[1].CreatedAt, TimeSpan.FromMinutes(1));
+        Assert.Equal(DateTime.Now, content[1].UpdatedAt, TimeSpan.FromMinutes(1));
+    }
 }

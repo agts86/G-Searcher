@@ -11,11 +11,61 @@ using LineDevSdk.DTO.WebHooks;
 using LineDevSdk.DTO.WebHooks.Events;
 using LineWebHookAPI.Models.Services;
 using System.Text.Json;
+using LineWebHookAPI.Models.Dto.Yahoo;
+using LineWebHookAPI.Models.Job;
+using Moq;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LineWebHookAPITest.Controllers;
 
 public class YahooControllerTest : TestBase
 {
+    [Fact]
+    public async Task AcceptLocalAsyncTest()
+    {
+        var dto = new WebHook()
+        {
+            Events =
+            [
+                new MessageEvent()
+                {
+                    ReplyToken = "replyToken",
+                    Message = new LocationMessage()
+                    {
+                        Latitude = 35.681236,
+                        Longitude = 139.767125
+                    }
+                }
+            ]
+        };
+        LocalJobDto capturedJob = null;
+        var queueMock = new Mock<IBackgroundJobQueue<LocalJobDto>>();
+        queueMock.Setup(x => x.EnqueueAsync(It.IsAny<LocalJobDto>(), It.IsAny<CancellationToken>()))
+            .Callback<LocalJobDto, CancellationToken>((job, _) => capturedJob = job)
+            .Returns(ValueTask.CompletedTask);
+        var yahooServiceMock = new Mock<IYahooService>();
+        yahooServiceMock.Setup(x => x.AcceptLocalAsync(It.IsAny<LocalJobDto>()))
+            .Returns(Task.CompletedTask);
+        var controller = new YahooController(yahooServiceMock.Object);
+
+        var result = await controller.AcceptLocalAsync(dto, "0106", queueMock.Object);
+
+        var accepted = Assert.IsType<AcceptedResult>(result);
+        Assert.Equal(202, accepted.StatusCode);
+        Assert.NotNull(capturedJob);
+        Assert.Equal("0106", capturedJob.GenreCode);
+        Assert.Same(dto, capturedJob.WebHook);
+        var payloadJson = JsonSerializer.Serialize(accepted.Value);
+        Assert.Contains(capturedJob.Id.ToString(), payloadJson);
+
+        queueMock.Verify(x => x.EnqueueAsync(It.IsAny<LocalJobDto>(), It.IsAny<CancellationToken>()), Times.Once);
+        yahooServiceMock.Verify
+        (
+            x => x.AcceptLocalAsync(It.Is<LocalJobDto>(job => job.Id == capturedJob.Id)),
+            Times.Once
+        );
+    }
+
     /// <summary>
     /// デバッグモード
     /// 結果あり

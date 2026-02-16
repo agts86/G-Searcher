@@ -2,8 +2,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using LineWebHookAPI.Models.DB;
+using LineWebHookAPI.Models.DB.Tables;
 using LineWebHookAPI.Models.Dto.Auth;
 using LineWebHookAPI.Models.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LineWebHookAPI.Models.Services;
@@ -18,6 +21,19 @@ public interface IAuthService
     Task<AuthLoginResult> LoginAsync(LoginRequestDto request);
 
     /// <summary>
+    /// リフレッシュトークンで再認証を実行する
+    /// </summary>
+    /// <param name="refreshToken">リフレッシュトークン</param>
+    /// <returns>認証成功時のトークン情報</returns>
+    Task<AuthLoginResult> RefreshAsync(string refreshToken);
+
+    /// <summary>
+    /// ログアウト時にリフレッシュトークンを無効化する
+    /// </summary>
+    /// <param name="refreshToken">リフレッシュトークン</param>
+    Task LogoutAsync(string refreshToken);
+
+    /// <summary>
     /// 認証済みユーザー名を取得する
     /// </summary>
     /// <param name="user">認証情報</param>
@@ -29,14 +45,23 @@ public interface IAuthService
 /// ログイン成功時の情報
 /// </summary>
 /// <param name="UserName">管理者ユーザー名</param>
-/// <param name="Token">JWT トークン</param>
-/// <param name="ExpiresAt">トークン有効期限</param>
-public record AuthLoginResult(string UserName, string Token, DateTimeOffset ExpiresAt);
+/// <param name="AccessToken">アクセストークン</param>
+/// <param name="AccessTokenExpiresAt">アクセストークン有効期限</param>
+/// <param name="RefreshToken">リフレッシュトークン</param>
+/// <param name="RefreshTokenExpiresAt">リフレッシュトークン有効期限</param>
+public record AuthLoginResult
+(
+    string UserName,
+    string AccessToken,
+    DateTimeOffset AccessTokenExpiresAt,
+    string RefreshToken,
+    DateTimeOffset RefreshTokenExpiresAt
+);
 
 /// <summary>
 /// 認証サービス
 /// </summary>
-public class AuthService(IConfiguration configuration) : IAuthService
+public class AuthService(IConfiguration configuration, LineWebHookContext dbContext) : IAuthService
 {
     /// <summary>
     /// 設定情報
@@ -44,11 +69,16 @@ public class AuthService(IConfiguration configuration) : IAuthService
     private IConfiguration Configuration { get; } = configuration;
 
     /// <summary>
+    /// DBコンテキスト
+    /// </summary>
+    private LineWebHookContext DbContext { get; } = dbContext;
+
+    /// <summary>
     /// 管理者ログインを実行する
     /// </summary>
     /// <param name="request">ログイン情報</param>
     /// <returns>認証成功時のトークン情報</returns>
-    public Task<AuthLoginResult> LoginAsync(LoginRequestDto request)
+    public async Task<AuthLoginResult> LoginAsync(LoginRequestDto request)
     {
         var adminUserName = Configuration.GetValue<string>("Auth:AdminUserName");
         var adminPassword = Configuration.GetValue<string>("Auth:AdminPassword");
@@ -60,44 +90,99 @@ public class AuthService(IConfiguration configuration) : IAuthService
         .Any(x => !IsMatch(x.Expected, x.Actual));
         if (isFailure)
             throw new UnauthorizedException(new ResponseError("Invalid user name or password."));
-        
-        var jwtKey = Configuration.GetValue<string>("Auth:JwtKey") ?? string.Empty;
-        const int MinimumJwtKeyLength = 32;
-        if (jwtKey.Length < MinimumJwtKeyLength)
-            throw new InvalidOperationException("Auth:JwtKey must be at least 32 characters.");
 
-        var issuer = Configuration.GetValue<string>("Auth:Issuer");
-        var audience = Configuration.GetValue<string>("Auth:Audience");
-        var expiresMinutes = Configuration.GetValue<int?>("Auth:ExpiresMinutes") ?? 120;
-        if (expiresMinutes <= 0)
-            expiresMinutes = 120;
+        var (accessToken, accessTokenExpiresAt) = CreateAccessToken(request.UserName);
+        var (refreshToken, refreshTokenHash, refreshTokenExpiresAt) = CreateRefreshToken();
 
-        var expiresAt = DateTimeOffset.UtcNow.AddMinutes(expiresMinutes);
-        var claims = new List<Claim>
-        {
-            new (JwtRegisteredClaimNames.Sub, request.UserName),
-            new (ClaimTypes.Name, request.UserName),
-            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+        await RevokeAllRefreshTokensByUserNameAsync(request.UserName);
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var token = new JwtSecurityToken
+        DbContext.RefreshTokens.Add
         (
-            issuer: issuer,
-            audience: audience,
-            claims: claims,
-            expires: expiresAt.UtcDateTime,
-            signingCredentials: credentials
+            new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                UserName = request.UserName,
+                TokenHash = refreshTokenHash,
+                ExpiresAt = refreshTokenExpiresAt.UtcDateTime
+            }
         );
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        return Task.FromResult(new AuthLoginResult
+        await DbContext.SaveChangesAsync();
+
+        return new AuthLoginResult
         (
             request.UserName,
-            tokenHandler.WriteToken(token),
-            expiresAt
-        ));
+            accessToken,
+            accessTokenExpiresAt,
+            refreshToken,
+            refreshTokenExpiresAt
+        );
+    }
+
+    /// <summary>
+    /// リフレッシュトークンで再認証を実行する
+    /// </summary>
+    /// <param name="refreshToken">リフレッシュトークン</param>
+    /// <returns>認証成功時のトークン情報</returns>
+    public async Task<AuthLoginResult> RefreshAsync(string refreshToken)
+    {
+        if (string.IsNullOrWhiteSpace(refreshToken))
+            throw new UnauthorizedException(new ResponseError("Unauthorized."));
+
+        var refreshTokenHash = GetTokenHash(refreshToken);
+        var storedToken = await DbContext.RefreshTokens.SingleOrDefaultAsync(x => x.TokenHash == refreshTokenHash);
+        if (storedToken is null)
+            throw new UnauthorizedException(new ResponseError("Unauthorized."));
+
+        if (storedToken.ExpiresAt <= DateTime.UtcNow)
+        {
+            DbContext.RefreshTokens.Remove(storedToken);
+            await DbContext.SaveChangesAsync();
+            throw new UnauthorizedException(new ResponseError("Unauthorized."));
+        }
+
+        var (accessToken, accessTokenExpiresAt) = CreateAccessToken(storedToken.UserName);
+        var (newRefreshToken, newRefreshTokenHash, refreshTokenExpiresAt) = CreateRefreshToken();
+
+        DbContext.RefreshTokens.Remove(storedToken);
+        DbContext.RefreshTokens.Add
+        (
+            new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                UserName = storedToken.UserName,
+                TokenHash = newRefreshTokenHash,
+                ExpiresAt = refreshTokenExpiresAt.UtcDateTime
+            }
+        );
+        await DbContext.SaveChangesAsync();
+
+        return new AuthLoginResult
+        (
+            storedToken.UserName,
+            accessToken,
+            accessTokenExpiresAt,
+            newRefreshToken,
+            refreshTokenExpiresAt
+        );
+    }
+
+    /// <summary>
+    /// ログアウト時にリフレッシュトークンを無効化する
+    /// </summary>
+    /// <param name="refreshToken">リフレッシュトークン</param>
+    public async Task LogoutAsync(string refreshToken)
+    {
+        if (string.IsNullOrWhiteSpace(refreshToken))
+            return;
+
+        var refreshTokenHash = GetTokenHash(refreshToken);
+        var storedToken = await DbContext.RefreshTokens.SingleOrDefaultAsync(x => x.TokenHash == refreshTokenHash);
+        if (storedToken is null)
+            return;
+
+        DbContext.RefreshTokens.Remove(storedToken);
+        await DbContext.SaveChangesAsync();
     }
 
     /// <summary>
@@ -131,5 +216,87 @@ public class AuthService(IConfiguration configuration) : IAuthService
          return false;
 
         return CryptographicOperations.FixedTimeEquals(leftBytes, rightBytes);
+    }
+
+    /// <summary>
+    /// アクセストークンを作成する
+    /// </summary>
+    /// <param name="userName">ユーザー名</param>
+    /// <returns>アクセストークン情報</returns>
+    private (string AccessToken, DateTimeOffset ExpiresAt) CreateAccessToken(string userName)
+    {
+        var jwtKey = Configuration.GetValue<string>("Auth:JwtKey") ?? string.Empty;
+        const int MinimumJwtKeyLength = 32;
+        if (jwtKey.Length < MinimumJwtKeyLength)
+            throw new InvalidOperationException("Auth:JwtKey must be at least 32 characters.");
+
+        var issuer = Configuration.GetValue<string>("Auth:Issuer");
+        var audience = Configuration.GetValue<string>("Auth:Audience");
+        var expiresMinutes = Configuration.GetValue<int?>("Auth:ExpiresMinutes") ?? 15;
+        if (expiresMinutes <= 0)
+            expiresMinutes = 15;
+
+        var expiresAt = DateTimeOffset.UtcNow.AddMinutes(expiresMinutes);
+        var claims = new List<Claim>
+        {
+            new (JwtRegisteredClaimNames.Sub, userName),
+            new (ClaimTypes.Name, userName),
+            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken
+        (
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: expiresAt.UtcDateTime,
+            signingCredentials: credentials
+        );
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        return (tokenHandler.WriteToken(token), expiresAt);
+    }
+
+    /// <summary>
+    /// リフレッシュトークンを作成する
+    /// </summary>
+    /// <returns>リフレッシュトークン情報</returns>
+    private (string RefreshToken, string TokenHash, DateTimeOffset ExpiresAt) CreateRefreshToken()
+    {
+        var refreshExpiresDays = Configuration.GetValue<int?>("Auth:RefreshExpiresDays") ?? 7;
+        if (refreshExpiresDays <= 0)
+            refreshExpiresDays = 7;
+
+        var refreshToken = Base64UrlEncoder.Encode(RandomNumberGenerator.GetBytes(64));
+        var tokenHash = GetTokenHash(refreshToken);
+        var expiresAt = DateTimeOffset.UtcNow.AddDays(refreshExpiresDays);
+
+        return (refreshToken, tokenHash, expiresAt);
+    }
+
+    /// <summary>
+    /// トークンハッシュ値を取得する
+    /// </summary>
+    /// <param name="token">トークン</param>
+    /// <returns>ハッシュ値</returns>
+    private static string GetTokenHash(string token)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(token));
+        return Convert.ToHexString(hash);
+    }
+
+    /// <summary>
+    /// ユーザーの既存リフレッシュトークンを無効化する
+    /// </summary>
+    /// <param name="userName">ユーザー名</param>
+    private async Task RevokeAllRefreshTokensByUserNameAsync(string userName)
+    {
+        var tokens = await DbContext.RefreshTokens.Where(x => x.UserName == userName).ToListAsync();
+        if (tokens.Count == 0)
+            return;
+
+        DbContext.RefreshTokens.RemoveRange(tokens);
     }
 }

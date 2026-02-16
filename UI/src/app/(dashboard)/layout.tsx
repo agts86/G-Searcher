@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { AuthGuard } from '@/lib/auth/AuthGuard';
 import { useLogout, useMe } from '@/features/auth/useAuth';
+import { useAutoRefresh } from '@/features/auth/useAutoRefresh';
 
 const NAV_ITEMS = [
   { label: 'ロケーション', href: '/dashboard/gourmet/location' },
@@ -68,6 +69,8 @@ type Props = {
 };
 
 export default function DashboardLayout({ children }: Props): React.ReactElement {
+  useAutoRefresh();
+
   return (
     <AuthGuard>
       <div className="flex h-screen flex-col">

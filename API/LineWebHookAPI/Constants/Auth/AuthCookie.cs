@@ -9,4 +9,9 @@ public static class AuthCookie
     /// 認証 Cookie 名
     /// </summary>
     public const string Name = "linewebhook_auth";
+
+    /// <summary>
+    /// リフレッシュトークン Cookie 名
+    /// </summary>
+    public const string RefreshName = "linewebhook_refresh";
 }

@@ -84,7 +84,8 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
       "JwtKey": "{32文字以上の任意の秘密鍵}",
       "Issuer": "LineWebHookAPI",
       "Audience": "LineWebHookAdmin",
-      "ExpiresMinutes": 120
+      "ExpiresMinutes": 15,
+      "RefreshExpiresDays": 7
     }
   }
   ``` 
@@ -121,6 +122,9 @@ UIデザインが得意でないためUI作成の手間省きでLineChatBot,Line
 
 Next.js 開発サーバーは `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `https://localhost:5001`）へ中継する。  
 このとき TLS 検証は Node.js 側で行われるため、開発時は `NODE_EXTRA_CA_CERTS` の設定が必要。
+
+認証は `Access Token 15分 + Refresh Token 7日`。  
+UI は有効期限の5分前に `/api/v1/auth/refresh` を呼び、失敗時は `401` で再ログインへ遷移する。
 
 VSCode の `UI + API: 同時起動` を使う場合は、以下が自動で適用される。
 
