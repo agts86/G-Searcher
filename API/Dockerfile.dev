@@ -3,17 +3,23 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # csproj のみをコピーしてリストア
-COPY ["LineWebHookAPI/LineWebHookAPI.csproj", "LineWebHookAPI/"]
-RUN dotnet restore "LineWebHookAPI/LineWebHookAPI.csproj"
+COPY ["Host/Host.csproj", "Host/"]
+COPY ["Application/Application.csproj", "Application/"]
+COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Presentation/Presentation.csproj", "Presentation/"]
+RUN dotnet restore "Host/Host.csproj"
 
 # 残りのファイルをコピーしてビルド
-COPY ["LineWebHookAPI/", "LineWebHookAPI/"]
-WORKDIR "/src/LineWebHookAPI"
-RUN dotnet build "LineWebHookAPI.csproj" -c publish -o /app/build
+COPY ["Host/", "Host/"]
+COPY ["Application/", "Application/"]
+COPY ["Infrastructure/", "Infrastructure/"]
+COPY ["Presentation/", "Presentation/"]
+WORKDIR "/src/Host"
+RUN dotnet build "Host.csproj" -c publish -o /app/build
 
 # パブリッシュ
 FROM build AS publish
-RUN dotnet publish "LineWebHookAPI.csproj" -c publish -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Host.csproj" -c publish -o /app/publish /p:UseAppHost=false
 
 # 実行環境（開発用）SDK イメージを使用し、マイグレードできるようにする
 FROM build AS final
@@ -21,7 +27,10 @@ WORKDIR /app
 EXPOSE 5000
 EXPOSE 5001
 COPY --from=publish /app/publish /app/bin
-COPY LineWebHookAPI/ ./
+COPY Host/ /app/Host/
+COPY Application/ /app/Application/
+COPY Infrastructure/ /app/Infrastructure/
+COPY Presentation/ /app/Presentation/
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf && \
     sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
 

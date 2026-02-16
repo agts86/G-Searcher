@@ -21,17 +21,23 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # csproj のみをコピーしてリストア
-COPY ["API/LineWebHookAPI/LineWebHookAPI.csproj", "API/LineWebHookAPI/"]
-RUN dotnet restore "API/LineWebHookAPI/LineWebHookAPI.csproj"
+COPY ["API/Host/Host.csproj", "API/Host/"]
+COPY ["API/Application/Application.csproj", "API/Application/"]
+COPY ["API/Infrastructure/Infrastructure.csproj", "API/Infrastructure/"]
+COPY ["API/Presentation/Presentation.csproj", "API/Presentation/"]
+RUN dotnet restore "API/Host/Host.csproj"
 
 # 残りのファイルをコピーしてビルド
-COPY ["API/LineWebHookAPI/", "API/LineWebHookAPI/"]
-WORKDIR "/src/API/LineWebHookAPI"
-RUN dotnet build "LineWebHookAPI.csproj" -c publish -o /app/build
+COPY ["API/Host/", "API/Host/"]
+COPY ["API/Application/", "API/Application/"]
+COPY ["API/Infrastructure/", "API/Infrastructure/"]
+COPY ["API/Presentation/", "API/Presentation/"]
+WORKDIR "/src/API/Host"
+RUN dotnet build "Host.csproj" -c publish -o /app/build
 
 # パブリッシュ
 FROM build AS publish
-RUN dotnet publish "LineWebHookAPI.csproj" -c publish -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Host.csproj" -c publish -o /app/publish /p:UseAppHost=false
 
 # 実行環境
 FROM base AS final

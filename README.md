@@ -32,6 +32,13 @@ https://lin.ee/sOGflWx
 -   YOLP API
 -   Line Messaging API
 
+## API構成（最小4プロジェクト）
+
+- `API/Host` : Host（`Program.cs` / 起動設定）
+- `API/Presentation` : Controller / Middleware / Validation
+- `API/Application` : Service / DTO / Exception / Repository Interface
+- `API/Infrastructure` : Repository 実装 / DbContext / Migrations
+
 ## 前提
 
 1. YOLP APIのキーを取得済み
@@ -111,7 +118,10 @@ https://lin.ee/sOGflWx
 8. DBマイグレード(初回だけ)
   ```
       docker-compose exec backend bash
-      dotnet ef database update
+      cd /app/Host
+      dotnet ef database update \
+        --project ../Infrastructure/Infrastructure.csproj \
+        --startup-project ./Host.csproj
   ```
 
 ## UI 開発（HTTPS 維持）

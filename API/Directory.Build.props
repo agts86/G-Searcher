@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- プロジェクト分割後の restore/build 並列実行が不安定なため固定 -->
+    <BuildInParallel>false</BuildInParallel>
+    <BuildProjectReferencesInParallel>false</BuildProjectReferencesInParallel>
+  </PropertyGroup>
+</Project>

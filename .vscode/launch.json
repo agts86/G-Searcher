@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/API/LineWebHookAPI/bin/Debug/net10.0/LineWebHookAPI.dll",
+            "program": "${workspaceFolder}/API/Host/bin/Debug/net10.0/LineWebHookAPI.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/API/LineWebHookAPI",
+            "cwd": "${workspaceFolder}/API/Host",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

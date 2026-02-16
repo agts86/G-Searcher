@@ -10,9 +10,8 @@
 
 ## API
 
-- `/api:build` -> `dotnet build API/LineWebHookAPI/LineWebHookAPI.csproj`
-- `/api:test` -> `dotnet test API/LineWebHookAPITest/LineWebHookAPITest.csproj`
-- `/api:migrate-add <Name>` -> `dotnet tool run dotnet-ef migrations add <Name> --project API/LineWebHookAPI/LineWebHookAPI.csproj --startup-project API/LineWebHookAPI/LineWebHookAPI.csproj --output-dir Migrations`
-- `/api:migrate-remove` -> `dotnet tool run dotnet-ef migrations remove --project API/LineWebHookAPI/LineWebHookAPI.csproj --startup-project API/LineWebHookAPI/LineWebHookAPI.csproj`
-- `/api:migrate-update` -> `dotnet tool run dotnet-ef database update --project API/LineWebHookAPI/LineWebHookAPI.csproj --startup-project API/LineWebHookAPI/LineWebHookAPI.csproj`
-
+- `/api:build` -> `dotnet build API/Host/Host.csproj`
+- `/api:test` -> `dotnet test API/Test/Test.csproj`
+- `/api:migrate-add <Name>` -> `dotnet tool run dotnet-ef migrations add <Name> --project API/Infrastructure/Infrastructure.csproj --startup-project API/Host/Host.csproj --output-dir Migrations`
+- `/api:migrate-remove` -> `dotnet tool run dotnet-ef migrations remove --project API/Infrastructure/Infrastructure.csproj --startup-project API/Host/Host.csproj`
+- `/api:migrate-update` -> `dotnet tool run dotnet-ef database update --project API/Infrastructure/Infrastructure.csproj --startup-project API/Host/Host.csproj`

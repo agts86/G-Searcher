@@ -2,7 +2,7 @@
 
 ## 1. 目的
 
-このドキュメントは `API/LineWebHookAPI` の開発ルールを定義する。  
+このドキュメントは `API/` 配下の API 実装ルールを定義する。  
 対象は ASP.NET Core Web API（.NET 10 / C#）であり、TypeScript / Next.js / NestJS 前提の規約は適用しない。
 
 ## 1.1 MUSTルール（最優先）
@@ -14,12 +14,16 @@
 
 ### ✅ やるべきこと
 
-- `Controllers/` は HTTP 入出力と認証・バリデーションに専念し、ビジネスロジックを持たない
-- `Models/Services/` はユースケースの実装を担当し、データ取得はリポジトリ経由で行う
-- `Models/DB/Repositories/` は DB へのアクセスのみを担当し、`LineWebHookContext` 経由で操作する
-- `Models/Dto/` は API 入出力や外部連携データの型定義として使う
-- `Configurations/`, `Constants/`, `Utilities/`, `Validations/` は横断関心事として整理する
+- プロジェクトを最小 4 構成で分割する  
+  `Host`（Program / 起動設定）  
+  `Presentation`（Controller / Middleware / Validation）  
+  `Application`（Service / DTO / Exception / Repository Interface）  
+  `Infrastructure`（Repository 実装 / DbContext / Migration）
+- `Presentation` は HTTP 入出力と認証・バリデーションに専念し、ビジネスロジックを持たない
+- `Application` はユースケースの実装を担当し、データ取得はリポジトリインターフェース経由で行う
+- `Infrastructure` は DB へのアクセスのみを担当し、`LineWebHookContext` 経由で操作する
 - 依存は `Controller -> Service -> Repository` の一方向を維持する
+- 参照方向は `Presentation -> Application`, `Infrastructure -> Application`, `Host -> (Presentation, Application, Infrastructure)` を維持する
 
 ### ❌ やってはいけないこと
 
@@ -32,7 +36,7 @@
 
 ### ✅ やるべきこと
 
-- DI 登録は `Program.cs` に集約する
+- DI 登録は `Host/Program.cs` に集約する
 - インターフェース経由で依存を受ける（例: `IYahooService`, `IManagedRepository`）
 - ライフタイムは用途で使い分ける
 - HTTP クライアントは `AddHttpClient` で登録する
@@ -112,7 +116,7 @@
 
 ### ✅ 自動適用すべきルール
 
-- ストラテジー解決は `API/LineWebHookAPI/Utilities/Polymorphism.cs` の `Polymorphism.CreatePolymorphismArray<T>()` を優先して使用する
+- ストラテジー解決は `API/Application/Utilities/Polymorphism.cs` の `Polymorphism.CreatePolymorphismArray<T>()` を優先して使用する
 - 基底クラスまたはインターフェースを指定して実装群を収集し、条件に一致する実装を選択する
 - `switch` や長い `if-else` で処理種別を分岐している場合、Strategy パターンやポリモーフィズムへの置換を優先する
 - 条件に応じた生成が増える場合は Factory パターンを検討する
@@ -203,20 +207,19 @@ private static GourmetWordLog CreateGourmetWordLog(Action<GourmetWordLog> setup 
 
 ```bash
 # API プロジェクトのビルド
-cd API/LineWebHookAPI
-dotnet build
-dotnet test
+dotnet build API/Host/Host.csproj
+dotnet test API/Test/Test.csproj
 
 # Migration 追加（リポジトリルートで実行）
 cd /path/to/repo
 dotnet tool run dotnet-ef migrations add <MigrationName> \
-  --project API/LineWebHookAPI/LineWebHookAPI.csproj \
-  --startup-project API/LineWebHookAPI/LineWebHookAPI.csproj \
+  --project API/Infrastructure/Infrastructure.csproj \
+  --startup-project API/Host/Host.csproj \
   --output-dir Migrations
 
 # Migration 適用
 cd /path/to/repo
 dotnet tool run dotnet-ef database update \
-  --project API/LineWebHookAPI/LineWebHookAPI.csproj \
-  --startup-project API/LineWebHookAPI/LineWebHookAPI.csproj
+  --project API/Infrastructure/Infrastructure.csproj \
+  --startup-project API/Host/Host.csproj
 ```

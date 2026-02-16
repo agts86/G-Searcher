@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Application/Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="LineDevSdk">
+      <HintPath>../Host/lib/LineDevSdk.dll</HintPath>
+    </Reference>
+    <Reference Include="YahooDeveloperApiClient">
+      <HintPath>../Host/lib/YahooDeveloperApiClient.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
