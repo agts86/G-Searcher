@@ -131,6 +131,9 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
         app.UseAuthentication();
 
         app.UseAuthorization();
