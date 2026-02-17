@@ -3,7 +3,7 @@ using LineDevSdk.DTO.Commons.Messages.Templates;
 using LineDevSdk.DTO.MessagingAPIs;
 using LineDevSdk.DTO.WebHooks;
 using LineDevSdk.DTO.WebHooks.Events;
-using Features.Yahoo.Dtos;
+using Features.Yahoo.Dto;
 using Features.Yahoo.Repositories;
 using Features.Yahoo.Constants;
 using Features.Yahoo.Extensions;
@@ -43,7 +43,7 @@ public interface IYahooService
 /// <summary>
 /// YahooBコントローラーのビジネスロジック
 /// </summary>
-public class YahooService
+internal class YahooService
 (
     IYahooRepository yahooRepository,
     IWebHostEnvironment env,

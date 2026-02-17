@@ -28,7 +28,7 @@ public interface IManagedService
 /// <summary>
 /// 管理用コントローラーのビジネスロジック
 /// </summary>
-public class ManagedService(IManagedRepository managedRepository) : IManagedService
+internal class ManagedService(IManagedRepository managedRepository) : IManagedService
 {
     /// <summary>
     /// リポジトリ

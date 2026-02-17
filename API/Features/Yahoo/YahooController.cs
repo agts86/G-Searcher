@@ -3,7 +3,7 @@ using Asp.Versioning;
 using LineDevSdk.Configurations;
 using LineDevSdk.DTO.MessagingAPIs;
 using LineDevSdk.DTO.WebHooks;
-using Features.Yahoo.Dtos;
+using Features.Yahoo.Dto;
 using Shared.Jobs;
 using Features.Yahoo.Services;
 using Shared.Validations;

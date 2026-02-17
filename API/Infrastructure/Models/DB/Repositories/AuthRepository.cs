@@ -7,7 +7,7 @@ namespace Infrastructure.Models.DB.Repositories;
 /// <summary>
 /// 認証用リポジトリ
 /// </summary>
-public class AuthRepository(LineWebHookContext dbContext) : IAuthRepository
+internal class AuthRepository(LineWebHookContext dbContext) : IAuthRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト

@@ -7,7 +7,7 @@ namespace Features.Yahoo.Extensions;
 /// <summary>
 /// LocalSearchResult拡張クラス
 /// </summary>
-public static class LocalSearchResultExtensions
+internal static class LocalSearchResultExtensions
 {
     /// <summary>
     /// カルーセルテンプレートの配列に変換

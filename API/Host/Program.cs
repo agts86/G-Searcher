@@ -6,18 +6,13 @@ using System.Text.Json.Serialization;
 using LineDevSdk.Configurations;
 using LineDevSdk.Http;
 using Host.Configurations;
+using Features.Auth;
 using Features.Auth.Constants;
-using Features.Auth.Repositories;
-using Features.Auth.Services;
-using Features.Managed.Repositories;
-using Features.Managed.Services;
-using Features.Yahoo.Dtos;
-using Features.Yahoo.Repositories;
-using Features.Yahoo.Services;
+using Features.Managed;
+using Features.Yahoo;
+using Infrastructure;
 using Infrastructure.Models.DB;
 using Infrastructure.Models.DB.Repositories;
-using Infrastructure.Models.Job;
-using Shared.Jobs;
 using Shared.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -97,16 +92,14 @@ public class Program
         // 以下DI
         builder.Services.AddTransient<Middleware>();
         builder.Services.AddScoped<LineSignatureFilter>();
-        builder.Services.AddScoped<IYahooRepository, YahooRepository>();
-        builder.Services.AddScoped<IManagedRepository, ManagedRepository>();
         builder.Services.AddScoped<IMiddleWareRepository, MiddleWareRepository>();
-        builder.Services.AddScoped<IAuthRepository, AuthRepository>();
         builder.Services.AddHttpClient<ILineMessagingClient, LineMessagingClient>();
-        builder.Services.AddScoped<IAuthService, AuthService>();
-        builder.Services.AddScoped<IYahooService, YahooService>();
-        builder.Services.AddScoped<IManagedService, ManagedService>();
-        builder.Services.AddSingleton<IBackgroundJobQueue<LocalJobDto>, BackgroundJobQueue<LocalJobDto>>();
-        builder.Services.AddHostedService<YahooBackgroundService>();
+        builder.Services.AddAuthInfrastructure();
+        builder.Services.AddManagedInfrastructure();
+        builder.Services.AddYahooInfrastructure();
+        builder.Services.AddAuthFeature();
+        builder.Services.AddManagedFeature();
+        builder.Services.AddYahooFeature();
 
 
         // Enumを文字列として扱う

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Features.Auth.Dtos;
+namespace Features.Auth.Dto;
 
 /// <summary>
 /// ログインリクエスト

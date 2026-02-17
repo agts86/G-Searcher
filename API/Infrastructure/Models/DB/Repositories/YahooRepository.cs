@@ -12,7 +12,7 @@ namespace Infrastructure.Models.DB.Repositories;
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPClient, ILineMessagingClient LineMessagingClient) : IYahooRepository
+internal class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPClient, ILineMessagingClient LineMessagingClient) : IYahooRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト

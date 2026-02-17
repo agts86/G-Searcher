@@ -1,4 +1,4 @@
-namespace Features.Auth.Dtos;
+namespace Features.Auth.Dto;
 
 /// <summary>
 /// ログインレスポンス

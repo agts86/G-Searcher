@@ -3,7 +3,7 @@ namespace Features.Yahoo.Constants;
 /// <summary>
 /// YahooUのURLルート
 /// </summary>
-public static class YahooUrlRoot
+internal static class YahooUrlRoot
 {
     /// <summary>
     /// ローカル

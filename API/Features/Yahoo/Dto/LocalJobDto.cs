@@ -1,7 +1,7 @@
 using System.Text.Json;
 using LineDevSdk.DTO.WebHooks;
 
-namespace Features.Yahoo.Dtos;
+namespace Features.Yahoo.Dto;
 
 /// <summary>
 /// Yahoo!ローカルサーチジョブ

@@ -2,7 +2,7 @@ using Application.Models.DB.Tables;
 
 namespace Features.Auth.Repositories;
 
-public interface IAuthRepository
+internal interface IAuthRepository
 {
     /// <summary>
     /// リフレッシュトークンをハッシュ値で取得する

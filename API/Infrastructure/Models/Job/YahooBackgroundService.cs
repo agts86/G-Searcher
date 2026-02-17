@@ -1,4 +1,4 @@
-using Features.Yahoo.Dtos;
+using Features.Yahoo.Dto;
 using Shared.Jobs;
 using Features.Yahoo.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +10,7 @@ namespace Infrastructure.Models.Job;
 /// Yahoo!ローカルサーチ非同期ジョブサービス
 /// </summary>
 /// <typeparam name="LocalJobDto"></typeparam>
-public class YahooBackgroundService(IServiceProvider sp, IBackgroundJobQueue<LocalJobDto> queue) : BackgroundService
+internal class YahooBackgroundService(IServiceProvider sp, IBackgroundJobQueue<LocalJobDto> queue) : BackgroundService
 {
     /// <summary>
     /// サービスプロバイダー

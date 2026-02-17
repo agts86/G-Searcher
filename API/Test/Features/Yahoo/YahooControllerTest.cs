@@ -11,7 +11,7 @@ using LineDevSdk.DTO.WebHooks;
 using LineDevSdk.DTO.WebHooks.Events;
 using Features.Yahoo.Services;
 using System.Text.Json;
-using Features.Yahoo.Dtos;
+using Features.Yahoo.Dto;
 using Shared.Jobs;
 using Moq;
 using Microsoft.AspNetCore.Mvc;

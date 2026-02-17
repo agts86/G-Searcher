@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Features.Auth.Dtos;
+using Features.Auth.Dto;
 using Features.Auth.Repositories;
 using Application.Models.DB.Tables;
 using Shared.Exceptions;
@@ -61,7 +61,7 @@ public record AuthLoginResult
 /// <summary>
 /// 認証サービス
 /// </summary>
-public class AuthService(IConfiguration configuration, IAuthRepository authRepository) : IAuthService
+internal class AuthService(IConfiguration configuration, IAuthRepository authRepository) : IAuthService
 {
     /// <summary>
     /// 設定情報

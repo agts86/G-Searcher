@@ -7,7 +7,7 @@ namespace Infrastructure.Models.DB.Repositories;
 /// <summary>
 /// サーチコントローラー用リポジトリ
 /// </summary>
-public class ManagedRepository(LineWebHookContext dbContext) : IManagedRepository
+internal class ManagedRepository(LineWebHookContext dbContext) : IManagedRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト

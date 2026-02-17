@@ -2,7 +2,7 @@ using Application.Models.DB.Tables;
 
 namespace Features.Managed.Repositories;
 
-public interface IManagedRepository
+internal interface IManagedRepository
 {
     /// <summary>
     /// ログを取得する

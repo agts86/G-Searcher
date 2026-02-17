@@ -3,7 +3,7 @@ namespace Features.Yahoo.Constants;
 /// <summary>
 /// メッセージ文
 /// </summary>
-public static class MessageTexts
+internal static class MessageTexts
 {
     /// <summary>
     /// 何もなし

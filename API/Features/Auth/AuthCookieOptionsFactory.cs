@@ -5,7 +5,7 @@ namespace Features.Auth;
 /// <summary>
 /// 認証 Cookie オプション生成
 /// </summary>
-public static class AuthCookieOptionsFactory
+internal static class AuthCookieOptionsFactory
 {
     /// <summary>
     /// 認証 Cookie オプションを作成する

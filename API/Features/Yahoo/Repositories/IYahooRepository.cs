@@ -8,7 +8,7 @@ namespace Features.Yahoo.Repositories;
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-public interface IYahooRepository
+internal interface IYahooRepository
 {
     /// <summary>
     /// グルメAPIを実行して結果を取得する

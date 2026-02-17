@@ -6,7 +6,7 @@ namespace Features.Yahoo.Extensions;
 /// <summary>
 /// IMessageの拡張メソッド
 /// </summary>
-public static class IMessageExtensions
+internal static class IMessageExtensions
 {
     /// <summary>
     /// IMessageをGourmetLogに変換する

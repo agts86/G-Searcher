@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Features.Auth;
 using Features.Auth.Constants;
 using Infrastructure.Models.DB.Repositories;
-using Features.Auth.Dtos;
+using Features.Auth.Dto;
 using Shared.Exceptions;
 using Features.Auth.Services;
 using Microsoft.AspNetCore.Http;

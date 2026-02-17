@@ -8,7 +8,7 @@ namespace Infrastructure.Models.Job;
 /// バックグラウンドジョブキュー実装
 /// </summary>
 /// <typeparam name="T">ジョブの型</typeparam>
-public class BackgroundJobQueue<T> : IBackgroundJobQueue<T>
+internal class BackgroundJobQueue<T> : IBackgroundJobQueue<T>
 {
     /// <summary>
     /// チャネル

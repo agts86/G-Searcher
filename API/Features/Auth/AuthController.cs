@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using Features.Auth.Constants;
-using Features.Auth.Dtos;
+using Features.Auth.Dto;
 using Features.Auth.Services;
 using Shared.Exceptions;
 using Microsoft.AspNetCore.Authorization;

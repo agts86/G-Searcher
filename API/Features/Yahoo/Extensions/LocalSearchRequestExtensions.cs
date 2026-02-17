@@ -6,7 +6,7 @@ namespace Features.Yahoo.Extensions;
 /// <summary>
 /// LocalSearchRequest拡張クラス
 /// </summary>
-public static class LocalSearchRequestExtensions
+internal static class LocalSearchRequestExtensions
 {
     /// <summary>
     /// メッセージ情報をマージします。
