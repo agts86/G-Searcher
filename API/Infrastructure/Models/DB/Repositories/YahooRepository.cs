@@ -1,6 +1,6 @@
 using LineDevSdk.DTO.MessagingAPIs;
 using LineDevSdk.Http;
-using Features.Yahoo.Repositories;
+using Features.Webhook.Repositories;
 using Application.Models.DB.Tables;
 using Microsoft.EntityFrameworkCore;
 using YahooDeveloperApiClient.YOLP;
@@ -12,7 +12,7 @@ namespace Infrastructure.Models.DB.Repositories;
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-internal class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPClient, ILineMessagingClient LineMessagingClient) : IYahooRepository
+internal class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPClient, ILineMessagingClient LineMessagingClient) : IWebhookRepository
 {
     /// <summary>
     /// EFCoreのコンテキスト

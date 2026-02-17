@@ -3,12 +3,12 @@ using Application.Models.DB.Tables;
 using YahooDeveloperApiClient.YOLP.Request;
 using YahooDeveloperApiClient.YOLP.Response;
 
-namespace Features.Yahoo.Repositories;
+namespace Features.Webhook.Repositories;
 
 /// <summary>
 /// Yahooコントローラー用リポジトリ
 /// </summary>
-internal interface IYahooRepository
+internal interface IWebhookRepository
 {
     /// <summary>
     /// グルメAPIを実行して結果を取得する

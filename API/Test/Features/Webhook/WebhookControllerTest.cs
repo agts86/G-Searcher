@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Features.Yahoo.Constants;
+using Features.Webhook.Constants;
 using YahooDeveloperApiClient.YOLP.Response;
-using Features.Yahoo;
+using Features.Webhook;
 using Infrastructure.Models.DB.Repositories;
 using LineDevSdk.DTO.Commons.Messages;
 using LineDevSdk.DTO.MessagingAPIs;
@@ -9,16 +9,16 @@ using LineDevSdk.DTO.Commons.Messages.Templates;
 using LineDevSdk.DTO.Commons.Messages.Actions;
 using LineDevSdk.DTO.WebHooks;
 using LineDevSdk.DTO.WebHooks.Events;
-using Features.Yahoo.Services;
+using Features.Webhook.Services;
 using System.Text.Json;
-using Features.Yahoo.Dto;
+using Features.Webhook.Dto;
 using Shared.Jobs;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Test.Features.Yahoo;
+namespace Test.Features.Webhook;
 
-public class YahooControllerTest : TestBase
+public class WebhookControllerTest : TestBase
 {
     [Fact]
     public async Task AcceptLocalAsyncTest()
@@ -43,10 +43,10 @@ public class YahooControllerTest : TestBase
         queueMock.Setup(x => x.EnqueueAsync(It.IsAny<LocalJobDto>(), It.IsAny<CancellationToken>()))
             .Callback<LocalJobDto, CancellationToken>((job, _) => capturedJob = job)
             .Returns(ValueTask.CompletedTask);
-        var yahooServiceMock = new Mock<IYahooService>();
-        yahooServiceMock.Setup(x => x.AcceptLocalAsync(It.IsAny<LocalJobDto>()))
+        var webhookServiceMock = new Mock<IWebhookService>();
+        webhookServiceMock.Setup(x => x.AcceptLocalAsync(It.IsAny<LocalJobDto>()))
             .Returns(Task.CompletedTask);
-        var controller = new YahooController(yahooServiceMock.Object);
+        var controller = new WebhookController(webhookServiceMock.Object);
 
         var result = await controller.AcceptLocalAsync(dto, "0106", queueMock.Object);
 
@@ -59,7 +59,7 @@ public class YahooControllerTest : TestBase
         Assert.Contains(capturedJob.Id.ToString(), payloadJson);
 
         queueMock.Verify(x => x.EnqueueAsync(It.IsAny<LocalJobDto>(), It.IsAny<CancellationToken>()), Times.Once);
-        yahooServiceMock.Verify
+        webhookServiceMock.Verify
         (
             x => x.AcceptLocalAsync(It.Is<LocalJobDto>(job => job.Id == capturedJob.Id)),
             Times.Once
@@ -151,9 +151,9 @@ public class YahooControllerTest : TestBase
         var YahooClient = CreateYahooClientMock(local);
         var LineMessagingClientMock = CreateLineMessagingClientMock();
         var yahooRepository = new YahooRepository(DbContext, YahooClient, LineMessagingClientMock);
-        var yahooService = new YahooService(yahooRepository, Env, Configuration);
-        var yahooController = new YahooController(yahooService);
-        var res = await yahooController.PostLocalAsync(dto,"0106");
+        var webhookService = new WebhookService(yahooRepository, Env, Configuration);
+        var webhookController = new WebhookController(webhookService);
+        var res = await webhookController.PostLocalAsync(dto,"0106");
 
         var contents = Assert.IsType<Reply[]>(res.Value);
 
@@ -225,9 +225,9 @@ public class YahooControllerTest : TestBase
         var YahooClient = CreateYahooClientMock(local);
         var LineMessagingClientMock = CreateLineMessagingClientMock();
         var yahooRepository = new YahooRepository(DbContext, YahooClient, LineMessagingClientMock);
-        var yahooService = new YahooService(yahooRepository, Env, Configuration);
-        var yahooController = new YahooController(yahooService);
-        var res = await yahooController.PostLocalAsync(dto,"0106");
+        var webhookService = new WebhookService(yahooRepository, Env, Configuration);
+        var webhookController = new WebhookController(webhookService);
+        var res = await webhookController.PostLocalAsync(dto,"0106");
 
         var contents = Assert.IsType<Reply[]>(res.Value);
         Assert.Single(contents);

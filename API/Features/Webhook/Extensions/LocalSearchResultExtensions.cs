@@ -2,7 +2,7 @@ using LineDevSdk.DTO.Commons.Messages.Actions;
 using LineDevSdk.DTO.Commons.Messages.Templates;
 using YahooDeveloperApiClient.YOLP.Response;
 
-namespace Features.Yahoo.Extensions;
+namespace Features.Webhook.Extensions;
 
 /// <summary>
 /// LocalSearchResult拡張クラス

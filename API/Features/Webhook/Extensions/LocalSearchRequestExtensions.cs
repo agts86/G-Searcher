@@ -1,7 +1,7 @@
 using LineDevSdk.DTO.Commons.Messages;
 using YahooDeveloperApiClient.YOLP.Request;
 
-namespace Features.Yahoo.Extensions;
+namespace Features.Webhook.Extensions;
 
 /// <summary>
 /// LocalSearchRequest拡張クラス

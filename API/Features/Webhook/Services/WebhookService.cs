@@ -3,10 +3,10 @@ using LineDevSdk.DTO.Commons.Messages.Templates;
 using LineDevSdk.DTO.MessagingAPIs;
 using LineDevSdk.DTO.WebHooks;
 using LineDevSdk.DTO.WebHooks.Events;
-using Features.Yahoo.Dto;
-using Features.Yahoo.Repositories;
-using Features.Yahoo.Constants;
-using Features.Yahoo.Extensions;
+using Features.Webhook.Dto;
+using Features.Webhook.Repositories;
+using Features.Webhook.Constants;
+using Features.Webhook.Extensions;
 using Application.Models.DB.Tables;
 using Shared.Jobs;
 using Microsoft.AspNetCore.Hosting;
@@ -14,9 +14,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using YahooDeveloperApiClient.YOLP.Request;
 
-namespace Features.Yahoo.Services;
+namespace Features.Webhook.Services;
 
-public interface IYahooService
+public interface IWebhookService
 {
     /// <summary>
     /// ジョブログを登録する
@@ -41,19 +41,19 @@ public interface IYahooService
 }
 
 /// <summary>
-/// YahooBコントローラーのビジネスロジック
+/// Webhookコントローラーのビジネスロジック
 /// </summary>
-internal class YahooService
+internal class WebhookService
 (
-    IYahooRepository yahooRepository,
+    IWebhookRepository webhookRepository,
     IWebHostEnvironment env,
     IConfiguration configuration
-) : IYahooService
+) : IWebhookService
 {
     /// <summary>
     /// リポジトリ
     /// </summary>
-    private IYahooRepository YahooRepository { get; } = yahooRepository;
+    private IWebhookRepository WebhookRepository { get; } = webhookRepository;
 
     /// <summary>
     /// 環境情報
@@ -76,8 +76,8 @@ internal class YahooService
             Id = job.Id,
             Contents = job.GetBody(),
         };
-        await YahooRepository.CreateAsync(log);
-        await YahooRepository.SaveChangesAsync();
+        await WebhookRepository.CreateAsync(log);
+        await WebhookRepository.SaveChangesAsync();
     }
 
     /// <summary>
@@ -100,12 +100,12 @@ internal class YahooService
                 isSuccess = false;
                 errorMessage = ex.Message;
             }
-            var log = await YahooRepository.FetchJobLogAsync(job.Id);
+            var log = await WebhookRepository.FetchJobLogAsync(job.Id);
             if (log is null) continue;
             log.IsSuccess = isSuccess;
             log.Info = errorMessage;
-            YahooRepository.Update(log);
-            await YahooRepository.SaveChangesAsync();
+            WebhookRepository.Update(log);
+            await WebhookRepository.SaveChangesAsync();
 
         }
     }
@@ -124,8 +124,8 @@ internal class YahooService
             if (e is not MessageEvent messageEvent) continue;
 
             var log = messageEvent.Message.ConvertGourmetLog();
-            await YahooRepository.CreateAsync(log);
-            await YahooRepository.SaveChangesAsync();
+            await WebhookRepository.CreateAsync(log);
+            await WebhookRepository.SaveChangesAsync();
 
             var localSearchRequest = new LocalSearchRequest()
             {
@@ -135,7 +135,7 @@ internal class YahooService
                 Detail = YdfDetailLevel.Full
             };
             localSearchRequest.MergeMessageInfo(messageEvent.Message);
-            var gourmet = await YahooRepository.GetLocalSearchResultAsync(localSearchRequest);
+            var gourmet = await WebhookRepository.GetLocalSearchResultAsync(localSearchRequest);
             var columns = gourmet.ToCarouselTemplateColumns();
 
             replies.Add
@@ -167,7 +167,7 @@ internal class YahooService
         if (!Env.IsDevelopment())
             replies.ForEach
             (
-                async x => await YahooRepository.PostReplyAsync(x, Configuration.GetValue<string>("Line:Token"))
+                async x => await WebhookRepository.PostReplyAsync(x, Configuration.GetValue<string>("Line:Token"))
             );
         return [.. replies];
     }

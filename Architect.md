@@ -34,8 +34,8 @@ graph LR
     end
 
     subgraph Features
-      YahooController["YahooController"]
-      YahooService["YahooService"]
+      WebhookController["WebhookController"]
+      WebhookService["WebhookService"]
       AuthController["AuthController"]
       AuthService["AuthService"]
       ManagedController["ManagedController"]
@@ -58,7 +58,7 @@ graph LR
       ManagedRepo["ManagedRepository"]
       MiddlewareRepo["MiddleWareRepository"]
       QueueImpl["BackgroundJobQueue&lt;LocalJobDto&gt;"]
-      Bg["YahooBackgroundService"]
+      Bg["WebhookBackgroundService"]
       DbContext["LineWebHookContext (DbContext)"]
     end
 
@@ -66,13 +66,13 @@ graph LR
     YOLP["IYOLPClient"]
     Pg["PostgreSQL"]
 
-    YahooController --> YahooService --> YahooRepo
+    WebhookController --> WebhookService --> YahooRepo
     AuthController --> AuthService --> AuthRepo
     ManagedController --> ManagedService --> ManagedRepo
     Middleware --> MiddlewareRepoI --> MiddlewareRepo
 
-    YahooController --> QueueI
-    Bg --> YahooService
+    WebhookController --> QueueI
+    Bg --> WebhookService
     Bg --> QueueI
     QueueI --> QueueImpl
 
@@ -84,10 +84,10 @@ graph LR
     MiddlewareRepo --> DbContext
     DbContext --> Pg
 
-    YahooService -. uses .-> AppModels
+    WebhookService -. uses .-> AppModels
     AuthService -. uses .-> AppModels
     ManagedService -. uses .-> AppModels
-    YahooService -. uses .-> SharedComp
+    WebhookService -. uses .-> SharedComp
     AuthService -. uses .-> SharedComp
     ManagedService -. uses .-> SharedComp
 ```

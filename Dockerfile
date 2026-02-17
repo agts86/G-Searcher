@@ -27,7 +27,7 @@ COPY ["API/Shared/Shared.csproj", "API/Shared/"]
 COPY ["API/Infrastructure/Infrastructure.csproj", "API/Infrastructure/"]
 COPY ["API/Features/Auth/Auth.csproj", "API/Features/Auth/"]
 COPY ["API/Features/Managed/Managed.csproj", "API/Features/Managed/"]
-COPY ["API/Features/Yahoo/Yahoo.csproj", "API/Features/Yahoo/"]
+COPY ["API/Features/Webhook/Webhook.csproj", "API/Features/Webhook/"]
 RUN dotnet restore "API/Host/Host.csproj"
 
 # 残りのファイルをコピーしてビルド

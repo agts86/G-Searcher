@@ -35,7 +35,7 @@ https://lin.ee/sOGflWx
 ## API構成
 
 - `API/Host` : Host（`Program.cs` / Middleware / 起動設定）
-- `API/Features` : Feature単位（Auth / Managed / Yahoo）の Controller / Service / Dto
+- `API/Features` : Feature単位（Auth / Managed / Webhook）の Controller / Service / Dto
 - `API/Tables` : DB テーブル
 - `API/Shared` : 共通 Validation / Exception / Utility / Interface
 - `API/Infrastructure` : Repository 実装 / DbContext / Migrations

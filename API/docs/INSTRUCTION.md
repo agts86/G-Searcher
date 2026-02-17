@@ -39,10 +39,10 @@
 ### ✅ やるべきこと
 
 - DI 登録は `Host/Program.cs` に集約する
-- インターフェース経由で依存を受ける（例: `IAuthService`, `IYahooService`）
+- インターフェース経由で依存を受ける（例: `IAuthService`, `IWebhookService`）
 - ライフタイムは用途で使い分ける
 - HTTP クライアントは `AddHttpClient` で登録する
-- `Host` から Feature / Infrastructure の実装型を直接参照せず、公開拡張メソッド（例: `AddAuthFeature`, `AddYahooInfrastructure`）経由で登録する
+- `Host` から Feature / Infrastructure の実装型を直接参照せず、公開拡張メソッド（例: `AddAuthFeature`, `AddWebhookInfrastructure`）経由で登録する
 
 ### ❌ やってはいけないこと
 
@@ -140,15 +140,15 @@
 ```csharp
 using Shared.Utilities;
 
-public interface IYahooTool
+public interface IWebhookTool
 {
     string Name { get; }
     Task<ToolResult> ExecuteAsync(ToolRequest request, CancellationToken cancellationToken);
 }
 
-public class YahooToolService(IYahooRepository repository)
+public class WebhookToolService(IWebhookRepository repository)
 {
-    private IYahooTool[] Tools { get; } = Polymorphism.CreatePolymorphismArray<IYahooTool>(repository);
+    private IWebhookTool[] Tools { get; } = Polymorphism.CreatePolymorphismArray<IWebhookTool>(repository);
 
     public async Task<ToolResult> ExecuteAsync(string toolName, ToolRequest request, CancellationToken cancellationToken)
     {

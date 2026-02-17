@@ -1,7 +1,7 @@
 using LineDevSdk.DTO.Commons.Messages;
 using Application.Models.DB.Tables;
 
-namespace Features.Yahoo.Extensions;
+namespace Features.Webhook.Extensions;
 
 /// <summary>
 /// IMessageの拡張メソッド

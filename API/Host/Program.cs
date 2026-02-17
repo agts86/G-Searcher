@@ -9,7 +9,7 @@ using Host.Configurations;
 using Features.Auth;
 using Features.Auth.Constants;
 using Features.Managed;
-using Features.Yahoo;
+using Features.Webhook;
 using Infrastructure;
 using Infrastructure.Models.DB;
 using Infrastructure.Models.DB.Repositories;
@@ -96,10 +96,10 @@ public class Program
         builder.Services.AddHttpClient<ILineMessagingClient, LineMessagingClient>();
         builder.Services.AddAuthInfrastructure();
         builder.Services.AddManagedInfrastructure();
-        builder.Services.AddYahooInfrastructure();
+        builder.Services.AddWebhookInfrastructure();
         builder.Services.AddAuthFeature();
         builder.Services.AddManagedFeature();
-        builder.Services.AddYahooFeature();
+        builder.Services.AddWebhookFeature();
 
 
         // Enumを文字列として扱う

@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Features\Auth\Auth.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Managed", "Features\Managed\Managed.csproj", "{9A8A81C9-A43F-4913-B752-2E642488E2A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yahoo", "Features\Yahoo\Yahoo.csproj", "{672B95FD-8F4A-4C5C-A1E0-8D8AFBEE6D22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhook", "Features\Webhook\Webhook.csproj", "{672B95FD-8F4A-4C5C-A1E0-8D8AFBEE6D22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{1D0741F4-EC0F-4914-BD91-31D2E0370EEE}"
 EndProject

@@ -3,29 +3,29 @@ using Asp.Versioning;
 using LineDevSdk.Configurations;
 using LineDevSdk.DTO.MessagingAPIs;
 using LineDevSdk.DTO.WebHooks;
-using Features.Yahoo.Dto;
+using Features.Webhook.Dto;
 using Shared.Jobs;
-using Features.Yahoo.Services;
+using Features.Webhook.Services;
 using Shared.Validations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Features.Yahoo;
+namespace Features.Webhook;
 
 /// <summary>
-/// Yahoo関連API
+/// Webhook関連API
 /// </summary>
 [ApiVersion("1")]
 [ApiController]
-[Route("api/v{version:apiVersion}/yahoo")]
-public class YahooController
+[Route("api/v{version:apiVersion}/webhook")]
+public class WebhookController
 (
-    IYahooService yahooService
+    IWebhookService webhookService
 ) : ControllerBase
 {
     /// <summary>
     /// ビジネスロジック
     /// </summary>
-    private IYahooService YahooService { get; } = yahooService;
+    private IWebhookService WebhookService { get; } = webhookService;
 
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ジョブキューに登録する
@@ -50,7 +50,7 @@ public class YahooController
         );
         await queue.EnqueueAsync(job);
 
-        await YahooService.AcceptLocalAsync(job);
+        await WebhookService.AcceptLocalAsync(job);
         return Accepted(new { job.Id });
     }
 
@@ -67,7 +67,7 @@ public class YahooController
         [FromBody] WebHook gourmetGettingDto,
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode)
     {
-        var res = await YahooService.PostLocalAsync(gourmetGettingDto, genreCode);
+        var res = await WebhookService.PostLocalAsync(gourmetGettingDto, genreCode);
         return res;
     }
 }

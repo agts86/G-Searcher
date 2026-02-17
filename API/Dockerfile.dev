@@ -9,7 +9,7 @@ COPY ["Shared/Shared.csproj", "Shared/"]
 COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
 COPY ["Features/Auth/Auth.csproj", "Features/Auth/"]
 COPY ["Features/Managed/Managed.csproj", "Features/Managed/"]
-COPY ["Features/Yahoo/Yahoo.csproj", "Features/Yahoo/"]
+COPY ["Features/Webhook/Webhook.csproj", "Features/Webhook/"]
 RUN dotnet restore "Host/Host.csproj"
 
 # 残りのファイルをコピーしてビルド

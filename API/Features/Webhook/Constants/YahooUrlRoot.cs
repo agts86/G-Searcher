@@ -1,4 +1,4 @@
-namespace Features.Yahoo.Constants;
+namespace Features.Webhook.Constants;
 
 /// <summary>
 /// YahooUのURLルート

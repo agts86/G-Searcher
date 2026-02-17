@@ -37,7 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="../Features/Auth/Auth.csproj" />
     <ProjectReference Include="../Features/Managed/Managed.csproj" />
-    <ProjectReference Include="../Features/Yahoo/Yahoo.csproj" />
+    <ProjectReference Include="../Features/Webhook/Webhook.csproj" />
     <ProjectReference Include="../Infrastructure/Infrastructure.csproj" />
   </ItemGroup>
 </Project>

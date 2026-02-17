@@ -1,16 +1,16 @@
-using Features.Yahoo.Dto;
+using Features.Webhook.Dto;
 using Shared.Jobs;
-using Features.Yahoo.Services;
+using Features.Webhook.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Infrastructure.Models.Job;
 
 /// <summary>
-/// Yahoo!ローカルサーチ非同期ジョブサービス
+/// Webhook非同期ジョブサービス
 /// </summary>
 /// <typeparam name="LocalJobDto"></typeparam>
-internal class YahooBackgroundService(IServiceProvider sp, IBackgroundJobQueue<LocalJobDto> queue) : BackgroundService
+internal class WebhookBackgroundService(IServiceProvider sp, IBackgroundJobQueue<LocalJobDto> queue) : BackgroundService
 {
     /// <summary>
     /// サービスプロバイダー
@@ -31,8 +31,8 @@ internal class YahooBackgroundService(IServiceProvider sp, IBackgroundJobQueue<L
         try
         {
             using var scope = ServiceProvider.CreateScope();
-            var yahooService = scope.ServiceProvider.GetRequiredService<IYahooService>();
-            await yahooService.PostLocalJobAsync(Queue, ct);
+            var webhookService = scope.ServiceProvider.GetRequiredService<IWebhookService>();
+            await webhookService.PostLocalJobAsync(Queue, ct);
         }
         catch { }
     }
