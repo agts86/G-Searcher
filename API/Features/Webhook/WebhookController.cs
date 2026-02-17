@@ -65,7 +65,8 @@ public class WebhookController
     public async Task<ActionResult<Reply[]>> PostLocalAsync
     (
         [FromBody] WebHook gourmetGettingDto,
-        [FromQuery][MaxLength(7)][HalfNumeric] string genreCode)
+        [FromQuery][MaxLength(7)][HalfNumeric] string genreCode
+    )
     {
         var res = await WebhookService.PostLocalAsync(gourmetGettingDto, genreCode);
         return res;
