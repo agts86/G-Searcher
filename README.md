@@ -120,6 +120,7 @@ https://lin.ee/sOGflWx
   ```
       docker compose exec backend bash
       cd /app/Host
+      dotnet restore ./Host.csproj
       dotnet ef database update \
         --project ../Infrastructure/Infrastructure.csproj \
         --startup-project ./Host.csproj
