@@ -30,7 +30,7 @@ FROM build AS final
 WORKDIR /app
 EXPOSE 5000
 EXPOSE 5001
-COPY --from=publish /app/publish /app/bin
+COPY --from=publish /app/publish /app
 COPY Host/ /app/Host/
 COPY Tables/ /app/Tables/
 COPY Shared/ /app/Shared/
@@ -43,4 +43,4 @@ RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf && \
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-ENTRYPOINT ["dotnet", "/app/bin/LineWebHookAPI.dll"]
+ENTRYPOINT ["dotnet", "LineWebHookAPI.dll"]
