@@ -1,0 +1,7 @@
+namespace Features.Managed.Constants;
+
+public enum MessageTypes
+{
+    location = 1,
+    text = 2
+}

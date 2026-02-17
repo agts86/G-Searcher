@@ -22,16 +22,20 @@ WORKDIR /src
 
 # csproj のみをコピーしてリストア
 COPY ["API/Host/Host.csproj", "API/Host/"]
-COPY ["API/Application/Application.csproj", "API/Application/"]
+COPY ["API/Tables/Tables.csproj", "API/Tables/"]
+COPY ["API/Shared/Shared.csproj", "API/Shared/"]
 COPY ["API/Infrastructure/Infrastructure.csproj", "API/Infrastructure/"]
-COPY ["API/Presentation/Presentation.csproj", "API/Presentation/"]
+COPY ["API/Features/Auth/Auth.csproj", "API/Features/Auth/"]
+COPY ["API/Features/Managed/Managed.csproj", "API/Features/Managed/"]
+COPY ["API/Features/Yahoo/Yahoo.csproj", "API/Features/Yahoo/"]
 RUN dotnet restore "API/Host/Host.csproj"
 
 # 残りのファイルをコピーしてビルド
 COPY ["API/Host/", "API/Host/"]
-COPY ["API/Application/", "API/Application/"]
+COPY ["API/Tables/", "API/Tables/"]
+COPY ["API/Shared/", "API/Shared/"]
+COPY ["API/Features/", "API/Features/"]
 COPY ["API/Infrastructure/", "API/Infrastructure/"]
-COPY ["API/Presentation/", "API/Presentation/"]
 WORKDIR "/src/API/Host"
 RUN dotnet build "Host.csproj" -c publish -o /app/build
 

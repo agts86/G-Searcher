@@ -29,18 +29,27 @@ graph TD
 
 ```mermaid
 graph LR
-    subgraph Presentation
-      YahooController["YahooController"]
-      AuthController["AuthController"]
-      ManagedController["ManagedController"]
+    subgraph Host
       Middleware["Middleware (IMiddleware)"]
     end
 
-    subgraph Application
+    subgraph Features
+      YahooController["YahooController"]
       YahooService["YahooService"]
+      AuthController["AuthController"]
       AuthService["AuthService"]
+      ManagedController["ManagedController"]
       ManagedService["ManagedService"]
-      Queue["BackgroundJobQueue&lt;LocalJobDto&gt;"]
+    end
+
+    subgraph Tables
+      AppModels["DB Tables"]
+    end
+
+    subgraph Shared
+      MiddlewareRepoI["IMiddleWareRepository"]
+      QueueI["IBackgroundJobQueue&lt;LocalJobDto&gt;"]
+      SharedComp["Exceptions / Validations / Utilities"]
     end
 
     subgraph Infrastructure
@@ -48,6 +57,7 @@ graph LR
       AuthRepo["AuthRepository"]
       ManagedRepo["ManagedRepository"]
       MiddlewareRepo["MiddleWareRepository"]
+      QueueImpl["BackgroundJobQueue&lt;LocalJobDto&gt;"]
       Bg["YahooBackgroundService"]
       DbContext["LineWebHookContext (DbContext)"]
     end
@@ -57,14 +67,14 @@ graph LR
     Pg["PostgreSQL"]
 
     YahooController --> YahooService --> YahooRepo
-    AuthController --> AuthService
-    AuthService --> AuthRepo
+    AuthController --> AuthService --> AuthRepo
     ManagedController --> ManagedService --> ManagedRepo
-    Middleware --> MiddlewareRepo
+    Middleware --> MiddlewareRepoI --> MiddlewareRepo
 
-    YahooController --> Queue
+    YahooController --> QueueI
     Bg --> YahooService
-    Queue --> Bg
+    Bg --> QueueI
+    QueueI --> QueueImpl
 
     YahooRepo --> LineSdk
     YahooRepo --> YOLP
@@ -73,6 +83,13 @@ graph LR
     ManagedRepo --> DbContext
     MiddlewareRepo --> DbContext
     DbContext --> Pg
+
+    YahooService -. uses .-> AppModels
+    AuthService -. uses .-> AppModels
+    ManagedService -. uses .-> AppModels
+    YahooService -. uses .-> SharedComp
+    AuthService -. uses .-> SharedComp
+    ManagedService -. uses .-> SharedComp
 ```
 
 ## 3. UI 内部（Dependency）

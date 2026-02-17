@@ -1,6 +1,6 @@
 using Application.Models.DB.Tables;
-using Application.Models.DB.Repositories;
-using Application.Models.Exceptions;
+using Shared.Exceptions;
+using Shared.Repositories;
 
 namespace Infrastructure.Models.DB.Repositories;
 

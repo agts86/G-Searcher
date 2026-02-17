@@ -4,16 +4,20 @@ WORKDIR /src
 
 # csproj のみをコピーしてリストア
 COPY ["Host/Host.csproj", "Host/"]
-COPY ["Application/Application.csproj", "Application/"]
+COPY ["Tables/Tables.csproj", "Tables/"]
+COPY ["Shared/Shared.csproj", "Shared/"]
 COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
-COPY ["Presentation/Presentation.csproj", "Presentation/"]
+COPY ["Features/Auth/Auth.csproj", "Features/Auth/"]
+COPY ["Features/Managed/Managed.csproj", "Features/Managed/"]
+COPY ["Features/Yahoo/Yahoo.csproj", "Features/Yahoo/"]
 RUN dotnet restore "Host/Host.csproj"
 
 # 残りのファイルをコピーしてビルド
 COPY ["Host/", "Host/"]
-COPY ["Application/", "Application/"]
+COPY ["Tables/", "Tables/"]
+COPY ["Shared/", "Shared/"]
+COPY ["Features/", "Features/"]
 COPY ["Infrastructure/", "Infrastructure/"]
-COPY ["Presentation/", "Presentation/"]
 WORKDIR "/src/Host"
 RUN dotnet build "Host.csproj" -c publish -o /app/build
 
@@ -28,9 +32,10 @@ EXPOSE 5000
 EXPOSE 5001
 COPY --from=publish /app/publish /app/bin
 COPY Host/ /app/Host/
-COPY Application/ /app/Application/
+COPY Tables/ /app/Tables/
+COPY Shared/ /app/Shared/
+COPY Features/ /app/Features/
 COPY Infrastructure/ /app/Infrastructure/
-COPY Presentation/ /app/Presentation/
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf && \
     sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
 

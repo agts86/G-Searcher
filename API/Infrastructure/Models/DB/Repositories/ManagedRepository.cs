@@ -1,5 +1,5 @@
 using Application.Models.DB.Tables;
-using Application.Models.DB.Repositories;
+using Features.Managed.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Models.DB.Repositories;

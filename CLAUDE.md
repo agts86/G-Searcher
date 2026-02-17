@@ -20,16 +20,17 @@ LINE ユーザーが位置情報やメッセージを送信すると、Yahoo!ロ
 
 ## アーキテクチャ
 
-### API レイヤ構成（4プロジェクト + Test）
+### API レイヤ構成（5プロジェクト + Test）
 
 依存方向: `Controller → Service → Repository`（一方向のみ）
 
 | プロジェクト | 役割 | 参照先 |
 |---|---|---|
-| `API/Host` | Program.cs / DI 登録 / 起動設定 | Presentation, Application, Infrastructure |
-| `API/Presentation` | Controller / Middleware / Validation | Application |
-| `API/Application` | Service / DTO / Exception / Repository Interface | なし（最内層） |
-| `API/Infrastructure` | Repository 実装 / DbContext / Migrations | Application |
+| `API/Host` | Program.cs / DI 登録 / Middleware / 起動設定 | Features, Infrastructure |
+| `API/Features` | Feature単位の Controller / Service / DTO | Tables, Shared |
+| `API/Tables` | DB テーブル | Shared |
+| `API/Shared` | 共通 Validation / Exception / Utility / Interface | なし（最内層） |
+| `API/Infrastructure` | Repository 実装 / DbContext / Migrations | Tables, Features, Shared |
 | `API/Test` | xUnit テスト | 全プロジェクト |
 
 ### UI ディレクトリ構成

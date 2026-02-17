@@ -1,6 +1,6 @@
-using Application.Models.Dto.Yahoo;
-using Application.Models.Job;
-using Application.Models.Services;
+using Features.Yahoo.Dtos;
+using Shared.Jobs;
+using Features.Yahoo.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

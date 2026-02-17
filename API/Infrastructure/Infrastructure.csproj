@@ -15,7 +15,11 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../Application/Application.csproj" />
+    <ProjectReference Include="../Tables/Tables.csproj" />
+    <ProjectReference Include="../Shared/Shared.csproj" />
+    <ProjectReference Include="../Features/Auth/Auth.csproj" />
+    <ProjectReference Include="../Features/Managed/Managed.csproj" />
+    <ProjectReference Include="../Features/Yahoo/Yahoo.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LineDevSdk">

@@ -1,7 +1,7 @@
 using LineDevSdk.DTO.MessagingAPIs;
 using LineDevSdk.Http;
+using Features.Yahoo.Repositories;
 using Application.Models.DB.Tables;
-using Application.Models.DB.Repositories;
 using Microsoft.EntityFrameworkCore;
 using YahooDeveloperApiClient.YOLP;
 using YahooDeveloperApiClient.YOLP.Request;

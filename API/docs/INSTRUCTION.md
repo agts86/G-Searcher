@@ -14,16 +14,17 @@
 
 ### ✅ やるべきこと
 
-- プロジェクトを最小 4 構成で分割する  
-  `Host`（Program / 起動設定）  
-  `Presentation`（Controller / Middleware / Validation）  
-  `Application`（Service / DTO / Exception / Repository Interface）  
+- プロジェクトを最小 5 構成で分割する  
+  `Host`（Program / Middleware / 起動設定）  
+  `Features`（Controller / Service / DTO / Feature固有ロジック）  
+  `Tables`（DB テーブル）  
+  `Shared`（共通 Validation / Exception / Utility / Interface）  
   `Infrastructure`（Repository 実装 / DbContext / Migration）
-- `Presentation` は HTTP 入出力と認証・バリデーションに専念し、ビジネスロジックを持たない
-- `Application` はユースケースの実装を担当し、データ取得はリポジトリインターフェース経由で行う
+- `Features` は HTTP 入出力とユースケース実行に専念し、DB 直接アクセスを持たない
+- `Tables` は DB テーブル定義を担当する
 - `Infrastructure` は DB へのアクセスのみを担当し、`LineWebHookContext` 経由で操作する
 - 依存は `Controller -> Service -> Repository` の一方向を維持する
-- 参照方向は `Presentation -> Application`, `Infrastructure -> Application`, `Host -> (Presentation, Application, Infrastructure)` を維持する
+- 参照方向は `Features -> (Tables, Shared)`, `Infrastructure -> (Tables, Features, Shared)`, `Host -> (Infrastructure, Features)` を維持する
 
 ### ❌ やってはいけないこと
 
@@ -116,7 +117,7 @@
 
 ### ✅ 自動適用すべきルール
 
-- ストラテジー解決は `API/Application/Utilities/Polymorphism.cs` の `Polymorphism.CreatePolymorphismArray<T>()` を優先して使用する
+- ストラテジー解決は `API/Shared/Utilities/Polymorphism.cs` の `Polymorphism.CreatePolymorphismArray<T>()` を優先して使用する
 - 基底クラスまたはインターフェースを指定して実装群を収集し、条件に一致する実装を選択する
 - `switch` や長い `if-else` で処理種別を分岐している場合、Strategy パターンやポリモーフィズムへの置換を優先する
 - 条件に応じた生成が増える場合は Factory パターンを検討する
@@ -134,7 +135,7 @@
 ### ✅ ASP.NET Core / C# での適用例
 
 ```csharp
-using LineWebHookAPI.Utilities;
+using Shared.Utilities;
 
 public interface IYahooTool
 {

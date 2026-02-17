@@ -1,6 +1,6 @@
 ﻿using Application.Models.DB.Tables;
 using Microsoft.EntityFrameworkCore;
-using Application.Utilities;
+using Shared.Utilities;
 using Infrastructure.Models.DB.SaveChanges;
 
 namespace Infrastructure.Models.DB;
