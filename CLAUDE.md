@@ -80,9 +80,9 @@ pnpm test       # Jest
 ### Docker（ローカル開発）
 
 ```bash
-docker-compose build
-docker-compose up -d    # postgres:5432, backend:5001, ui:3000
-docker-compose down
+docker compose build
+docker compose up -d    # postgres:5432, backend:5001, ui:3000
+docker compose down
 ```
 
 ## 適用範囲と優先順位

@@ -25,7 +25,7 @@ https://lin.ee/sOGflWx
 
 ■ コンテナ
 
--   docker | docker-compose
+-   docker | docker compose
 
 ■ その他<br>
 
@@ -73,7 +73,7 @@ https://lin.ee/sOGflWx
   ```
   {
     "ConnectionStrings": {
-      "PostgreSQLConnection": "{docker-compose使わない場合は任意に設定)}"
+      "PostgreSQLConnection": "{docker compose使わない場合は任意に設定)}"
     },
     "Line": {
       "Token": {取得したLine Developersのチャネルアクセストークン),
@@ -97,15 +97,15 @@ https://lin.ee/sOGflWx
 3. ビルド
    
   ```
-      docker-compose build
+      docker compose build
   ```    
 4. コンテナ起動（実行）
   ```
-      docker-compose up -d
+      docker compose up -d
   ``` 
 5. コンテナ停止
   ```
-      docker-compose down
+      docker compose down
   ``` 
 
 6. API確認
@@ -118,7 +118,7 @@ https://lin.ee/sOGflWx
 
 8. DBマイグレード(初回だけ)
   ```
-      docker-compose exec backend bash
+      docker compose exec backend bash
       cd /app/Host
       dotnet ef database update \
         --project ../Infrastructure/Infrastructure.csproj \
