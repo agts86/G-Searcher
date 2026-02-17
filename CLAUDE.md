@@ -1,13 +1,93 @@
-# Claude Code Guide
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 このファイルはリポジトリ全体の共通ルールを定義する。
-現在の対象は `API` のみ（FrontEnd は未定義）。
-`API/` 配下の作業では [API/CLAUDE.md](API/CLAUDE.md) も参照すること。
+`API/` 配下の作業では [API/CLAUDE.md](API/CLAUDE.md)、`UI/` 配下では [UI/CLAUDE.md](UI/CLAUDE.md) も参照すること。
+
+## プロジェクト概要
+
+LINE Messaging API の Webhook を受ける ASP.NET Core API と、管理画面の Next.js SPA のモノレポ。
+LINE ユーザーが位置情報やメッセージを送信すると、Yahoo!ローカルサーチ API で周辺のグルメ情報を検索して返信する。
+
+### 技術スタック
+
+- **API**: C# / ASP.NET Core (.NET 10) / Entity Framework Core / PostgreSQL
+- **UI**: TypeScript / Next.js (`output: 'export'` で静的出力 → CSR SPA)
+- **デプロイ**: Docker multi-stage build → GHCR → Azure Web App（API + UI を単一コンテナで配信）
+- **外部連携**: LINE Messaging API, Yahoo!ローカルサーチ API (YOLP)
+- **cron**: Cloudflare Workers（`cron-worker/CloudFlare`、5分間隔でヘルスチェック）
+
+## アーキテクチャ
+
+### API レイヤ構成（4プロジェクト + Test）
+
+依存方向: `Controller → Service → Repository`（一方向のみ）
+
+| プロジェクト | 役割 | 参照先 |
+|---|---|---|
+| `API/Host` | Program.cs / DI 登録 / 起動設定 | Presentation, Application, Infrastructure |
+| `API/Presentation` | Controller / Middleware / Validation | Application |
+| `API/Application` | Service / DTO / Exception / Repository Interface | なし（最内層） |
+| `API/Infrastructure` | Repository 実装 / DbContext / Migrations | Application |
+| `API/Test` | xUnit テスト | 全プロジェクト |
+
+### UI ディレクトリ構成
+
+- `src/app/` — ページ（`(auth)/login`, `(dashboard)/dashboard`）
+- `src/features/` — 画面固有ロジック（auth, gourmet-location, gourmet-word, error-log, job-log）
+- `src/lib/api/` — API クライアント集約
+- `src/components/` — 共通UI (`ui/`), 業務UI (`logs/`, `map/`)
+
+### 認証フロー
+
+Access Token 15分 + Refresh Token 7日（DB 管理）。UI は有効期限5分前に `/api/v1/auth/refresh` を呼び、失敗時は再ログインへ遷移。
+
+## コマンド
+
+### API
+
+```bash
+dotnet build API/Host/Host.csproj          # ビルド
+dotnet test API/Test/Test.csproj           # テスト全件
+dotnet test API/Test/Test.csproj --filter "FullyQualifiedName~ClassName"  # テスト個別
+
+# Migration
+dotnet tool run dotnet-ef migrations add <Name> \
+  --project API/Infrastructure/Infrastructure.csproj \
+  --startup-project API/Host/Host.csproj \
+  --output-dir Migrations
+
+dotnet tool run dotnet-ef migrations remove \
+  --project API/Infrastructure/Infrastructure.csproj \
+  --startup-project API/Host/Host.csproj
+
+dotnet tool run dotnet-ef database update \
+  --project API/Infrastructure/Infrastructure.csproj \
+  --startup-project API/Host/Host.csproj
+```
+
+### UI
+
+```bash
+cd UI
+pnpm lint       # ESLint
+pnpm build      # 静的出力（out/）
+pnpm test       # Jest
+```
+
+### Docker（ローカル開発）
+
+```bash
+docker-compose build
+docker-compose up -d    # postgres:5432, backend:5001, ui:3000
+docker-compose down
+```
 
 ## 適用範囲と優先順位
 
 - ルート `CLAUDE.md` は全体ルール
-- `API/CLAUDE.md` は API 配下でこのファイルより優先
+- `API/CLAUDE.md` / `UI/CLAUDE.md` は各サブディレクトリでこのファイルより優先
 - 競合時は「より深い階層」のルールを優先
 
 ## 共通ルール
