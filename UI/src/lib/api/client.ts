@@ -1,4 +1,4 @@
-import { setAccessTokenExpiresAt } from '@/lib/auth/session';
+import { getAccessTokenExpiresAt, setAccessTokenExpiresAt } from '@/lib/auth/session';
 
 /** API 基底 URL。同一オリジン前提のため相対パスで固定 */
 const BASE_URL = '/api/v1';
@@ -51,7 +51,7 @@ async function request<T>(method: HttpMethod, path: string, body?: unknown, canR
   });
 
   if (!res.ok) {
-    if (res.status === 401 && canRetry && !AUTH_PATHS_WITHOUT_REFRESH.has(path)) {
+    if (res.status === 401 && canRetry && !AUTH_PATHS_WITHOUT_REFRESH.has(path) && getAccessTokenExpiresAt()) {
       await refreshAccessToken();
       return request<T>(method, path, body, false);
     }

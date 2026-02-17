@@ -56,14 +56,10 @@ export function useAutoRefresh(): void {
       }
     };
 
-    const initialize = async (): Promise<void> => {
+    const initialize = (): void => {
       const expiresAt = getAccessTokenExpiresAt();
-      if (expiresAt) {
-        scheduleRefreshTimer(timerRef, expiresAt, refreshAndReschedule);
-        return;
-      }
-
-      await refreshAndReschedule();
+      if (!expiresAt) return;
+      scheduleRefreshTimer(timerRef, expiresAt, refreshAndReschedule);
     };
 
     const dispose = (): void => {

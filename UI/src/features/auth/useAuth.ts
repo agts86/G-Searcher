@@ -8,11 +8,16 @@ import {
   setAccessTokenExpiresAt,
 } from '@/lib/auth/session';
 
-export function useMe(): UseQueryResult<MeResponse> {
+type UseMeOptions = {
+  enabled?: boolean;
+};
+
+export function useMe(options?: UseMeOptions): UseQueryResult<MeResponse> {
   return useQuery({
     queryKey: QueryKeys.auth.me,
     queryFn: () => authClient.me(),
     retry: false,
+    enabled: options?.enabled ?? true,
   });
 }
 
