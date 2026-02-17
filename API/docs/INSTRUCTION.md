@@ -25,6 +25,7 @@
 - `Infrastructure` は DB へのアクセスのみを担当し、`LineWebHookContext` 経由で操作する
 - 依存は `Controller -> Service -> Repository` の一方向を維持する
 - 参照方向は `Features -> (Tables, Shared)`, `Infrastructure -> (Tables, Features, Shared)`, `Host -> (Infrastructure, Features)` を維持する
+- `Features` の公開境界は Controller / API 入出力 DTO を基本とし、Service 実装・Repository・拡張/定数などの補助型は `internal` を優先する
 
 ### ❌ やってはいけないこと
 
@@ -38,15 +39,17 @@
 ### ✅ やるべきこと
 
 - DI 登録は `Host/Program.cs` に集約する
-- インターフェース経由で依存を受ける（例: `IYahooService`, `IManagedRepository`）
+- インターフェース経由で依存を受ける（例: `IAuthService`, `IYahooService`）
 - ライフタイムは用途で使い分ける
 - HTTP クライアントは `AddHttpClient` で登録する
+- `Host` から Feature / Infrastructure の実装型を直接参照せず、公開拡張メソッド（例: `AddAuthFeature`, `AddYahooInfrastructure`）経由で登録する
 
 ### ❌ やってはいけないこと
 
 - `new` で依存クラスを直接生成する
 - static に状態を保持して疑似 DI として使う
 - 同一責務のサービスを複数箇所で重複登録する
+- `Host` から `internal` 実装型を参照するために `InternalsVisibleTo("Host")` を追加する
 
 ## 4. DB・Migration 運用
 

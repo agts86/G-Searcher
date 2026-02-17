@@ -12,8 +12,10 @@
 
 - 依存方向は `Controller -> Service -> Repository` を維持
 - `Host/Program.cs` に DI 設定を集約
+- Feature / Infrastructure の DI 登録は公開拡張メソッド（例: `AddAuthFeature`, `AddAuthInfrastructure`）経由を優先し、`Host` から実装型を直接参照しない
 - プロジェクト参照は `Features -> (Tables, Shared)`, `Infrastructure -> (Tables, Features, Shared)`, `Host -> (Infrastructure, Features)` を維持
 - `Features` / `Tables` / `Shared` から `DbContext` を直接参照しない
+- `Features` では Controller / API 入出力 DTO を `public`、それ以外の実装（Service / Repository / helper）は `internal` を基本とする
 - DB アクセスは `LineWebHookContext` 経由で統一
 - 設定キーは `ConnectionStrings:PostgreSQLConnection` を使用
 - 環境別設定は `appsettings.Development.json` を使用
