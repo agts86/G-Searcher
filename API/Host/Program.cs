@@ -123,7 +123,11 @@ public class Program
             "/health",
             async (LineWebHookContext dbContext, CancellationToken cancellationToken) =>
             {
-                await dbContext.Database.ExecuteSqlRawAsync("SELECT 1", cancellationToken);
+                try
+                {
+                    await dbContext.Database.OpenConnectionAsync(cancellationToken);
+                }
+                catch (Exception){}
                 return Results.Ok("ok");
             }
         );
