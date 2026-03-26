@@ -109,9 +109,7 @@ docker compose down
 
 ## 運用ドキュメント
 
-@docs/agent/commands.md
-
-@docs/agent/tags.md
+@.claude/rules/tags.md
 
 ## 依頼テンプレート
 

@@ -28,4 +28,3 @@
 `#api #db #migration #no-test-change 目的: PostgreSQL対応`
 
 `#ui #page #feature 目的: ロケーションログ画面の実装`
-

@@ -372,6 +372,10 @@ pnpm-debug.log*
 npm-debug.log*
 yarn-error.log*
 
+# Claude Code personal settings
+CLAUDE.local.md
+.claude/settings.local.json
+
 # keep source folders named "logs" under UI tracked
 !UI/src/**/logs/
 !UI/src/**/logs/**
