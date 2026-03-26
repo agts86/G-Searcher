@@ -374,7 +374,9 @@ yarn-error.log*
 
 # Claude Code personal settings
 CLAUDE.local.md
+**/CLAUDE.local.md
 .claude/settings.local.json
+**/.claude/settings.local.json
 
 # keep source folders named "logs" under UI tracked
 !UI/src/**/logs/

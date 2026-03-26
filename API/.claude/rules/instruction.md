@@ -2,7 +2,7 @@
 
 ## 1. 目的
 
-このドキュメントは `API/` 配下の API 実装ルールを定義する。  
+このドキュメントは `API/` 配下の API 実装ルールを定義する。
 対象は ASP.NET Core Web API（.NET 10 / C#）であり、TypeScript / Next.js / NestJS 前提の規約は適用しない。
 
 ## 1.1 MUSTルール（最優先）
@@ -14,11 +14,11 @@
 
 ### ✅ やるべきこと
 
-- プロジェクトを最小 5 構成で分割する  
-  `Host`（Program / Middleware / 起動設定）  
-  `Features`（Controller / Service / DTO / Feature固有ロジック）  
-  `Tables`（DB テーブル）  
-  `Shared`（共通 Validation / Exception / Utility / Interface）  
+- プロジェクトを最小 5 構成で分割する
+  `Host`（Program / Middleware / 起動設定）
+  `Features`（Controller / Service / DTO / Feature固有ロジック）
+  `Tables`（DB テーブル）
+  `Shared`（共通 Validation / Exception / Utility / Interface）
   `Infrastructure`（Repository 実装 / DbContext / Migration）
 - `Features` は HTTP 入出力とユースケース実行に専念し、DB 直接アクセスを持たない
 - `Tables` は DB テーブル定義を担当する
@@ -206,24 +206,3 @@ private static GourmetWordLog CreateGourmetWordLog(Action<GourmetWordLog> setup 
 - 設定キー名（`PostgreSQLConnection`）が統一されている
 - `dotnet build` を実行して成功している
 - `dotnet test` を実行して成功している
-
-## 11. 推奨コマンド
-
-```bash
-# API プロジェクトのビルド
-dotnet build API/Host/Host.csproj
-dotnet test API/Test/Test.csproj
-
-# Migration 追加（リポジトリルートで実行）
-cd /path/to/repo
-dotnet tool run dotnet-ef migrations add <MigrationName> \
-  --project API/Infrastructure/Infrastructure.csproj \
-  --startup-project API/Host/Host.csproj \
-  --output-dir Migrations
-
-# Migration 適用
-cd /path/to/repo
-dotnet tool run dotnet-ef database update \
-  --project API/Infrastructure/Infrastructure.csproj \
-  --startup-project API/Host/Host.csproj
-```
