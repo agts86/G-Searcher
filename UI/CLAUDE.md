@@ -5,12 +5,6 @@
 
 ## 詳細仕様（自動インポート）
 
-@UI/docs/INSTRUCTION.md
+@UI/.claude/rules/instruction.md
 
-## チェックコマンド
-
-```bash
-pnpm lint
-pnpm build
-pnpm test
-```
+@UI/.claude/rules/eslint.md
