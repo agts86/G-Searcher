@@ -123,12 +123,12 @@ public class Program
             "/health",
             async (LineWebHookContext dbContext, CancellationToken cancellationToken) =>
             {
-                try
-                {
-                    await dbContext.Database.OpenConnectionAsync(cancellationToken);
-                }
-                catch (Exception){}
-                return Results.Ok("ok");
+                // try
+                // {
+                //     await dbContext.Database.OpenConnectionAsync(cancellationToken);
+                // }
+                // catch (Exception){}
+                return await Task.Run(() => Results.Ok("ok"));
             }
         );
 
