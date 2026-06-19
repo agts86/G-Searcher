@@ -10,6 +10,7 @@ on:
     paths:
       - 'API/**'
       - 'UI/**'
+      - '.github/workflows/ContainerDeploy.yml'
   workflow_dispatch:
 
 jobs:
