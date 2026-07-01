@@ -381,3 +381,4 @@ CLAUDE.local.md
 # keep source folders named "logs" under UI tracked
 !UI/src/**/logs/
 !UI/src/**/logs/**
+.vercel
