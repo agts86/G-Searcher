@@ -1,9 +1,8 @@
 # ベースイメージ
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:80;https://+:443
+ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
-EXPOSE 443
 
 # UI ビルド
 FROM node:24-bookworm-slim AS ui-build
@@ -51,4 +50,5 @@ COPY --from=ui-build /src/UI/out ./wwwroot
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf && \
     sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
 
-ENTRYPOINT ["dotnet", "LineWebHookAPI.dll"]
+# $PORT を実行時に反映（Vercel 既定は 80）
+ENTRYPOINT ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-80} exec dotnet LineWebHookAPI.dll"]
