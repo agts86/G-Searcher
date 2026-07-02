@@ -101,6 +101,7 @@ internal class WebhookService
             {
                 var results = await PostLocalAsync(job.WebHook, job.GenreCode);
                 await CreateEventLogsAsync([.. results.Select(x => x.Meta)]);
+                isSuccess = results.All(x => x.IsReplySucceeded);
             }
             catch (Exception ex)
             {
@@ -182,10 +183,14 @@ internal class WebhookService
 
         // デバッグ実行時はエラーコード確定のため処理しない
         if (!Env.IsDevelopment())
-            results.ForEach
+            await Task.WhenAll
             (
-                async x => await WebhookRepository.PostReplyAsync(x.Reply, Configuration.GetValue<string>("Line:Token"))
+                results.Select
+                (
+                    async x => x.IsReplySucceeded = await WebhookRepository.PostReplyAsync(x.Reply, Configuration.GetValue<string>("Line:Token"))
+                )
             );
+
         return [.. results];
     }
 }

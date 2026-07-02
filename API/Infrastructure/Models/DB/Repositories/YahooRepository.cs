@@ -46,9 +46,18 @@ internal class YahooRepository(LineWebHookContext dbContext, IYOLPClient YOLPCli
     /// <param name="Reply">返答内容</param>
     /// <param name="endPointUrl">エンドポイント</param>
     /// <param name="token">トークン</param>
-    public Task PostReplyAsync(Reply Reply, string token)
+    /// <returns>送信に成功したか</returns>
+    public async Task<bool> PostReplyAsync(Reply Reply, string token)
     {
-        return LineMessagingClient.PostReplyAsync(Reply, token);
+        try
+        {
+            await LineMessagingClient.PostReplyAsync(Reply, token);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     /// <summary>

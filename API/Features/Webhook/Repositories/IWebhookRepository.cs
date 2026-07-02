@@ -24,7 +24,8 @@ internal interface IWebhookRepository
     /// <param name="Reply">返答内容</param>
     /// <param name="endPointUrl">エンドポイント</param>
     /// <param name="token">トークン</param>
-    Task PostReplyAsync(Reply Reply, string token);
+    /// <returns>送信に成功したか</returns>
+    Task<bool> PostReplyAsync(Reply Reply, string token);
 
     /// <summary>
     /// データベースの変更を保存する

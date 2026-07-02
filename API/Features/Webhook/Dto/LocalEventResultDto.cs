@@ -17,4 +17,9 @@ public class LocalEventResultDto(Reply reply, Meta meta)
     /// 登録するログ
     /// </summary>
     public Meta Meta { get; } = meta;
+
+    /// <summary>
+    /// 返信が成功したか
+    /// </summary>
+    public bool IsReplySucceeded { get; set; }
 }
