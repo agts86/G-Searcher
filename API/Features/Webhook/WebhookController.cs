@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Asp.Versioning;
 using LineDevSdk.Configurations;
-using LineDevSdk.DTO.MessagingAPIs;
 using LineDevSdk.DTO.WebHooks;
 using Features.Webhook.Dto;
 using Shared.Jobs;
@@ -62,13 +61,14 @@ public class WebhookController
     /// <returns>LineAPIにPostした内容</returns>
     [HttpPost("local")]
     [ServiceFilter(typeof(LineSignatureFilter))]
-    public async Task<ActionResult<Reply[]>> PostLocalAsync
+    public async Task<ActionResult<LocalEventResultDto[]>> PostLocalAsync
     (
         [FromBody] WebHook gourmetGettingDto,
         [FromQuery][MaxLength(7)][HalfNumeric] string genreCode
     )
     {
         var res = await WebhookService.PostLocalAsync(gourmetGettingDto, genreCode);
+        await WebhookService.CreateEventLogsAsync([.. res.Select(x => x.Meta)]);
         return res;
     }
 }

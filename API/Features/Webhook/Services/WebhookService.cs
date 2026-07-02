@@ -32,12 +32,18 @@ public interface IWebhookService
     Task PostLocalJobAsync(IBackgroundJobQueue<LocalJobDto> queue, CancellationToken ct);
 
     /// <summary>
+    /// イベントログを登録する
+    /// </summary>
+    /// <param name="logs">登録するログ一覧</param>
+    Task CreateEventLogsAsync(Meta[] logs);
+
+    /// <summary>
     /// ラインフックからのリクエストを受け取り、YahooAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">リクエスト</param>
     /// <param name="genreCode">ジャンルコード</param>
     /// <returns>LineAPIにPostした内容</returns>
-    Task<Reply[]> PostLocalAsync(WebHook gourmetGettingDto, string genreCode);
+    Task<LocalEventResultDto[]> PostLocalAsync(WebHook gourmetGettingDto, string genreCode);
 }
 
 /// <summary>
@@ -93,7 +99,8 @@ internal class WebhookService
             string errorMessage = null;
             try
             {
-                await PostLocalAsync(job.WebHook, job.GenreCode);
+                var results = await PostLocalAsync(job.WebHook, job.GenreCode);
+                await CreateEventLogsAsync([.. results.Select(x => x.Meta)]);
             }
             catch (Exception ex)
             {
@@ -111,21 +118,32 @@ internal class WebhookService
     }
 
     /// <summary>
+    /// イベントログを登録する
+    /// </summary>
+    /// <param name="logs">登録するログ一覧</param>
+    public async Task CreateEventLogsAsync(Meta[] logs)
+    {
+        foreach (var log in logs)
+        {
+            await WebhookRepository.CreateAsync(log);
+        }
+        await WebhookRepository.SaveChangesAsync();
+    }
+
+    /// <summary>
     /// ラインフックからのリクエストを受け取り、YahooAPIを実行し返答する
     /// </summary>
     /// <param name="gourmetGettingDto">リクエスト</param>
     /// <returns>LineAPIにPostした内容</returns>
-    public async Task<Reply[]> PostLocalAsync(WebHook gourmetGettingDto, string genreCode)
+    public async Task<LocalEventResultDto[]> PostLocalAsync(WebHook gourmetGettingDto, string genreCode)
     {
-        var replies = new List<Reply>();
+        var results = new List<LocalEventResultDto>();
 
         foreach (var e in gourmetGettingDto.Events ?? [])
         {
             if (e is not MessageEvent messageEvent) continue;
 
             var log = messageEvent.Message.ConvertGourmetLog();
-            await WebhookRepository.CreateAsync(log);
-            await WebhookRepository.SaveChangesAsync();
 
             var localSearchRequest = new LocalSearchRequest()
             {
@@ -138,37 +156,36 @@ internal class WebhookService
             var gourmet = await WebhookRepository.GetLocalSearchResultAsync(localSearchRequest);
             var columns = gourmet.ToCarouselTemplateColumns();
 
-            replies.Add
-            (
-                new Reply()
-                {
-                    ReplyToken = messageEvent.ReplyToken,
-                    Messages =
-                    [
-                        columns.Length > 0 ?
-                        new TemplateMessage()
+            var reply = new Reply()
+            {
+                ReplyToken = messageEvent.ReplyToken,
+                Messages =
+                [
+                    columns.Length > 0 ?
+                    new TemplateMessage()
+                    {
+                        AltText = "検索結果",
+                        Template = new CarouselTemplate()
                         {
-                            AltText = "検索結果",
-                            Template = new CarouselTemplate()
-                            {
-                                Columns = columns
-                            }
-                        }:
-                        new TextV2Message()
-                        {
-                            Text = MessageTexts.NotFound
+                            Columns = columns
                         }
-                    ]
-                }
-            );
+                    }:
+                    new TextV2Message()
+                    {
+                        Text = MessageTexts.NotFound
+                    }
+                ]
+            };
+
+            results.Add(new LocalEventResultDto(reply, log));
         }
 
         // デバッグ実行時はエラーコード確定のため処理しない
         if (!Env.IsDevelopment())
-            replies.ForEach
+            results.ForEach
             (
-                async x => await WebhookRepository.PostReplyAsync(x, Configuration.GetValue<string>("Line:Token"))
+                async x => await WebhookRepository.PostReplyAsync(x.Reply, Configuration.GetValue<string>("Line:Token"))
             );
-        return [.. replies];
+        return [.. results];
     }
 }

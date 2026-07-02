@@ -155,14 +155,14 @@ public class WebhookControllerTest : TestBase
         var webhookController = new WebhookController(webhookService);
         var res = await webhookController.PostLocalAsync(dto,"0106");
 
-        var contents = Assert.IsType<Reply[]>(res.Value);
+        var contents = Assert.IsType<LocalEventResultDto[]>(res.Value);
 
         Assert.Single(contents);
-        Assert.Equal("replyToken", contents[0].ReplyToken);
-        Assert.Single(contents[0].Messages);
-        Assert.IsType<TemplateMessage>(contents[0].Messages[0]);
-        
-        var message = contents[0].Messages[0] as TemplateMessage;
+        Assert.Equal("replyToken", contents[0].Reply.ReplyToken);
+        Assert.Single(contents[0].Reply.Messages);
+        Assert.IsType<TemplateMessage>(contents[0].Reply.Messages[0]);
+
+        var message = contents[0].Reply.Messages[0] as TemplateMessage;
         Assert.Equal("template", message.Type);
         Assert.Equal("検索結果", message.AltText);
         Assert.IsType<CarouselTemplate>(message.Template);
@@ -229,13 +229,13 @@ public class WebhookControllerTest : TestBase
         var webhookController = new WebhookController(webhookService);
         var res = await webhookController.PostLocalAsync(dto,"0106");
 
-        var contents = Assert.IsType<Reply[]>(res.Value);
+        var contents = Assert.IsType<LocalEventResultDto[]>(res.Value);
         Assert.Single(contents);
-        Assert.Equal("replyToken", contents[0].ReplyToken);
-        Assert.Single(contents[0].Messages);
-        Assert.IsType<TextV2Message>(contents[0].Messages[0]);
+        Assert.Equal("replyToken", contents[0].Reply.ReplyToken);
+        Assert.Single(contents[0].Reply.Messages);
+        Assert.IsType<TextV2Message>(contents[0].Reply.Messages[0]);
 
-        var message = contents[0].Messages[0] as TextV2Message;
+        var message = contents[0].Reply.Messages[0] as TextV2Message;
         Assert.Equal("textV2", message.Type);
         Assert.Equal(MessageTexts.NotFound, message.Text);
 
