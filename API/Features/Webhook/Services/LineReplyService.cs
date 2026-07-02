@@ -107,34 +107,35 @@ internal class LineReplyService
             results.Add(new LocalEventResultDto(reply, log));
         }
 
-        // デバッグ実行時はエラーコード確定のため処理しない
-        if (!Env.IsDevelopment())
-            await Task.WhenAll
-            (
-                results.Select
-                (
-                    async x => x.IsReplySucceeded = await PostReplyAsync(x.Reply)
-                )
-            );
-
+        await PostReplyAsync(results);
         return [.. results];
     }
 
     /// <summary>
     /// LineAPIに返信を送信する
     /// </summary>
-    /// <param name="reply">返答内容</param>
-    /// <returns>送信に成功したか</returns>
-    private async Task<bool> PostReplyAsync(Reply reply)
+    /// <param name="results">返答内容</param>
+    private async Task PostReplyAsync(List<LocalEventResultDto> results)
     {
-        try
-        {
-            await LineMessagingClient.PostReplyAsync(reply, Configuration.GetValue<string>("Line:Token"));
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        // デバッグ実行時はエラーコード確定のため処理しない
+        if (Env.IsDevelopment()) return;
+        await Task.WhenAll
+        (
+            results.Select
+            (
+                async x =>
+                {
+                    try
+                    {
+                        await LineMessagingClient.PostReplyAsync(x.Reply, Configuration.GetValue<string>("Line:Token"));
+                        x.IsReplySucceeded = true;
+                    }
+                    catch (Exception)
+                    {
+                        x.IsReplySucceeded = false;
+                    }
+                }
+            )
+        );
     }
 }
