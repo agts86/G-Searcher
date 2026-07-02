@@ -16,16 +16,8 @@ namespace Features.Webhook;
 [ApiVersion("1")]
 [ApiController]
 [Route("api/v{version:apiVersion}/webhook")]
-public class WebhookController
-(
-    IWebhookService webhookService
-) : ControllerBase
+public class WebhookController : ControllerBase
 {
-    /// <summary>
-    /// ビジネスロジック
-    /// </summary>
-    private IWebhookService WebhookService { get; } = webhookService;
-
     /// <summary>
     /// ラインフックからの位置情報を受け取り、ジョブキューに登録する
     /// </summary>
@@ -49,7 +41,6 @@ public class WebhookController
         );
         await queue.EnqueueAsync(job);
 
-        await WebhookService.AcceptLocalAsync(job);
         return Accepted(new { job.Id });
     }
 
@@ -58,17 +49,21 @@ public class WebhookController
     /// </summary>
     /// <param name="gourmetGettingDto">位置情報</param>
     /// <param name="genreCode">ジャンルコード</param>
+    /// <param name="lineReplyService">LINE返信サービス</param>
+    /// <param name="eventLogService">イベントログサービス</param>
     /// <returns>LineAPIにPostした内容</returns>
     [HttpPost("local")]
     [ServiceFilter(typeof(LineSignatureFilter))]
     public async Task<ActionResult<LocalEventResultDto[]>> PostLocalAsync
     (
         [FromBody] WebHook gourmetGettingDto,
-        [FromQuery][MaxLength(7)][HalfNumeric] string genreCode
+        [FromQuery][MaxLength(7)][HalfNumeric] string genreCode,
+        [FromServices] ILineReplyService lineReplyService,
+        [FromServices] IEventLogService eventLogService
     )
     {
-        var res = await WebhookService.PostLocalAsync(gourmetGettingDto, genreCode);
-        await WebhookService.CreateEventLogsAsync([.. res.Select(x => x.Meta)]);
-        return res;
+        var res = await lineReplyService.PostLocalAsync(gourmetGettingDto, genreCode);
+        await eventLogService.CreateEventLogsAsync([.. res.Select(x => x.Meta)]);
+        return Ok(res);
     }
 }

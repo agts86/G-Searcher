@@ -7,20 +7,14 @@ using Microsoft.Extensions.Hosting;
 namespace Infrastructure.Models.Job;
 
 /// <summary>
-/// Webhook非同期ジョブサービス
+/// ジョブ処理結果の永続化バックグラウンドサービス
 /// </summary>
-/// <typeparam name="LocalJobDto"></typeparam>
-internal class WebhookBackgroundService(IServiceProvider sp, IBackgroundJobQueue<LocalJobDto> queue, IBackgroundJobQueue<LocalJobResultDto> resultQueue) : BackgroundService
+internal class JobResultPersistenceBackgroundService(IServiceProvider sp, IBackgroundJobQueue<LocalJobResultDto> resultQueue) : BackgroundService
 {
     /// <summary>
     /// サービスプロバイダー
     /// </summary>
     private IServiceProvider ServiceProvider { get; } = sp;
-
-    /// <summary>
-    /// バックグラウンドジョブキュー
-    /// </summary>
-    private IBackgroundJobQueue<LocalJobDto> Queue { get; } = queue;
 
     /// <summary>
     /// 処理結果キュー
@@ -36,8 +30,8 @@ internal class WebhookBackgroundService(IServiceProvider sp, IBackgroundJobQueue
         try
         {
             using var scope = ServiceProvider.CreateScope();
-            var webhookService = scope.ServiceProvider.GetRequiredService<IWebhookService>();
-            await webhookService.PostLocalJobAsync(Queue, ResultQueue, ct);
+            var jobResultPersistenceService = scope.ServiceProvider.GetRequiredService<IJobResultPersistenceService>();
+            await jobResultPersistenceService.PersistAsync(ResultQueue, ct);
         }
         catch { }
     }

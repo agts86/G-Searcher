@@ -11,9 +11,11 @@ public static class WebhookInfrastructureDependencyInjection
 {
     public static IServiceCollection AddWebhookInfrastructure(this IServiceCollection services)
     {
-        services.AddScoped<IWebhookRepository, YahooRepository>();
+        services.AddScoped<IWebhookDbRepository, WebhookDbRepository>();
         services.AddSingleton<IBackgroundJobQueue<LocalJobDto>, BackgroundJobQueue<LocalJobDto>>();
+        services.AddSingleton<IBackgroundJobQueue<LocalJobResultDto>, BackgroundJobQueue<LocalJobResultDto>>();
         services.AddHostedService<WebhookBackgroundService>();
+        services.AddHostedService<JobResultPersistenceBackgroundService>();
         return services;
     }
 }

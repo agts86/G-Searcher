@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Threading.Channels;
 using Shared.Jobs;
 
@@ -26,26 +25,17 @@ internal class BackgroundJobQueue<T> : IBackgroundJobQueue<T>
         => _channel.Writer.WriteAsync(job, ct);
 
     /// <summary>
-    /// キューからすべてのジョブを非同期に読み取る
+    /// キューに溜まっているジョブをまとめて読み取る（最低1件を待ってから、その時点で読み取れる分をまとめて返す）
     /// </summary>
     /// <param name="ct">キャンセルトークン</param>
-    /// <returns>ジョブの列挙子</returns>
-    public IAsyncEnumerable<T> ReadAllAsync(CancellationToken ct = default)
+    /// <returns>ジョブのバッチ</returns>
+    public async Task<IReadOnlyList<T>> ReadBatchAsync(CancellationToken ct = default)
     {
-        return GetAllJobsAsync(ct);
-    }
+        await _channel.Reader.WaitToReadAsync(ct);
 
-    /// <summary>
-    /// ジョブを非同期に取得する
-    /// </summary>
-    /// <param name="ct"></param>
-    /// <returns></returns>
-    private async IAsyncEnumerable<T> GetAllJobsAsync([EnumeratorCancellation] CancellationToken ct = default)
-    {
-        while (await _channel.Reader.WaitToReadAsync(ct))
-        {
-            while (_channel.Reader.TryRead(out var job))
-                yield return job;
-        }
+        var batch = new List<T>();
+        while (_channel.Reader.TryRead(out var job))
+            batch.Add(job);
+        return batch;
     }
 }

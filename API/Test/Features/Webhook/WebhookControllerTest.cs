@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Application.Models.DB.Tables;
 using Features.Webhook.Constants;
 using YahooDeveloperApiClient.YOLP.Response;
 using Features.Webhook;
@@ -43,10 +44,7 @@ public class WebhookControllerTest : TestBase
         queueMock.Setup(x => x.EnqueueAsync(It.IsAny<LocalJobDto>(), It.IsAny<CancellationToken>()))
             .Callback<LocalJobDto, CancellationToken>((job, _) => capturedJob = job)
             .Returns(ValueTask.CompletedTask);
-        var webhookServiceMock = new Mock<IWebhookService>();
-        webhookServiceMock.Setup(x => x.AcceptLocalAsync(It.IsAny<LocalJobDto>()))
-            .Returns(Task.CompletedTask);
-        var controller = new WebhookController(webhookServiceMock.Object);
+        var controller = new WebhookController();
 
         var result = await controller.AcceptLocalAsync(dto, "0106", queueMock.Object);
 
@@ -59,11 +57,6 @@ public class WebhookControllerTest : TestBase
         Assert.Contains(capturedJob.Id.ToString(), payloadJson);
 
         queueMock.Verify(x => x.EnqueueAsync(It.IsAny<LocalJobDto>(), It.IsAny<CancellationToken>()), Times.Once);
-        webhookServiceMock.Verify
-        (
-            x => x.AcceptLocalAsync(It.Is<LocalJobDto>(job => job.Id == capturedJob.Id)),
-            Times.Once
-        );
     }
 
     /// <summary>
@@ -150,12 +143,14 @@ public class WebhookControllerTest : TestBase
         Env.EnvironmentName = "Development";
         var YahooClient = CreateYahooClientMock(local);
         var LineMessagingClientMock = CreateLineMessagingClientMock();
-        var yahooRepository = new YahooRepository(DbContext, YahooClient, LineMessagingClientMock);
-        var webhookService = new WebhookService(yahooRepository, Env, Configuration);
-        var webhookController = new WebhookController(webhookService);
-        var res = await webhookController.PostLocalAsync(dto,"0106");
+        var lineReplyService = new LineReplyService(YahooClient, LineMessagingClientMock, Env, Configuration);
+        var webhookDbRepository = new WebhookDbRepository(DbContext);
+        var eventLogService = new EventLogService(webhookDbRepository);
+        var webhookController = new WebhookController();
+        var res = await webhookController.PostLocalAsync(dto, "0106", lineReplyService, eventLogService);
 
-        var contents = Assert.IsType<LocalEventResultDto[]>(res.Value);
+        var okResult = Assert.IsType<OkObjectResult>(res.Result);
+        var contents = Assert.IsType<LocalEventResultDto[]>(okResult.Value);
 
         Assert.Single(contents);
         Assert.Equal("replyToken", contents[0].Reply.ReplyToken);
@@ -224,12 +219,14 @@ public class WebhookControllerTest : TestBase
         Env.EnvironmentName = "Development";
         var YahooClient = CreateYahooClientMock(local);
         var LineMessagingClientMock = CreateLineMessagingClientMock();
-        var yahooRepository = new YahooRepository(DbContext, YahooClient, LineMessagingClientMock);
-        var webhookService = new WebhookService(yahooRepository, Env, Configuration);
-        var webhookController = new WebhookController(webhookService);
-        var res = await webhookController.PostLocalAsync(dto,"0106");
+        var lineReplyService = new LineReplyService(YahooClient, LineMessagingClientMock, Env, Configuration);
+        var webhookDbRepository = new WebhookDbRepository(DbContext);
+        var eventLogService = new EventLogService(webhookDbRepository);
+        var webhookController = new WebhookController();
+        var res = await webhookController.PostLocalAsync(dto, "0106", lineReplyService, eventLogService);
 
-        var contents = Assert.IsType<LocalEventResultDto[]>(res.Value);
+        var okResult = Assert.IsType<OkObjectResult>(res.Result);
+        var contents = Assert.IsType<LocalEventResultDto[]>(okResult.Value);
         Assert.Single(contents);
         Assert.Equal("replyToken", contents[0].Reply.ReplyToken);
         Assert.Single(contents[0].Reply.Messages);

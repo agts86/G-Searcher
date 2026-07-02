@@ -15,9 +15,9 @@ public interface IBackgroundJobQueue<T>
     ValueTask EnqueueAsync(T job, CancellationToken ct = default);
 
     /// <summary>
-    /// キューからすべてのジョブを非同期に読み取る
+    /// キューに溜まっているジョブをまとめて読み取る（最低1件を待ってから、その時点で読み取れる分をまとめて返す）
     /// </summary>
     /// <param name="ct">キャンセルトークン</param>
-    /// <returns>ジョブの列挙子</returns>
-    IAsyncEnumerable<T> ReadAllAsync(CancellationToken ct = default);
+    /// <returns>ジョブのバッチ</returns>
+    Task<IReadOnlyList<T>> ReadBatchAsync(CancellationToken ct = default);
 }
