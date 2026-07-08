@@ -41,6 +41,35 @@ services:
     depends_on:
       - postgres
 
+  api-ts:
+    container_name: api-ts
+    build:
+      context: ./api-ts
+      dockerfile: Dockerfile.dev
+    working_dir: /app/src/host
+    command: >
+      sh -c "cd /app &&
+      pnpm install --store-dir /tmp/pnpm-store &&
+      pnpm --filter @api-ts/tables exec prisma generate &&
+      pnpm --filter @api-ts/host exec tsx watch src/main.ts"
+    environment:
+      - TZ=Asia/Tokyo
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public&sslmode=disable
+      - JWT_SECRET=DevelopmentOnlyJwtKeyMustBeAtLeast32Chars
+      - JWT_ISSUER=LineWebHookAPI
+      - JWT_AUDIENCE=LineWebHookAdmin
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin
+      - ACCESS_TOKEN_EXPIRES_MINUTES=15
+      - REFRESH_TOKEN_EXPIRES_DAYS=7
+    network_mode: "host"
+    volumes:
+      - ./api-ts:/app
+    depends_on:
+      - postgres
+
   postgres:
     container_name: postgres
     image: postgres:16

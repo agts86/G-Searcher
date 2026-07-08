@@ -54,6 +54,22 @@
             },
             "console": "integratedTerminal",
             "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "name": "api-ts: host dev",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/api-ts/src/host/node_modules/.bin/tsx",
+            "program": "${workspaceFolder}/api-ts/src/host/src/main.ts",
+            "cwd": "${workspaceFolder}/api-ts/src/host",
+            "envFile": "${workspaceFolder}/api-ts/src/host/.env",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "listening on\\s+(https?://\\S+)",
+                "uriFormat": "%s/ui"
+            },
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
         }
     ],
     "compounds": [

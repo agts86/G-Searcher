@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 既存.NET側 API/Tables/Models/DB/Tables/RefreshToken.cs と同じ物理テーブル/カラムにマッピングする。
+// このPhaseでは prisma migrate は実行しない（EF Coreが引き続きスキーマの記録上の所有者）。
+model RefreshToken {
+  id        String   @id @default(uuid()) @map("Id") @db.Uuid
+  userName  String   @map("UserName")
+  tokenHash String   @unique @map("TokenHash")
+  expiresAt DateTime @map("ExpiresAt") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("CreatedAt") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("UpdatedAt") @db.Timestamptz(6)
+
+  @@index([expiresAt])
+  @@map("RefreshToken")
+}
