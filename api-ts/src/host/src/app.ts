@@ -1,7 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { swaggerUI } from '@hono/swagger-ui';
 import { createAuthRouter, AuthService, type AuthServiceConfig } from '@api-ts/features-auth';
-import { getPrismaClient, PrismaAuthRepository } from '@api-ts/infrastructure';
+import { createManagedRouter, ManagedService } from '@api-ts/features-managed';
+import { getPrismaClient, PrismaAuthRepository, PrismaManagedRepository } from '@api-ts/infrastructure';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -39,20 +40,29 @@ function buildAuthServiceConfig(): AuthServiceConfig {
 export function createApp() {
   const config = buildAuthServiceConfig();
   const prisma = getPrismaClient();
-  const repository = new PrismaAuthRepository(prisma);
-  const authService = new AuthService(repository, config);
-  const authRouter = createAuthRouter(authService, config.jwt);
+  // 本番以外（Swagger UIが見える環境と同じ条件）はSecure Cookieを外し、
+  // HTTPのローカル開発環境でもSwagger UIの Try it out からログイン状態を維持できるようにする。
+  const cookieSecure = process.env.NODE_ENV === 'production';
+
+  const authRepository = new PrismaAuthRepository(prisma);
+  const authService = new AuthService(authRepository, config);
+  const authRouter = createAuthRouter(authService, config.jwt, cookieSecure);
+
+  const managedRepository = new PrismaManagedRepository(prisma);
+  const managedService = new ManagedService(managedRepository);
+  const managedRouter = createManagedRouter(managedService, config.jwt);
 
   const app = new OpenAPIHono();
   app.get('/health', (c) => c.text('ok'));
   app.route('/api/v1/auth', authRouter);
+  app.route('/api/v1/managed', managedRouter);
 
   // 既存.NET側 Program.cs の `if (app.Environment.IsDevelopment())` と同じ考え方。
   // /doc・/ui は本番でAPI仕様を外部に露出させないため、本番では登録しない。
   if (process.env.NODE_ENV !== 'production') {
     app.doc('/doc', {
       openapi: '3.1.0',
-      info: { title: 'api-ts (Auth)', version: '0.1.0' },
+      info: { title: 'api-ts (Auth / Managed)', version: '0.1.0' },
     });
     app.get('/ui', swaggerUI({ url: '/doc' }));
   }

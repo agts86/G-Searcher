@@ -6,6 +6,7 @@
   },
   "references": [
     { "path": "../features/auth" },
+    { "path": "../features/managed" },
     { "path": "../infrastructure" },
     { "path": "../shared" }
   ],

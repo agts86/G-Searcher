@@ -20,3 +20,45 @@ model RefreshToken {
   @@index([expiresAt])
   @@map("RefreshToken")
 }
+
+// 以下、Managed機能で参照する既存.NET側 API/Tables/Models/DB/Tables/*.cs のテーブル。
+// PK以外のインデックスなし。DB側デフォルト値なし（アプリ側でIdを生成する）。
+
+model GourmetLocationLog {
+  id        String   @id @default(uuid()) @map("Id") @db.Uuid
+  lat       Float    @map("Lat")
+  lng       Float    @map("Lng")
+  createdAt DateTime @default(now()) @map("CreatedAt") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("UpdatedAt") @db.Timestamptz(6)
+
+  @@map("GourmetLocationLog")
+}
+
+model GourmetWordLog {
+  id        String   @id @default(uuid()) @map("Id") @db.Uuid
+  text      String?  @map("Text")
+  createdAt DateTime @default(now()) @map("CreatedAt") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("UpdatedAt") @db.Timestamptz(6)
+
+  @@map("GourmetWordLog")
+}
+
+model ErrorLog {
+  id        String   @id @default(uuid()) @map("Id") @db.Uuid
+  contents  String   @map("Contents")
+  createdAt DateTime @default(now()) @map("CreatedAt") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("UpdatedAt") @db.Timestamptz(6)
+
+  @@map("ErrorLog")
+}
+
+model JobLog {
+  id        String   @id @default(uuid()) @map("Id") @db.Uuid
+  isSuccess Boolean  @map("IsSuccess")
+  contents  String?  @map("Contents")
+  info      String?  @map("Info")
+  createdAt DateTime @default(now()) @map("CreatedAt") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("UpdatedAt") @db.Timestamptz(6)
+
+  @@map("JobLog")
+}

@@ -15,10 +15,10 @@ const config = {
   refreshTokenExpiresInSeconds: 604800,
 };
 
-function setup(): { app: ReturnType<typeof createAuthRouter> } {
+function setup(cookieSecure = true): { app: ReturnType<typeof createAuthRouter> } {
   const repo = new InMemoryAuthRepository();
   const service = new AuthService(repo, config);
-  const app = createAuthRouter(service, config.jwt);
+  const app = createAuthRouter(service, config.jwt, cookieSecure);
   return { app };
 }
 
@@ -45,6 +45,20 @@ describe('POST /login', () => {
     const cookies = getSetCookies(res).join(';');
     expect(cookies).toContain('linewebhook_auth');
     expect(cookies).toContain('linewebhook_refresh');
+  });
+
+  it('cookieSecure=falseならSecure属性の無いCookieを発行する（HTTPのSwagger UIから試せるように）', async () => {
+    const { app } = setup(false);
+
+    const res = await app.request('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userName: 'admin', password: 'admin' }),
+    });
+
+    const cookies = getSetCookies(res).join(';');
+    expect(cookies).not.toContain('Secure');
+    expect(cookies).toContain('HttpOnly');
   });
 
   it('失敗時は401を返しCookieを設定しない', async () => {

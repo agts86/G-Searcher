@@ -91,11 +91,13 @@ export default tseslint.config(
               from: ['feature'],
               allow: ['tables', 'shared', ['feature', { featureName: '{{ featureName }}' }]],
             },
-            // infrastructure → tables, shared, feature（featureのinterfaceを実装するため）
-            { from: ['infrastructure'], allow: ['tables', 'shared', 'feature'] },
+            // infrastructure → 自分自身, tables, shared, feature（featureのinterfaceを実装するため）
+            { from: ['infrastructure'], allow: ['infrastructure', 'tables', 'shared', 'feature'] },
             // host → 自分自身(main.tsがapp.tsをimportする等), feature, infrastructure, shared（DI配線・composition root）
             { from: ['host'], allow: ['host', 'feature', 'infrastructure', 'shared'] },
-            // tables, shared は最内層。他レイヤーに依存しない
+            // shared, tables は最内層だが、自分自身（同パッケージ内の他ファイル）へのimportは許可する
+            { from: ['shared'], allow: ['shared'] },
+            { from: ['tables'], allow: ['tables'] },
           ],
         },
       ],

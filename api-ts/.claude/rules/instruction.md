@@ -37,8 +37,8 @@ api-ts/
           auth.repository.ts          # インターフェースのみ（実装を持たない）
           auth.dto.ts                   # Zodスキーマ
         test/
-      managed/                # 将来のPhaseで追加。auth/と同じ形にする
-      webhook/                  # 将来のPhaseで追加。auth/と同じ形にする
+      managed/                # ~ API/Features/Managed（実装済み）。auth/と同じ形
+      webhook/                  # 未着手。実装時はauth/と同じ形にする
     tables/                 # ~ API/Tables: Prismaスキーマ・生成される型
       prisma/schema.prisma
     shared/                  # ~ API/Shared: 共通utility（jwt.ts, cookies.ts, hash.ts）

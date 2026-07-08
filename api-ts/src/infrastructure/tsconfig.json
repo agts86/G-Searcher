@@ -7,7 +7,8 @@
   "references": [
     { "path": "../tables" },
     { "path": "../shared" },
-    { "path": "../features/auth" }
+    { "path": "../features/auth" },
+    { "path": "../features/managed" }
   ],
   "include": ["src"]
 }

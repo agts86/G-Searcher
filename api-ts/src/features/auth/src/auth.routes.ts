@@ -12,13 +12,18 @@ import { UnauthorizedError } from './auth.service.js';
 import type { AuthService, LoginResult } from './auth.service.js';
 import { LoginRequestSchema, LoginResponseSchema, MeResponseSchema, ErrorResponseSchema } from './auth.dto.js';
 
-function setAuthCookies(c: Context, result: LoginResult): void {
-  setCookie(c, AUTH_COOKIE_NAME, result.accessToken, buildAuthCookieOptions(result.accessTokenExpiresAt));
+function setAuthCookies(c: Context, result: LoginResult, cookieSecure: boolean): void {
+  setCookie(
+    c,
+    AUTH_COOKIE_NAME,
+    result.accessToken,
+    buildAuthCookieOptions(result.accessTokenExpiresAt, cookieSecure),
+  );
   setCookie(
     c,
     AUTH_REFRESH_COOKIE_NAME,
     result.refreshToken,
-    buildAuthCookieOptions(result.refreshTokenExpiresAt),
+    buildAuthCookieOptions(result.refreshTokenExpiresAt, cookieSecure),
   );
 }
 
@@ -95,7 +100,7 @@ const meRoute = createRoute({
  * 外に切り出すと型安全性(c.req.valid()の型)を失う。行数警告よりも型安全性を優先する。
  */
 // eslint-disable-next-line max-lines-per-function -- 理由は上のコメント参照
-export function createAuthRouter(service: AuthService, jwtConfig: JwtConfig): OpenAPIHono {
+export function createAuthRouter(service: AuthService, jwtConfig: JwtConfig, cookieSecure = true): OpenAPIHono {
   const app = new OpenAPIHono();
 
   app.openapi(loginRoute, async (c) => {
@@ -103,7 +108,7 @@ export function createAuthRouter(service: AuthService, jwtConfig: JwtConfig): Op
 
     try {
       const result = await service.login(userName, password);
-      setAuthCookies(c, result);
+      setAuthCookies(c, result, cookieSecure);
       return c.json(loginResponseBody(result), 200);
     } catch (err) {
       if (err instanceof UnauthorizedError) {
@@ -118,7 +123,7 @@ export function createAuthRouter(service: AuthService, jwtConfig: JwtConfig): Op
 
     try {
       const result = await service.refresh(refreshToken);
-      setAuthCookies(c, result);
+      setAuthCookies(c, result, cookieSecure);
       return c.json(loginResponseBody(result), 200);
     } catch (err) {
       if (err instanceof UnauthorizedError) {

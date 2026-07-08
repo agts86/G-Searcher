@@ -8,11 +8,12 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch --env-file=.env src/main.ts",
     "start": "node --env-file=.env dist/main.js",
-    "test": "echo \"no tests in host (composition root only)\" && exit 0",
+    "test": "vitest run",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
     "@api-ts/features-auth": "workspace:*",
+    "@api-ts/features-managed": "workspace:*",
     "@api-ts/infrastructure": "workspace:*",
     "@api-ts/shared": "workspace:*",
     "hono": "^4.6.0",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "typescript": "^6.0.0",
     "tsx": "^4.19.0",
-    "@types/node": "^22.10.0"
+    "@types/node": "^22.10.0",
+    "vitest": "^3.0.0"
   }
 }

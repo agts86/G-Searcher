@@ -13,3 +13,5 @@ export {
   type CreatedAccessToken,
   type VerifiedAccessToken,
 } from './jwt.js';
+export { formatAsJstIsoString } from './datetime.js';
+export { createAuthGuard, type AuthGuardVariables } from './auth-guard.js';
