@@ -9,5 +9,6 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     fileParallelism: false,
+    globalSetup: ['../tables/test-support/vitest-global-setup.ts'],
   },
 });

@@ -15,9 +15,11 @@
     "@prisma/client": "^6.1.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.4",
+    "@electric-sql/pglite-socket": "^0.2.7",
+    "@types/node": "^22.10.0",
     "prisma": "^6.1.0",
     "typescript": "^6.0.0",
-    "vitest": "^3.0.0",
-    "@types/node": "^22.10.0"
+    "vitest": "^3.0.0"
   }
 }
