@@ -1,6 +1,6 @@
-# UI Agent Guide
+# ui Agent Guide
 
-このファイルは `UI/` 配下専用のルールを定義する。
+このファイルは `ui/` 配下専用のルールを定義する。
 
 ## 1. 技術スタック前提
 
@@ -37,6 +37,6 @@
 
 ## 5. 関連仕様
 
-- 詳細仕様: `UI/docs/INSTRUCTION.md`
+- 詳細仕様: `ui/docs/INSTRUCTION.md`
 - コマンド辞書: `docs/agent/commands.md`
 - タグ辞書: `docs/agent/tags.md`

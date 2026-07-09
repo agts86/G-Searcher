@@ -9,7 +9,7 @@ on:
       - develop
     paths:
       - 'api/**'
-      - 'UI/**'
+      - 'ui/**'
       - 'Dockerfile'
       - '.github/workflows/ContainerDeploy.yml'
   workflow_dispatch:

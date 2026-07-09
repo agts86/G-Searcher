@@ -95,11 +95,11 @@ https://lin.ee/sOGflWx
 
 ## UI 開発
 
-Next.js 開発サーバーは `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api）へ中継する。  
+Next.js 開発サーバーは `ui/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api）へ中継する。  
 api は Cookie の `Secure` 属性を `NODE_ENV === 'production'` で切り替えるため、開発時は HTTP で問題なく、証明書の設定は不要。
 
 ```bash
-cd UI
+cd ui
 pnpm dev
 ```
 
@@ -108,5 +108,5 @@ UI は有効期限の5分前に `/api/v1/auth/refresh` を呼び、失敗時は 
 
 ## デプロイ用コンテナ
 
-`Dockerfile` は multi-stage build で `UI` をビルドし、生成物（`UI/out`）を api コンテナの `wwwroot` に同梱する。  
+`Dockerfile` は multi-stage build で `ui` をビルドし、生成物（`ui/out`）を api コンテナの `wwwroot` に同梱する。  
 そのため、コンテナビルド時の context はリポジトリルート（`.`）を使用する。

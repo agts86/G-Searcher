@@ -1,12 +1,12 @@
-# UI ビルド
+# ui ビルド
 FROM node:24-bookworm-slim AS ui-build
-WORKDIR /src/UI
+WORKDIR /src/ui
 ENV PNPM_HOME=/pnpm
 ENV PATH=${PNPM_HOME}:${PATH}
 RUN corepack enable && corepack prepare pnpm@10.26.0 --activate
-COPY UI/package.json UI/pnpm-lock.yaml ./
+COPY ui/package.json ui/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
-COPY UI/ ./
+COPY ui/ ./
 RUN pnpm build
 
 # api ビルド
@@ -35,6 +35,6 @@ ENV NODE_ENV=production
 ENV PORT=80
 EXPOSE 80
 COPY --from=api-build /app/api /app/api
-COPY --from=ui-build /src/UI/out ./wwwroot
+COPY --from=ui-build /src/ui/out ./wwwroot
 
 ENTRYPOINT ["node_modules/.bin/tsx", "src/main.ts"]

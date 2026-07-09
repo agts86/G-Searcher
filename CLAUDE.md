@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 このファイルはリポジトリ全体の共通ルールを定義する。
-`api/` 配下の作業では [api/CLAUDE.md](api/CLAUDE.md)、`UI/` 配下では [UI/CLAUDE.md](UI/CLAUDE.md) も参照すること。
+`api/` 配下の作業では [api/CLAUDE.md](api/CLAUDE.md)、`ui/` 配下では [ui/CLAUDE.md](ui/CLAUDE.md) も参照すること。
 
 ## プロジェクト概要
 
@@ -64,7 +64,7 @@ pnpm --filter @api/tables exec prisma db push
 ### UI
 
 ```bash
-cd UI
+cd ui
 pnpm lint       # ESLint
 pnpm build      # 静的出力（out/）
 pnpm test       # Jest
@@ -81,7 +81,7 @@ docker compose down
 ## 適用範囲と優先順位
 
 - ルート `CLAUDE.md` は全体ルール
-- `api/CLAUDE.md` / `UI/CLAUDE.md` は各サブディレクトリでこのファイルより優先
+- `api/CLAUDE.md` / `ui/CLAUDE.md` は各サブディレクトリでこのファイルより優先
 - 競合時は「より深い階層」のルールを優先
 
 ## 共通ルール

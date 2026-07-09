@@ -1,14 +1,14 @@
-# LineWebHook UI (Next.js) 設計原則・コーディング規約指示書
+# LineWebHook ui (Next.js) 設計原則・コーディング規約指示書
 
 ## 1. 目的と前提
 
-このドキュメントは `UI/` 配下のフロントエンド実装ルールを定義する。
+このドキュメントは `ui/` 配下のフロントエンド実装ルールを定義する。
 対象は Next.js（TypeScript）であり、最終成果物は Azure App Service 上の **単一コンテナ** で配信する。
 
 ### 前提アーキテクチャ
 
 - バックエンド API: `api/src/host`（Hono / TypeScript）
-- フロントエンド: `UI/`（Next.js）
+- フロントエンド: `ui/`（Next.js）
 - デプロイ構成: 1コンテナで API と静的フロントを同居
 - Next.js は `output: 'export'` による静的出力を利用し、実行時は CSR（SPA）として動作
 
@@ -33,7 +33,7 @@
 ### 推奨構成
 
 ```text
-UI/
+ui/
   src/
     app/
       (auth)/login/page.tsx
@@ -155,7 +155,7 @@ UI/
 ### ✅ やるべきこと
 
 - `next build` で静的出力を生成する（`out/`）
-- コンテナビルド時に `UI/out` を API 側の静的配信ディレクトリ（例: `wwwroot/`）へコピーする
+- コンテナビルド時に `ui/out` を API 側の静的配信ディレクトリ（例: `wwwroot/`）へコピーする
 - API 側で SPA fallback（未知パスは `index.html`）を設定する
 - API へのアクセスは同一オリジンを基本とし、不要な CORS 設定を増やさない
 
@@ -168,7 +168,7 @@ UI/
 
 ### ✅ やるべきこと
 
-- 開発時は `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api）へ中継する
+- 開発時は `ui/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api）へ中継する
 - api はCookieの `Secure` 属性を `NODE_ENV === 'production'` で切り替える設計のため、開発時（api宛て）はHTTPで問題ない。自己署名証明書やCA設定は不要
 
 ### ❌ やってはいけないこと
@@ -199,5 +199,5 @@ pnpm test
 
 ---
 
-この規約は、`UI/` を Next.js CSR SPA として安定運用し、単一コンテナで API と一体配信するための基準である。
+この規約は、`ui/` を Next.js CSR SPA として安定運用し、単一コンテナで API と一体配信するための基準である。
 設計判断に迷う場合は「静的配信できるか」「管理者専用として過不足ないか」「保守しやすいか」を優先して決定する。

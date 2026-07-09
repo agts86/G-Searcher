@@ -129,5 +129,5 @@ graph LR
 ```
 
 注記:
-- `Dockerfile` は multi-stage build で `UI` と `api` をビルドし、`UI/out` を api コンテナの `wwwroot` に、`api` 一式（node_modules込み）を同梱します。実行は `tsx` で `src/host/src/main.ts` を直接起動します。
+- `Dockerfile` は multi-stage build で `ui` と `api` をビルドし、`ui/out` を api コンテナの `wwwroot` に、`api` 一式（node_modules込み）を同梱します。実行は `tsx` で `src/host/src/main.ts` を直接起動します。
 - 認証は `Access Token + Refresh Token` を利用し、`RefreshToken` は DB で管理します。

@@ -2,13 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "UI: Next.js dev",
+            "name": "ui: Next.js dev",
             "type": "node",
             "request": "launch",
             "preLaunchTask": "prepare-ui-next-cache",
-            "program": "${workspaceFolder}/UI/node_modules/next/dist/bin/next",
+            "program": "${workspaceFolder}/ui/node_modules/next/dist/bin/next",
             "args": ["dev"],
-            "cwd": "${workspaceFolder}/UI",
+            "cwd": "${workspaceFolder}/ui",
             "runtimeExecutable": "node",
             "serverReadyAction": {
                 "action": "openExternally",
@@ -38,10 +38,10 @@
     ],
     "compounds": [
         {
-            "name": "UI + API: 同時起動",
+            "name": "ui + API: 同時起動",
             "configurations": [
                 "api: host dev",
-                "UI: Next.js dev"
+                "ui: Next.js dev"
             ]
         }
     ]

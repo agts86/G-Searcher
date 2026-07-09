@@ -378,9 +378,9 @@ CLAUDE.local.md
 .claude/settings.local.json
 **/.claude/settings.local.json
 
-# keep source folders named "logs" under UI tracked
-!UI/src/**/logs/
-!UI/src/**/logs/**
+# keep source folders named "logs" under ui tracked
+!ui/src/**/logs/
+!ui/src/**/logs/**
 .vercel
 
 # api (Node/TypeScript) 秘密情報を含むローカル環境変数ファイル
