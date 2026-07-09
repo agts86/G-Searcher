@@ -34,6 +34,9 @@ function dedupeAndCap(features: YolpFeature[]): YolpFeature[] {
   const seen = new Set<string>();
   const result: YolpFeature[] = [];
   for (const feature of features) {
+    // detailUrlが無いとLINEのuri actionが不正になりカラム全体が拒否されるため、
+    // 詳細URLを提示できない結果はカルーセルに含めない。
+    if (!feature.detailUrl) continue;
     if (seen.has(feature.gid)) continue;
     seen.add(feature.gid);
     result.push(feature);
@@ -84,10 +87,11 @@ export class LineReplyService {
       return true;
     }
 
-    if (features.length === 0) {
+    const columns = toCarouselColumns(features);
+    if (columns.length === 0) {
       return this.lineReplyClient.replyText(replyToken, NOT_FOUND_TEXT);
     }
 
-    return this.lineReplyClient.replyCarousel(replyToken, toCarouselColumns(features));
+    return this.lineReplyClient.replyCarousel(replyToken, columns);
   }
 }

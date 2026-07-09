@@ -90,6 +90,27 @@ describe('LineReplyService.processEvent', () => {
     ]);
   });
 
+  it('detailUrlが無い結果はカルーセルから除外し、全て除外されたらNotFoundテキストを返信する', async () => {
+    const noUrlFeature: YolpFeature = { gid: 'g1', name: '店A', address: '店Aの住所', detailUrl: null };
+    const { service, lineReplyClient } = buildService({ searchResults: [noUrlFeature] });
+
+    await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
+
+    expect(vi.mocked(lineReplyClient.replyCarousel)).not.toHaveBeenCalled();
+    expect(vi.mocked(lineReplyClient.replyText)).toHaveBeenCalledWith('reply-token-1', NOT_FOUND_TEXT);
+  });
+
+  it('detailUrlが無い結果は除いて、有効な結果だけでカルーセルを返信する', async () => {
+    const noUrlFeature: YolpFeature = { gid: 'g1', name: '店A', address: '店Aの住所', detailUrl: null };
+    const { service, lineReplyClient } = buildService({ searchResults: [noUrlFeature, feature('g2', '店B')] });
+
+    await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
+
+    expect(vi.mocked(lineReplyClient.replyCarousel)).toHaveBeenCalledWith('reply-token-1', [
+      { title: '店B', text: '店Bの住所', detailUrl: 'https://example.com/g2' },
+    ]);
+  });
+
   it('同じgidの結果は重複排除し、最大10件までにする', async () => {
     const results = [
       feature('g1', '店A-1'),

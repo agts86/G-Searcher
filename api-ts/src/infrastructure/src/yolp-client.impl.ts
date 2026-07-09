@@ -22,12 +22,27 @@ interface YolpLocalSearchResponse {
   Feature?: YolpFeatureResponse[];
 }
 
+/**
+ * 既存.NET側 DetailInfo.Extra は StringComparer.OrdinalIgnoreCase の辞書（かつ
+ * デシリアライズ全体が PropertyNameCaseInsensitive）で "YUrl" を検索していたため、
+ * 実際のYOLPレスポンスのキーの大文字小文字が厳密一致しなくても拾えていた。
+ * ここでも同じ大文字小文字非依存の挙動に合わせる。
+ */
+function findExtraValueCaseInsensitive(extra: Record<string, string> | undefined, key: string): string | null {
+  if (!extra) {
+    return null;
+  }
+  const lowerKey = key.toLowerCase();
+  const foundKey = Object.keys(extra).find((k) => k.toLowerCase() === lowerKey);
+  return foundKey ? extra[foundKey] : null;
+}
+
 function toYolpFeature(feature: YolpFeatureResponse): YolpFeature {
   return {
     gid: feature.Gid ?? feature.Id ?? '',
     name: feature.Name ?? '',
     address: feature.Property?.Address ?? null,
-    detailUrl: feature.Property?.Detail?.Extra?.YUrl ?? null,
+    detailUrl: findExtraValueCaseInsensitive(feature.Property?.Detail?.Extra, 'YUrl'),
   };
 }
 

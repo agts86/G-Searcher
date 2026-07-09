@@ -52,6 +52,17 @@ describe('YolpClientImpl.searchLocal', () => {
     expect(result).toEqual([]);
   });
 
+  it('Extraのキーが大文字小文字違い(yurl)でもdetailUrlを拾う（既存.NET側のOrdinalIgnoreCase相当）', async () => {
+    const { adapter } = buildAdapter({
+      Feature: [{ Gid: 'g1', Name: '店A', Property: { Detail: { Extra: { yurl: 'https://example.com/g1' } } } }],
+    });
+    const client = new YolpClientImpl(adapter, 'app-id-1');
+
+    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
+
+    expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/g1' }]);
+  });
+
   it('Gid/Address/YUrlが無い場合はId/nullでフォールバックする', async () => {
     const { adapter } = buildAdapter({ Feature: [{ Id: 'id-1', Name: '店B' }] });
     const client = new YolpClientImpl(adapter, 'app-id-1');
