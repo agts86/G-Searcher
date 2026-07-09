@@ -69,6 +69,11 @@ jobs:
 
     - name: Test with coverage
       working-directory: api-ts
+      # GitHub ActionsはCI=trueを自動設定するため、素のままだとvitestが
+      # ANSIカラーコードを強制出力し、tee先のログ→job summaryが文字化けする。
+      # NO_COLOR=1でそれを抑止する。
+      env:
+        NO_COLOR: '1'
       # デフォルトのbash -e {0}にはpipefailが付かず、teeを挟むとpnpmの失敗が
       # ステップの失敗として伝播しない（teeの終了コードで上書きされる）ため明示する。
       run: |
