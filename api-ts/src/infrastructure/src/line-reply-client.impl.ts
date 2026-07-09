@@ -37,7 +37,9 @@ export class LineReplyClientImpl implements LineReplyClient {
     try {
       await this.client.replyMessage({ replyToken, messages });
       return true;
-    } catch {
+    } catch (err) {
+      // eslint-disable-next-line no-console -- LINE返信失敗は現状DB/JobLogに残らないため、調査用に最低限ログへ出す
+      console.error(`LINE reply failed: replyToken=${replyToken}`, err);
       return false;
     }
   }
