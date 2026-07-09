@@ -12,34 +12,40 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const TABLES_ROOT = resolve(__dirname, '..');
 
 const PGLITE_HOST = '127.0.0.1';
-const PGLITE_PORT = 5432;
+// docker-composeの実Postgres(開発用DB、5432番)とは意図的に別ポートにする。
+// テストがdeleteMany()等で開発用DBのデータを壊さないよう、常に専用DBを使う
+// （「空いていればPGlite、埋まっていれば既存DB」というフォールバックはしない）。
+const PGLITE_PORT = 5433;
 
 export const PGLITE_DATABASE_URL = `postgresql://postgres:postgres@${PGLITE_HOST}:${PGLITE_PORT}/postgres?schema=public&sslmode=disable`;
 
 let db: PGlite | null = null;
 let server: PGLiteSocketServer | null = null;
 
+async function canConnect(port: number, host: string): Promise<boolean> {
+  return new Promise<boolean>((resolvePromise) => {
+    const socket = connect(port, host);
+    socket.once('connect', () => {
+      socket.end();
+      resolvePromise(true);
+    });
+    socket.once('error', () => resolvePromise(false));
+  });
+}
+
 // server.start()のPromiseはリッスン開始要求の受理を示すのみで、実際にTCP接続を
 // 受け付け可能になるまでわずかにラグがある。接続できるまでポーリングして待つ。
 async function waitUntilAcceptingConnections(timeoutMs = 5000): Promise<void> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    const connected = await new Promise<boolean>((resolvePromise) => {
-      const socket = connect(PGLITE_PORT, PGLITE_HOST);
-      socket.once('connect', () => {
-        socket.end();
-        resolvePromise(true);
-      });
-      socket.once('error', () => resolvePromise(false));
-    });
-    if (connected) return;
+    if (await canConnect(PGLITE_PORT, PGLITE_HOST)) return;
     await new Promise((r) => setTimeout(r, 50));
   }
   throw new Error(`PGlite socket server did not become ready on ${PGLITE_HOST}:${PGLITE_PORT}`);
 }
 
 // 実PostgreSQLの代わりにWASM版PostgresであるPGliteをソケットサーバーとして立て、
-// 通常のPostgresクライアント（Prisma含む）から`localhost:5432`として接続させる。
+// 通常のPostgresクライアント（Prisma含む）から専用ポートとして接続させる。
 // スキーマ自体はschema.prismaのまま（postgresql provider）使えるため、
 // アプリ側コードは実DBに対する接続と何ら変わらない。
 export async function startPGliteServer(): Promise<void> {

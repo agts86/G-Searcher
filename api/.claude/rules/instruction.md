@@ -99,7 +99,7 @@ api/
 
 - フレームワーク: Vitest（workspace root から `pnpm -r test` で全パッケージ横断実行）
 - ユニットテスト: `shared/`配下の純粋関数（JWT生成/検証、Cookie属性生成、ハッシュ化）はDBなしでテストする
-- 統合テスト: `features/*/test/*.routes.test.ts`や`infrastructure/test/*.impl.test.ts`はHonoの`app.request()`や実際のPrisma Clientを通してテストする（モックしない）。DBは`tables/test-support/`のvitest `globalSetup`が`localhost:5432`にPGlite（WASM版Postgres、`@electric-sql/pglite` + `@electric-sql/pglite-socket`）を自動起動するため、`docker-compose.yml`のPostgresを手動起動する必要はない（`.NET`版がEF CoreのSQLite in-memoryでDBレスにテストしていたのと同じ発想。ただしスキーマがPostgreSQL固有型（`@db.Uuid`等）に依存しているためSQLiteではなくPostgres互換のPGliteを使う）。CI（`.github/workflows/ApiUniTest.yml`）は本番相当の実PostgreSQLを使い続ける。DATABASE_URLに`connection_limit=1&pgbouncer=true`が必須（PGliteは複数コネクションでのprepared statement名前空間分離に対応しないため）
+- 統合テスト: `features/*/test/*.routes.test.ts`や`infrastructure/test/*.impl.test.ts`はHonoの`app.request()`や実際のPrisma Clientを通してテストする（モックしない）。DBは`tables/test-support/`のvitest `globalSetup`が`localhost:5433`（開発用DBの5432とは別ポート）にPGlite（WASM版Postgres、`@electric-sql/pglite` + `@electric-sql/pglite-socket`）を自動起動するため、`docker-compose.yml`のPostgresを手動起動する必要はない（`.NET`版がEF CoreのSQLite in-memoryでDBレスにテストしていたのと同じ発想。ただしスキーマがPostgreSQL固有型（`@db.Uuid`等）に依存しているためSQLiteではなくPostgres互換のPGliteを使う）。ポートをあえて開発用DBと分けているのは、テストの`deleteMany()`等で開発用DBのデータを壊さないため（「空いていればPGlite、埋まっていれば既存DBを使う」というフォールバックはしない）。CI（`.github/workflows/ApiUniTest.yml`）は本番相当の実PostgreSQLを使い続ける。`tables`/`infrastructure`の`.env`のDATABASE_URLに`connection_limit=1&pgbouncer=true`が必須（PGliteは複数コネクションでのprepared statement名前空間分離に対応しないため）。`host/.env`は開発時のアプリ起動用のため5432のまま・上記パラメータなしでよい
 - 既存`API/Test/`にある期待仕様と振る舞いが一致することを、移行対象ごとに確認する
 
 ## 11. 環境変数

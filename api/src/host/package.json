@@ -9,7 +9,7 @@
     "dev": "tsx watch --inspect --env-file=.env src/main.ts",
     "start": "tsx src/main.ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage --coverage.reporter=text-summary",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {

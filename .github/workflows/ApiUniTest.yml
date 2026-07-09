@@ -16,6 +16,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
     services:
       postgres:
         image: postgres:16
@@ -80,12 +83,58 @@ jobs:
         set -o pipefail
         pnpm -r test:coverage | tee /tmp/test-coverage.log
 
-    - name: Add coverage summary to job summary
+    - name: Report Coverage - shared
+      uses: davelosert/vitest-coverage-report-action@v2
       if: always()
-      run: |
-        {
-          echo '## Coverage Summary'
-          echo '```'
-          grep -E 'RUN.*api/src|Coverage summary|Statements|Branches|Functions|Lines {8}:|^====' /tmp/test-coverage.log
-          echo '```'
-        } >> "$GITHUB_STEP_SUMMARY"
+      with:
+        name: 'shared'
+        comment-on: 'none'
+        json-summary-path: 'api/src/shared/coverage/coverage-summary.json'
+
+    - name: Report Coverage - tables
+      uses: davelosert/vitest-coverage-report-action@v2
+      if: always()
+      with:
+        name: 'tables'
+        comment-on: 'none'
+        json-summary-path: 'api/src/tables/coverage/coverage-summary.json'
+
+    - name: Report Coverage - features/auth
+      uses: davelosert/vitest-coverage-report-action@v2
+      if: always()
+      with:
+        name: 'features/auth'
+        comment-on: 'none'
+        json-summary-path: 'api/src/features/auth/coverage/coverage-summary.json'
+
+    - name: Report Coverage - features/managed
+      uses: davelosert/vitest-coverage-report-action@v2
+      if: always()
+      with:
+        name: 'features/managed'
+        comment-on: 'none'
+        json-summary-path: 'api/src/features/managed/coverage/coverage-summary.json'
+
+    - name: Report Coverage - features/webhook
+      uses: davelosert/vitest-coverage-report-action@v2
+      if: always()
+      with:
+        name: 'features/webhook'
+        comment-on: 'none'
+        json-summary-path: 'api/src/features/webhook/coverage/coverage-summary.json'
+
+    - name: Report Coverage - infrastructure
+      uses: davelosert/vitest-coverage-report-action@v2
+      if: always()
+      with:
+        name: 'infrastructure'
+        comment-on: 'none'
+        json-summary-path: 'api/src/infrastructure/coverage/coverage-summary.json'
+
+    - name: Report Coverage - host
+      uses: davelosert/vitest-coverage-report-action@v2
+      if: always()
+      with:
+        name: 'host'
+        comment-on: 'none'
+        json-summary-path: 'api/src/host/coverage/coverage-summary.json'
