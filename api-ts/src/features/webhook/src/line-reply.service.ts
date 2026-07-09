@@ -1,9 +1,13 @@
-import type { webhook } from '@line/bot-sdk';
+import { randomUUID } from 'node:crypto';
+import type { webhook, messagingApi } from '@line/bot-sdk';
+import { formatAsJstIsoString } from '@api-ts/shared';
 import type { YolpClient, YolpFeature, YolpLocation } from './yolp-client.js';
 import type { LineReplyClient, CarouselColumn } from './line-reply-client.js';
-import type { GourmetLogEntry, LocalEventResult } from './webhook.types.js';
+import type { GourmetLogEntry, LocalEventResult, PersistedMeta } from './webhook.types.js';
 
 export const NOT_FOUND_TEXT = 'ごめんなさい。。見つかりませんでした。。';
+const NOT_FOUND_ALT_TEXT = '検索結果';
+const DETAIL_LABEL = '詳細を見る';
 const MAX_CAROUSEL_COLUMNS = 10;
 // 全角スペース(U+3000)を検出する。リテラル文字だとESLintのno-irregular-whitespaceに
 // 引っかかるためコードポイント(0x3000)から動的に生成する。
@@ -23,11 +27,25 @@ function toGourmetLogEntry(message: webhook.MessageContent): GourmetLogEntry | n
   return null;
 }
 
-function toQueryLocation(meta: GourmetLogEntry): YolpLocation {
-  if (meta.type === 'location') {
-    return { lat: meta.lat, lon: meta.lng };
+/**
+ * 既存.NET側 IMessageExtensions.ConvertGourmetLog() で先にIdを発番し、
+ * SaveChangesAsync時にCreatedAt/UpdatedAtを付与してからレスポンスに含める、という流れと
+ * 同じ値をレスポンスとDB永続化の両方で共有するため、ここでid/timestampを確定させる。
+ */
+function toPersistedMeta(entry: GourmetLogEntry): PersistedMeta {
+  const id = randomUUID();
+  const now = formatAsJstIsoString(new Date());
+  if (entry.type === 'location') {
+    return { id, lat: entry.lat, lng: entry.lng, createdAt: now, updatedAt: now };
   }
-  return { query: (meta.text ?? '').replace(FULL_WIDTH_SPACE, ' ') };
+  return { id, text: entry.text, createdAt: now, updatedAt: now };
+}
+
+function toQueryLocation(entry: GourmetLogEntry): YolpLocation {
+  if (entry.type === 'location') {
+    return { lat: entry.lat, lon: entry.lng };
+  }
+  return { query: (entry.text ?? '').replace(FULL_WIDTH_SPACE, ' ') };
 }
 
 function dedupeAndCap(features: YolpFeature[]): YolpFeature[] {
@@ -53,6 +71,32 @@ function toCarouselColumns(features: YolpFeature[]): CarouselColumn[] {
   }));
 }
 
+/**
+ * 既存.NET側 LineReplyService.PostLocalAsync がReplyを組み立てる部分と同じ振る舞い。
+ * メッセージ本文の組み立てをここに集約し、実際に送った内容をレスポンスにも含められるようにする。
+ */
+function buildMessages(features: YolpFeature[]): unknown[] {
+  const columns = toCarouselColumns(features);
+  if (columns.length === 0) {
+    const textMessage: messagingApi.TextMessage = { type: 'text', text: NOT_FOUND_TEXT };
+    return [textMessage];
+  }
+
+  const templateMessage: messagingApi.TemplateMessage = {
+    type: 'template',
+    altText: NOT_FOUND_ALT_TEXT,
+    template: {
+      type: 'carousel',
+      columns: columns.map((column) => ({
+        title: column.title,
+        text: column.text,
+        actions: [{ type: 'uri', label: DETAIL_LABEL, uri: column.detailUrl }],
+      })),
+    },
+  };
+  return [templateMessage];
+}
+
 /** 既存.NET側 LineReplyService と同じ振る舞い（メッセージ解析→YOLP検索→カルーセル/NotFound返信） */
 export class LineReplyService {
   constructor(
@@ -66,32 +110,32 @@ export class LineReplyService {
       return null;
     }
 
-    const meta = toGourmetLogEntry(event.message);
-    if (!meta) {
+    const entry = toGourmetLogEntry(event.message);
+    if (!entry) {
       return null;
     }
+    const meta = toPersistedMeta(entry);
 
     const features = await this.yolpClient.searchLocal({
       genreCode: genreCode ?? '',
-      location: toQueryLocation(meta),
+      location: toQueryLocation(entry),
     });
+    const withUrlCount = features.filter((f) => f.detailUrl).length;
+    // eslint-disable-next-line no-console -- 検索結果の件数・detailUrl充足率は調査上重要なため常時ログに残す
+    console.log(`YOLP search: ${features.length} features, ${withUrlCount} with detailUrl`);
 
-    const isReplySucceeded = await this.reply(event.replyToken, features);
+    const messages = buildMessages(features);
+    const isReplySucceeded = await this.reply(event.replyToken, messages);
 
-    return { meta, isReplySucceeded };
+    return { reply: { replyToken: event.replyToken, messages }, meta, isReplySucceeded };
   };
 
-  private async reply(replyToken: string, features: YolpFeature[]): Promise<boolean> {
+  private async reply(replyToken: string, messages: unknown[]): Promise<boolean> {
     // 既存.NET側 Env.IsDevelopment() 時にLINE API呼び出し自体をスキップする挙動と同じ
     if (this.skipLineApiCall) {
       return true;
     }
 
-    const columns = toCarouselColumns(features);
-    if (columns.length === 0) {
-      return this.lineReplyClient.replyText(replyToken, NOT_FOUND_TEXT);
-    }
-
-    return this.lineReplyClient.replyCarousel(replyToken, columns);
+    return this.lineReplyClient.send(replyToken, messages);
   }
 }

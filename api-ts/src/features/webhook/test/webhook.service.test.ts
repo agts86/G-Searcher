@@ -21,7 +21,17 @@ function messageEvent(): webhook.Event {
   };
 }
 
-function buildService(processEventResult: LocalEventResult | null = { meta: { type: 'word', text: 'ラーメン' }, isReplySucceeded: true }): {
+function wordMeta(text: string): { id: string; text: string; createdAt: string; updatedAt: string } {
+  return { id: 'meta-1', text, createdAt: '2026-01-01T00:00:00.000+09:00', updatedAt: '2026-01-01T00:00:00.000+09:00' };
+}
+
+function buildService(
+  processEventResult: LocalEventResult | null = {
+    reply: { replyToken: 'token-1', messages: [] },
+    meta: wordMeta('ラーメン'),
+    isReplySucceeded: true,
+  },
+): {
   service: WebhookService;
   repo: WebhookRepository;
   lineReplyService: LineReplyService;
@@ -84,33 +94,36 @@ describe('WebhookService.persistJobResult', () => {
   it('resultsのmetaをGourmet*Logへ、JobをJobLogへ保存する', async () => {
     const { service, repo } = buildService();
     const job = { id: 'job-1', webhookBody: buildWebhookBody([messageEvent()]), genreCode: 'genre1' };
+    const meta = wordMeta('ラーメン');
     const jobResult = {
       job,
-      results: [{ meta: { type: 'word' as const, text: 'ラーメン' }, isReplySucceeded: true }],
+      results: [{ reply: { replyToken: 'token-1', messages: [] }, meta, isReplySucceeded: true }],
       isSuccess: true,
       errorMessage: null,
     };
 
     await service.persistJobResult(jobResult);
 
-    expect(vi.mocked(repo.createGourmetWordLog)).toHaveBeenCalledWith({ text: 'ラーメン' });
+    expect(vi.mocked(repo.createGourmetWordLog)).toHaveBeenCalledWith(meta);
     expect(vi.mocked(repo.createJobLog)).toHaveBeenCalledWith({
       id: 'job-1',
       isSuccess: true,
-      contents: JSON.stringify(job.webhookBody),
+      contents: JSON.stringify({ id: 'job-1', webHook: job.webhookBody, genreCode: 'genre1' }),
       info: null,
     });
   });
 });
 
 describe('WebhookService.processSync', () => {
-  it('イベントを処理し、metaをDB保存してmeta配列を返す（JobLogは保存しない）', async () => {
+  it('イベントを処理し、metaをDB保存してreply/meta/isReplySucceededの配列を返す（JobLogは保存しない）', async () => {
     const { service, repo } = buildService();
 
-    const metas = await service.processSync(buildWebhookBody([messageEvent()]), 'genre1');
+    const results = await service.processSync(buildWebhookBody([messageEvent()]), 'genre1');
 
-    expect(metas).toEqual([{ type: 'word', text: 'ラーメン' }]);
-    expect(vi.mocked(repo.createGourmetWordLog)).toHaveBeenCalledWith({ text: 'ラーメン' });
+    expect(results).toEqual([
+      { reply: { replyToken: 'token-1', messages: [] }, meta: wordMeta('ラーメン'), isReplySucceeded: true },
+    ]);
+    expect(vi.mocked(repo.createGourmetWordLog)).toHaveBeenCalledWith(wordMeta('ラーメン'));
     expect(vi.mocked(repo.createJobLog)).not.toHaveBeenCalled();
   });
 });

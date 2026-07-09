@@ -40,8 +40,7 @@ function buildService(options: {
     searchLocal: vi.fn().mockResolvedValue(options.searchResults ?? []),
   };
   const lineReplyClient: LineReplyClient = {
-    replyCarousel: vi.fn().mockResolvedValue(true),
-    replyText: vi.fn().mockResolvedValue(true),
+    send: vi.fn().mockResolvedValue(true),
   };
   const service = new LineReplyService(yolpClient, lineReplyClient, options.skipLineApiCall ?? false);
   return { service, yolpClient, lineReplyClient };
@@ -57,7 +56,9 @@ describe('LineReplyService.processEvent', () => {
       genreCode: 'genre1',
       location: { query: 'ラーメン うどん' },
     });
-    expect(result?.meta).toEqual({ type: 'word', text: 'ラーメン　うどん' });
+    expect(result?.meta).toMatchObject({ text: 'ラーメン　うどん' });
+    expect(typeof result?.meta.id).toBe('string');
+    expect(result?.meta.createdAt).toBe(result?.meta.updatedAt);
   });
 
   it('ロケーションメッセージはGourmetLocationLogに変換し、緯度経度でYOLP検索する', async () => {
@@ -69,25 +70,51 @@ describe('LineReplyService.processEvent', () => {
       genreCode: 'genre1',
       location: { lat: 35.5, lon: 139.5 },
     });
-    expect(result?.meta).toEqual({ type: 'location', lat: 35.5, lng: 139.5 });
+    expect(result?.meta).toMatchObject({ lat: 35.5, lng: 139.5 });
+    expect(typeof result?.meta.id).toBe('string');
   });
 
-  it('検索結果0件ならNotFoundテキストを返信する', async () => {
+  it('reply.replyTokenは元イベントのreplyTokenと一致する', async () => {
+    const { service } = buildService({ searchResults: [feature('g1', '店A')] });
+
+    const result = await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
+
+    expect(result?.reply.replyToken).toBe('reply-token-1');
+  });
+
+  it('検索結果0件ならNotFoundテキストで返信し、reply.messagesにも同じ内容を含める', async () => {
     const { service, lineReplyClient } = buildService({ searchResults: [] });
 
-    await service.processEvent(textMessageEvent('存在しない店'), 'genre1');
+    const result = await service.processEvent(textMessageEvent('存在しない店'), 'genre1');
 
-    expect(vi.mocked(lineReplyClient.replyText)).toHaveBeenCalledWith('reply-token-1', NOT_FOUND_TEXT);
+    const expectedMessages = [{ type: 'text', text: NOT_FOUND_TEXT }];
+    expect(vi.mocked(lineReplyClient.send)).toHaveBeenCalledWith('reply-token-1', expectedMessages);
+    expect(result?.reply.messages).toEqual(expectedMessages);
   });
 
-  it('検索結果があればカルーセルで返信する', async () => {
+  it('検索結果があればカルーセルで返信し、reply.messagesにも同じ内容を含める', async () => {
     const { service, lineReplyClient } = buildService({ searchResults: [feature('g1', '店A')] });
 
-    await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
+    const result = await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
 
-    expect(vi.mocked(lineReplyClient.replyCarousel)).toHaveBeenCalledWith('reply-token-1', [
-      { title: '店A', text: '店Aの住所', detailUrl: 'https://example.com/g1' },
-    ]);
+    const expectedMessages = [
+      {
+        type: 'template',
+        altText: '検索結果',
+        template: {
+          type: 'carousel',
+          columns: [
+            {
+              title: '店A',
+              text: '店Aの住所',
+              actions: [{ type: 'uri', label: '詳細を見る', uri: 'https://example.com/g1' }],
+            },
+          ],
+        },
+      },
+    ];
+    expect(vi.mocked(lineReplyClient.send)).toHaveBeenCalledWith('reply-token-1', expectedMessages);
+    expect(result?.reply.messages).toEqual(expectedMessages);
   });
 
   it('detailUrlが無い結果はカルーセルから除外し、全て除外されたらNotFoundテキストを返信する', async () => {
@@ -96,8 +123,7 @@ describe('LineReplyService.processEvent', () => {
 
     await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
 
-    expect(vi.mocked(lineReplyClient.replyCarousel)).not.toHaveBeenCalled();
-    expect(vi.mocked(lineReplyClient.replyText)).toHaveBeenCalledWith('reply-token-1', NOT_FOUND_TEXT);
+    expect(vi.mocked(lineReplyClient.send)).toHaveBeenCalledWith('reply-token-1', [{ type: 'text', text: NOT_FOUND_TEXT }]);
   });
 
   it('detailUrlが無い結果は除いて、有効な結果だけでカルーセルを返信する', async () => {
@@ -106,9 +132,9 @@ describe('LineReplyService.processEvent', () => {
 
     await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
 
-    expect(vi.mocked(lineReplyClient.replyCarousel)).toHaveBeenCalledWith('reply-token-1', [
-      { title: '店B', text: '店Bの住所', detailUrl: 'https://example.com/g2' },
-    ]);
+    const [, messages] = vi.mocked(lineReplyClient.send).mock.calls[0];
+    const [templateMessage] = messages as [{ template: { columns: unknown[] } }];
+    expect(templateMessage.template.columns).toHaveLength(1);
   });
 
   it('同じgidの結果は重複排除し、最大10件までにする', async () => {
@@ -121,14 +147,15 @@ describe('LineReplyService.processEvent', () => {
 
     await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
 
-    const columns = vi.mocked(lineReplyClient.replyCarousel).mock.calls[0][1];
-    expect(columns).toHaveLength(10);
-    expect(columns[0].title).toBe('店A-1');
+    const [, messages] = vi.mocked(lineReplyClient.send).mock.calls[0];
+    const [templateMessage] = messages as [{ template: { columns: { title: string }[] } }];
+    expect(templateMessage.template.columns).toHaveLength(10);
+    expect(templateMessage.template.columns[0].title).toBe('店A-1');
   });
 
   it('isReplySucceededは返信結果を反映する', async () => {
     const { service, lineReplyClient } = buildService({ searchResults: [feature('g1', '店A')] });
-    vi.mocked(lineReplyClient.replyCarousel).mockResolvedValue(false);
+    vi.mocked(lineReplyClient.send).mockResolvedValue(false);
 
     const result = await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
 
@@ -140,9 +167,9 @@ describe('LineReplyService.processEvent', () => {
 
     const result = await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
 
-    expect(vi.mocked(lineReplyClient.replyCarousel)).not.toHaveBeenCalled();
-    expect(vi.mocked(lineReplyClient.replyText)).not.toHaveBeenCalled();
+    expect(vi.mocked(lineReplyClient.send)).not.toHaveBeenCalled();
     expect(result?.isReplySucceeded).toBe(true);
+    expect(result?.reply.messages).toHaveLength(1);
   });
 
   it('メッセージイベント以外はnullを返す（スキップ）', async () => {

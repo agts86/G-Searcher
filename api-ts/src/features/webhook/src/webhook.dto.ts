@@ -20,8 +20,15 @@ export const AcceptResponseSchema = z
   })
   .openapi('AcceptResponse');
 
-export const GourmetLogEntrySchema = z.union([
-  z.object({ type: z.literal('location'), lat: z.number(), lng: z.number() }),
-  z.object({ type: z.literal('word'), text: z.string().nullable() }),
+const PersistedMetaSchema = z.union([
+  z.object({ id: z.string(), lat: z.number(), lng: z.number(), createdAt: z.string(), updatedAt: z.string() }),
+  z.object({ id: z.string(), text: z.string().nullable(), createdAt: z.string(), updatedAt: z.string() }),
 ]);
-export const LocalReplyResponseSchema = z.array(GourmetLogEntrySchema).openapi('LocalReplyResponse');
+
+const LocalEventResultSchema = z.object({
+  reply: z.object({ replyToken: z.string(), messages: z.array(z.unknown()) }),
+  meta: PersistedMetaSchema,
+  isReplySucceeded: z.boolean(),
+});
+
+export const LocalReplyResponseSchema = z.array(LocalEventResultSchema).openapi('LocalReplyResponse');

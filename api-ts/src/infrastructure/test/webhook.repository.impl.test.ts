@@ -20,22 +20,28 @@ afterAll(async () => {
 });
 
 describe('PrismaWebhookRepository.createGourmetLocationLog', () => {
-  it('lat/lngを保存する', async () => {
-    await repo.createGourmetLocationLog({ lat: 35.5, lng: 139.5 });
+  it('渡されたid/lat/lng/createdAt/updatedAtをそのまま保存する', async () => {
+    const id = randomUUID();
+    const createdAt = '2026-01-01T00:00:00.000+09:00';
+
+    await repo.createGourmetLocationLog({ id, lat: 35.5, lng: 139.5, createdAt, updatedAt: createdAt });
 
     const rows = await prisma.gourmetLocationLog.findMany();
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ lat: 35.5, lng: 139.5 });
+    expect(rows[0]).toMatchObject({ id, lat: 35.5, lng: 139.5, createdAt: new Date(createdAt), updatedAt: new Date(createdAt) });
   });
 });
 
 describe('PrismaWebhookRepository.createGourmetWordLog', () => {
-  it('textを保存する', async () => {
-    await repo.createGourmetWordLog({ text: 'ラーメン' });
+  it('渡されたid/text/createdAt/updatedAtをそのまま保存する', async () => {
+    const id = randomUUID();
+    const createdAt = '2026-01-01T00:00:00.000+09:00';
+
+    await repo.createGourmetWordLog({ id, text: 'ラーメン', createdAt, updatedAt: createdAt });
 
     const rows = await prisma.gourmetWordLog.findMany();
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ text: 'ラーメン' });
+    expect(rows[0]).toMatchObject({ id, text: 'ラーメン', createdAt: new Date(createdAt), updatedAt: new Date(createdAt) });
   });
 });
 

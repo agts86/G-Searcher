@@ -2,10 +2,14 @@ import { randomUUID } from 'node:crypto';
 import type { webhook } from '@line/bot-sdk';
 import type { LineReplyService } from './line-reply.service.js';
 import type { WebhookRepository } from './webhook.repository.js';
-import type { GourmetLogEntry, LocalEventResult, LocalJob, LocalJobResult } from './webhook.types.js';
+import type { LocalEventResult, LocalJob, LocalJobResult, PersistedMeta } from './webhook.types.js';
 
 function toErrorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
+}
+
+function isLocationMeta(meta: PersistedMeta): meta is Extract<PersistedMeta, { lat: number }> {
+  return 'lat' in meta;
 }
 
 /** 既存.NET側 WebhookService と同じ振る舞い（ジョブの生成・処理・永続化） */
@@ -33,20 +37,22 @@ export class WebhookService {
   /** キューワーカーから呼ばれる: ジョブ結果をDBへ永続化する（Gourmet*Log + JobLog） */
   async persistJobResult(result: LocalJobResult): Promise<void> {
     await this.persistMetas(result.results.map((r) => r.meta));
+    // 既存.NET側 LocalJobDto.GetBody() （id/webHook/genreCodeを含む自身のJSON化）と
+    // 同じ内容をJobLog.Contentsに残す。
+    const body = { id: result.job.id, webHook: result.job.webhookBody, genreCode: result.job.genreCode };
     await this.repo.createJobLog({
       id: result.job.id,
       isSuccess: result.isSuccess,
-      contents: JSON.stringify(result.job.webhookBody),
+      contents: JSON.stringify(body),
       info: result.errorMessage,
     });
   }
 
-  /** /local 用: 同期的に処理し、DB保存したmetaの配列を返す（JobLogは保存しない） */
-  async processSync(webhookBody: webhook.CallbackRequest, genreCode: string | undefined): Promise<GourmetLogEntry[]> {
+  /** /local 用: 同期的に処理し、DB保存した上でreply/meta/isReplySucceededの一覧を返す */
+  async processSync(webhookBody: webhook.CallbackRequest, genreCode: string | undefined): Promise<LocalEventResult[]> {
     const results = await this.processEvents(webhookBody, genreCode);
-    const metas = results.map((r) => r.meta);
-    await this.persistMetas(metas);
-    return metas;
+    await this.persistMetas(results.map((r) => r.meta));
+    return results;
   }
 
   private async processEvents(
@@ -63,12 +69,12 @@ export class WebhookService {
     return results;
   }
 
-  private async persistMetas(metas: GourmetLogEntry[]): Promise<void> {
+  private async persistMetas(metas: PersistedMeta[]): Promise<void> {
     for (const meta of metas) {
-      if (meta.type === 'location') {
-        await this.repo.createGourmetLocationLog({ lat: meta.lat, lng: meta.lng });
+      if (isLocationMeta(meta)) {
+        await this.repo.createGourmetLocationLog(meta);
       } else {
-        await this.repo.createGourmetWordLog({ text: meta.text });
+        await this.repo.createGourmetWordLog(meta);
       }
     }
   }

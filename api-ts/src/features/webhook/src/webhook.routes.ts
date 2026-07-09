@@ -34,7 +34,7 @@ const localRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'YOLP検索・LINE返信・DB保存まで同期的に完了し、保存したログの一覧を返す',
+      description: 'YOLP検索・LINE返信・DB保存まで同期的に完了し、送信した返信内容・保存したログ・返信成否の一覧を返す',
       content: { 'application/json': { schema: LocalReplyResponseSchema } },
     },
   },
@@ -75,8 +75,8 @@ export function createWebhookRouter(service: WebhookService, channelSecret: stri
   app.openapi(localRoute, async (c) => {
     const body = c.req.valid('json');
     const { genreCode } = c.req.valid('query');
-    const metas = await service.processSync(toCallbackRequest(body), genreCode);
-    return c.json(metas, 200);
+    const results = await service.processSync(toCallbackRequest(body), genreCode);
+    return c.json(results, 200);
   });
 
   return app;
