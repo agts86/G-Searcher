@@ -102,6 +102,8 @@ export class YolpClientImpl implements YolpClient {
     const url = `${YOLP_BASE_URL}/search/local/V1/localSearch?${params.toString()}`;
 
     const response = await this.httpAdapter.get<YolpLocalSearchResponse>(url);
+    // eslint-disable-next-line no-console -- 一時調査用: 実際にDetail/Extraが返っているか確認するため
+    console.log('YOLP raw first feature Property:', JSON.stringify(response.Feature?.[0]?.Property));
     return (response.Feature ?? []).map(toYolpFeature);
   }
 }
