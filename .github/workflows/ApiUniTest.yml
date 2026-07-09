@@ -1,48 +1,86 @@
-name: ApiUniTest
+name: ApiUnitTest
 
 on:
   push:
     branches: [ "develop" ]
     paths:
-      - 'API/**'
+      - 'api-ts/**'
       - '.github/workflows/ApiUniTest.yml'
   pull_request:
     branches: [ "develop" ]
     paths:
-      - 'API/**'
+      - 'api-ts/**'
       - '.github/workflows/ApiUniTest.yml'
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres?schema=public&sslmode=disable
 
     steps:
     - uses: actions/checkout@v5
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
       with:
-        dotnet-version: 10.0.x
+        version: 10.26.0
 
-    - name: Restore dependencies
-      run: dotnet restore ./API/LineWebHookAPI.sln
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: pnpm
+        cache-dependency-path: api-ts/pnpm-lock.yaml
+
+    - name: Install dependencies
+      working-directory: api-ts
+      run: pnpm install --frozen-lockfile
+
+    - name: Sync DB schema
+      # prisma migrateは使わない（EF Coreがスキーマの記録上の所有者のため）。
+      # schema.prismaの内容をそのままCI用の使い捨てDBへ反映するだけのdb pushを使う。
+      working-directory: api-ts
+      run: pnpm --filter @api-ts/tables exec prisma db push --skip-generate
 
     - name: Build
-      run: dotnet build ./API/LineWebHookAPI.sln --no-restore
+      working-directory: api-ts
+      run: pnpm -r build
 
-    - name: Run tests with coverage
-      run: dotnet test ./API/LineWebHookAPI.sln --no-build --verbosity normal --collect:"XPlat Code Coverage" --settings ./API/coverlet.runsettings
+    - name: Lint
+      working-directory: api-ts
+      run: pnpm -r lint
 
-    - name: Install ReportGenerator
-      run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-    - name: Generate coverage report in Markdown
+    - name: Test with coverage
+      working-directory: api-ts
+      # デフォルトのbash -e {0}にはpipefailが付かず、teeを挟むとpnpmの失敗が
+      # ステップの失敗として伝播しない（teeの終了コードで上書きされる）ため明示する。
       run: |
-        reportgenerator -reports:**/TestResults/*/coverage.cobertura.xml \
-                        -targetdir:./API/CoverageReport \
-                        -reporttypes:MarkdownSummary
-    
-        cat ./API/CoverageReport/Summary.md >> $GITHUB_STEP_SUMMARY
+        set -o pipefail
+        pnpm -r test:coverage | tee /tmp/test-coverage.log
 
-
+    - name: Add coverage summary to job summary
+      if: always()
+      run: |
+        {
+          echo '## Coverage Summary'
+          echo '```'
+          grep -E 'RUN.*api-ts/src|Coverage summary|Statements|Branches|Functions|Lines {8}:|^====' /tmp/test-coverage.log
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"

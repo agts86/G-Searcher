@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text-summary",
     "lint": "eslint src test --ext .ts"
   },
   "dependencies": {

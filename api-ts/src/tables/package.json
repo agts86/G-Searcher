@@ -8,6 +8,7 @@
   "scripts": {
     "build": "prisma generate && tsc -p tsconfig.json",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text-summary",
     "lint": "echo \"no lint target in tables\" && exit 0"
   },
   "dependencies": {
