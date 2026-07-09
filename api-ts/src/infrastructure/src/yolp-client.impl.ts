@@ -12,6 +12,7 @@ interface YolpFeatureResponse {
   Name?: string;
   Property?: {
     Address?: string;
+    Tel1?: string;
     Detail?: {
       PcUrl1?: string;
       MobileUrl1?: string;
@@ -42,9 +43,10 @@ function findExtraValueCaseInsensitive(extra: Record<string, string> | undefined
 
 /**
  * "YUrl" はYOLPの公式ドキュメントに存在しないcassette固有の拡張フィールドで、
- * 多くの結果で欠落する（存在しない場合キー自体が返らない仕様）。詳細リンクが
- * 表示されない結果が多発しないよう、公式フィールドの PcUrl1 / MobileUrl1 / ReviewUrl
- * へフォールバックする。
+ * 実際のレスポンスの多くで Detail 自体が欠落する（存在しない場合キー自体が
+ * 返らない仕様）。詳細リンクが表示されない結果が多発しないよう、公式フィールドの
+ * PcUrl1 / MobileUrl1 / ReviewUrl、それも無ければ電話番号(Tel1)へのtelリンクまで
+ * フォールバックする（Tel1はDetail配下ではなくPropertyの結果でほぼ確実に入っている）。
  */
 function resolveDetailUrl(property: YolpFeatureResponse['Property']): string | null {
   const detail = property?.Detail;
@@ -53,6 +55,7 @@ function resolveDetailUrl(property: YolpFeatureResponse['Property']): string | n
     detail?.PcUrl1,
     detail?.MobileUrl1,
     detail?.ReviewUrl,
+    property?.Tel1 ? `tel:${property.Tel1.replace(/-/g, '')}` : undefined,
   ];
   return candidates.find((candidate) => Boolean(candidate)) ?? null;
 }

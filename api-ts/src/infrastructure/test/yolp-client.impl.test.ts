@@ -91,7 +91,18 @@ describe('YolpClientImpl.searchLocal', () => {
     ]);
   });
 
-  it('Gid/Address/YUrlが無い場合はId/nullでフォールバックする', async () => {
+  it('URL系フィールドが全て無くてもTel1があればtel:リンクにフォールバックする', async () => {
+    const { adapter } = buildAdapter({
+      Feature: [{ Gid: 'g1', Name: '店A', Property: { Tel1: '03-1234-5678' } }],
+    });
+    const client = new YolpClientImpl(adapter, 'app-id-1');
+
+    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
+
+    expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'tel:0312345678' }]);
+  });
+
+  it('Gid/Address/URL系/Tel1が無い場合はId/nullでフォールバックする', async () => {
     const { adapter } = buildAdapter({ Feature: [{ Id: 'id-1', Name: '店B' }] });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
