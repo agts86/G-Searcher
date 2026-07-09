@@ -3,7 +3,7 @@ services:
     network_mode: bridge
     command: ["sleep", "infinity"]
     volumes:
-      - ..:/workspaces/LineWebHookAPI
+      - .:/workspaces/LineWebHookAPI
     depends_on:
       - postgres
 
