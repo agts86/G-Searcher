@@ -15,7 +15,7 @@ API はもともと C#/ASP.NET Core で実装されていたが、TypeScript(Hon
 
 - **API**: TypeScript / Hono / Prisma / PostgreSQL（pnpm workspace モノレポ、`api/`）
 - **UI**: TypeScript / Next.js (`output: 'export'` で静的出力 → CSR SPA)
-- **デプロイ**: Docker multi-stage build → GHCR → Azure Web App（API + UI を単一コンテナで配信）
+- **デプロイ**: Docker multi-stage build によるコンテナイメージ（API + UI を単一コンテナで配信）。**メイン経路は Vercel**（Framework Preset: Container、`vercel.json` の `services` フィールドでコンテナサービスとして明示宣言し、ルート直下の `api/` が Vercel の zero-config Functions 規約と衝突するのを回避している）。GHCR → Azure Web App 経路も別途稼働中
 - **外部連携**: LINE Messaging API, Yahoo!ローカルサーチ API (YOLP)
 - **cron**: Cloudflare Workers（`cron-worker/CloudFlare`、ヘルスチェック）
 

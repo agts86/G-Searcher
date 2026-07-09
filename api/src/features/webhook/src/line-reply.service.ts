@@ -120,10 +120,6 @@ export class LineReplyService {
       genreCode: genreCode ?? '',
       location: toQueryLocation(entry),
     });
-    const withUrlCount = features.filter((f) => f.detailUrl).length;
-    // eslint-disable-next-line no-console -- 検索結果の件数・detailUrl充足率は調査上重要なため常時ログに残す
-    console.log(`YOLP search: ${features.length} features, ${withUrlCount} with detailUrl`);
-
     const messages = buildMessages(features);
     const isReplySucceeded = await this.reply(event.replyToken, messages);
 
