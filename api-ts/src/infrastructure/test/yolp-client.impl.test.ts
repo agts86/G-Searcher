@@ -63,6 +63,34 @@ describe('YolpClientImpl.searchLocal', () => {
     expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/g1' }]);
   });
 
+  it('Extra.YUrlが無い場合はDetail.PcUrl1にフォールバックする', async () => {
+    const { adapter } = buildAdapter({
+      Feature: [{ Gid: 'g1', Name: '店A', Property: { Detail: { PcUrl1: 'https://loco.yahoo.co.jp/place/g1/' } } }],
+    });
+    const client = new YolpClientImpl(adapter, 'app-id-1');
+
+    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
+
+    expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'https://loco.yahoo.co.jp/place/g1/' }]);
+  });
+
+  it('Detail.PcUrl1も無い場合はMobileUrl1、それも無ければReviewUrlにフォールバックする', async () => {
+    const { adapter } = buildAdapter({
+      Feature: [
+        { Gid: 'g1', Name: '店A', Property: { Detail: { MobileUrl1: 'https://example.com/mobile/g1' } } },
+        { Gid: 'g2', Name: '店B', Property: { Detail: { ReviewUrl: 'https://example.com/review/g2' } } },
+      ],
+    });
+    const client = new YolpClientImpl(adapter, 'app-id-1');
+
+    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店' } });
+
+    expect(result).toEqual([
+      { gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/mobile/g1' },
+      { gid: 'g2', name: '店B', address: null, detailUrl: 'https://example.com/review/g2' },
+    ]);
+  });
+
   it('Gid/Address/YUrlが無い場合はId/nullでフォールバックする', async () => {
     const { adapter } = buildAdapter({ Feature: [{ Id: 'id-1', Name: '店B' }] });
     const client = new YolpClientImpl(adapter, 'app-id-1');

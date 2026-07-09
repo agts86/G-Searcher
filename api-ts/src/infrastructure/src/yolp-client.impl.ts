@@ -13,6 +13,9 @@ interface YolpFeatureResponse {
   Property?: {
     Address?: string;
     Detail?: {
+      PcUrl1?: string;
+      MobileUrl1?: string;
+      ReviewUrl?: string;
       Extra?: Record<string, string>;
     };
   };
@@ -37,12 +40,30 @@ function findExtraValueCaseInsensitive(extra: Record<string, string> | undefined
   return foundKey ? extra[foundKey] : null;
 }
 
+/**
+ * "YUrl" はYOLPの公式ドキュメントに存在しないcassette固有の拡張フィールドで、
+ * 多くの結果で欠落する（存在しない場合キー自体が返らない仕様）。詳細リンクが
+ * 表示されない結果が多発しないよう、公式フィールドの PcUrl1 / MobileUrl1 / ReviewUrl
+ * へフォールバックする。
+ */
+function resolveDetailUrl(property: YolpFeatureResponse['Property']): string | null {
+  const detail = property?.Detail;
+  const candidates = [
+    findExtraValueCaseInsensitive(detail?.Extra, 'YUrl'),
+    detail?.PcUrl1,
+    detail?.MobileUrl1,
+    detail?.ReviewUrl,
+  ];
+  return candidates.find((candidate) => Boolean(candidate)) ?? null;
+}
+
 function toYolpFeature(feature: YolpFeatureResponse): YolpFeature {
+  const property = feature.Property;
   return {
     gid: feature.Gid ?? feature.Id ?? '',
     name: feature.Name ?? '',
-    address: feature.Property?.Address ?? null,
-    detailUrl: findExtraValueCaseInsensitive(feature.Property?.Detail?.Extra, 'YUrl'),
+    address: property?.Address ?? null,
+    detailUrl: resolveDetailUrl(property),
   };
 }
 
