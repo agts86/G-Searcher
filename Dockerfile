@@ -9,32 +9,32 @@ RUN pnpm install --frozen-lockfile
 COPY UI/ ./
 RUN pnpm build
 
-# api-ts ビルド
-FROM node:24-bookworm-slim AS api-ts-build
-WORKDIR /app/api-ts
+# api ビルド
+FROM node:24-bookworm-slim AS api-build
+WORKDIR /app/api
 ENV PNPM_HOME=/pnpm
 ENV PATH=${PNPM_HOME}:${PATH}
 RUN apt-get update \
     && apt-get install -y --no-install-recommends openssl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@10.26.0 --activate
-COPY api-ts/ ./
+COPY api/ ./
 RUN pnpm install --frozen-lockfile
 # pnpm -r build は全パッケージのtscを通す型チェックの安全弁（実行時はtsxで生ソースを直接動かすためdist自体は使わない）。
 # tables の build スクリプト内で prisma generate も実行されるが、明示のため個別にも実行しておく。
 RUN pnpm -r build
-RUN pnpm --filter @api-ts/tables exec prisma generate
+RUN pnpm --filter @api/tables exec prisma generate
 
 # 実行環境
 FROM node:24-bookworm-slim AS final
-WORKDIR /app/api-ts/src/host
+WORKDIR /app/api/src/host
 RUN apt-get update \
     && apt-get install -y --no-install-recommends openssl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production
 ENV PORT=80
 EXPOSE 80
-COPY --from=api-ts-build /app/api-ts /app/api-ts
+COPY --from=api-build /app/api /app/api
 COPY --from=ui-build /src/UI/out ./wwwroot
 
 ENTRYPOINT ["node_modules/.bin/tsx", "src/main.ts"]

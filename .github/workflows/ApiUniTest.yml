@@ -4,12 +4,12 @@ on:
   push:
     branches: [ "develop" ]
     paths:
-      - 'api-ts/**'
+      - 'api/**'
       - '.github/workflows/ApiUniTest.yml'
   pull_request:
     branches: [ "develop" ]
     paths:
-      - 'api-ts/**'
+      - 'api/**'
       - '.github/workflows/ApiUniTest.yml'
 
 jobs:
@@ -47,28 +47,28 @@ jobs:
       with:
         node-version: 24
         cache: pnpm
-        cache-dependency-path: api-ts/pnpm-lock.yaml
+        cache-dependency-path: api/pnpm-lock.yaml
 
     - name: Install dependencies
-      working-directory: api-ts
+      working-directory: api
       run: pnpm install --frozen-lockfile
 
     - name: Sync DB schema
       # prisma migrateは使わない（EF Coreがスキーマの記録上の所有者のため）。
       # schema.prismaの内容をそのままCI用の使い捨てDBへ反映するだけのdb pushを使う。
-      working-directory: api-ts
-      run: pnpm --filter @api-ts/tables exec prisma db push --skip-generate
+      working-directory: api
+      run: pnpm --filter @api/tables exec prisma db push --skip-generate
 
     - name: Build
-      working-directory: api-ts
+      working-directory: api
       run: pnpm -r build
 
     - name: Lint
-      working-directory: api-ts
+      working-directory: api
       run: pnpm -r lint
 
     - name: Test with coverage
-      working-directory: api-ts
+      working-directory: api
       # GitHub ActionsはCI=trueを自動設定するため、素のままだとvitestが
       # ANSIカラーコードを強制出力し、tee先のログ→job summaryが文字化けする。
       # NO_COLOR=1でそれを抑止する。
@@ -86,6 +86,6 @@ jobs:
         {
           echo '## Coverage Summary'
           echo '```'
-          grep -E 'RUN.*api-ts/src|Coverage summary|Statements|Branches|Functions|Lines {8}:|^====' /tmp/test-coverage.log
+          grep -E 'RUN.*api/src|Coverage summary|Statements|Branches|Functions|Lines {8}:|^====' /tmp/test-coverage.log
           echo '```'
         } >> "$GITHUB_STEP_SUMMARY"

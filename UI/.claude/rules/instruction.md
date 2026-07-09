@@ -7,7 +7,7 @@
 
 ### 前提アーキテクチャ
 
-- バックエンド API: `api-ts/src/host`（Hono / TypeScript）
+- バックエンド API: `api/src/host`（Hono / TypeScript）
 - フロントエンド: `UI/`（Next.js）
 - デプロイ構成: 1コンテナで API と静的フロントを同居
 - Next.js は `output: 'export'` による静的出力を利用し、実行時は CSR（SPA）として動作
@@ -168,8 +168,8 @@ UI/
 
 ### ✅ やるべきこと
 
-- 開発時は `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api-ts）へ中継する
-- api-ts はCookieの `Secure` 属性を `NODE_ENV === 'production'` で切り替える設計のため、開発時（api-ts宛て）はHTTPで問題ない。自己署名証明書やCA設定は不要
+- 開発時は `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api）へ中継する
+- api はCookieの `Secure` 属性を `NODE_ENV === 'production'` で切り替える設計のため、開発時（api宛て）はHTTPで問題ない。自己署名証明書やCA設定は不要
 
 ### ❌ やってはいけないこと
 

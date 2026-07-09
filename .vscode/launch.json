@@ -19,14 +19,14 @@
             "skipFiles": ["<node_internals>/**"]
         },
         {
-            "name": "api-ts: host dev",
+            "name": "api: host dev",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "${workspaceFolder}/api-ts/src/host/node_modules/.bin/tsx",
+            "runtimeExecutable": "${workspaceFolder}/api/src/host/node_modules/.bin/tsx",
             "runtimeArgs": ["watch", "--inspect"],
-            "program": "${workspaceFolder}/api-ts/src/host/src/main.ts",
-            "cwd": "${workspaceFolder}/api-ts/src/host",
-            "envFile": "${workspaceFolder}/api-ts/src/host/.env",
+            "program": "${workspaceFolder}/api/src/host/src/main.ts",
+            "cwd": "${workspaceFolder}/api/src/host",
+            "envFile": "${workspaceFolder}/api/src/host/.env",
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "listening on\\s+(https?://\\S+)",
@@ -40,7 +40,7 @@
         {
             "name": "UI + API: 同時起動",
             "configurations": [
-                "api-ts: host dev",
+                "api: host dev",
                 "UI: Next.js dev"
             ]
         }

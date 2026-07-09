@@ -18,27 +18,27 @@ services:
       - ./UI:/app
       - ui_node_modules:/app/node_modules
     depends_on:
-      - api-ts
+      - api
 
-  api-ts:
-    container_name: api-ts
+  api:
+    container_name: api
     build:
-      context: ./api-ts
+      context: ./api
       dockerfile: Dockerfile.dev
     working_dir: /app/src/host
     command: >
       sh -c "cd /app &&
       pnpm install --store-dir /tmp/pnpm-store &&
-      pnpm --filter @api-ts/tables exec prisma generate &&
-      pnpm --filter @api-ts/host exec tsx watch src/main.ts"
+      pnpm --filter @api/tables exec prisma generate &&
+      pnpm --filter @api/host exec tsx watch src/main.ts"
     environment:
       - TZ=Asia/Tokyo
       - NODE_ENV=development
     env_file:
-      - ./api-ts/src/host/.env
+      - ./api/src/host/.env
     network_mode: "host"
     volumes:
-      - ./api-ts:/app
+      - ./api:/app
     depends_on:
       - postgres
 

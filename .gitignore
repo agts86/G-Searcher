@@ -383,14 +383,14 @@ CLAUDE.local.md
 !UI/src/**/logs/**
 .vercel
 
-# api-ts (Node/TypeScript) 秘密情報を含むローカル環境変数ファイル
+# api (Node/TypeScript) 秘密情報を含むローカル環境変数ファイル
 .env
 .env.local
 **/.env
 **/.env.local
 !**/.env.example
 
-# api-ts (Node/TypeScript) ビルド成果物
+# api (Node/TypeScript) ビルド成果物
 dist/
 **/dist/
 *.tsbuildinfo

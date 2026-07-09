@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 このファイルはリポジトリ全体の共通ルールを定義する。
-`api-ts/` 配下の作業では [api-ts/CLAUDE.md](api-ts/CLAUDE.md)、`UI/` 配下では [UI/CLAUDE.md](UI/CLAUDE.md) も参照すること。
+`api/` 配下の作業では [api/CLAUDE.md](api/CLAUDE.md)、`UI/` 配下では [UI/CLAUDE.md](UI/CLAUDE.md) も参照すること。
 
 ## プロジェクト概要
 
@@ -13,7 +13,7 @@ API はもともと C#/ASP.NET Core で実装されていたが、TypeScript(Hon
 
 ### 技術スタック
 
-- **API**: TypeScript / Hono / Prisma / PostgreSQL（pnpm workspace モノレポ、`api-ts/`）
+- **API**: TypeScript / Hono / Prisma / PostgreSQL（pnpm workspace モノレポ、`api/`）
 - **UI**: TypeScript / Next.js (`output: 'export'` で静的出力 → CSR SPA)
 - **デプロイ**: Docker multi-stage build → GHCR → Azure Web App（API + UI を単一コンテナで配信）
 - **外部連携**: LINE Messaging API, Yahoo!ローカルサーチ API (YOLP)
@@ -27,11 +27,11 @@ API はもともと C#/ASP.NET Core で実装されていたが、TypeScript(Hon
 
 | パッケージ | 役割 | 参照先 |
 |---|---|---|
-| `api-ts/src/host` | Hono app組み立て / DI配線 / 起動設定 | Features, Infrastructure |
-| `api-ts/src/features/*` | Feature単位の Router / Service / DTO（auth, managed, webhook） | Tables, Shared, 同一Feature内 |
-| `api-ts/src/tables` | Prisma スキーマ | Shared |
-| `api-ts/src/shared` | 共通 Validation / Utility / Interface | なし（最内層） |
-| `api-ts/src/infrastructure` | Repository 実装 / Prisma Client / 外部APIクライアント | Tables, Features, Shared |
+| `api/src/host` | Hono app組み立て / DI配線 / 起動設定 | Features, Infrastructure |
+| `api/src/features/*` | Feature単位の Router / Service / DTO（auth, managed, webhook） | Tables, Shared, 同一Feature内 |
+| `api/src/tables` | Prisma スキーマ | Shared |
+| `api/src/shared` | 共通 Validation / Utility / Interface | なし（最内層） |
+| `api/src/infrastructure` | Repository 実装 / Prisma Client / 外部APIクライアント | Tables, Features, Shared |
 
 pnpmの非hoisted node_modulesとeslint-plugin-boundariesで、この参照方向を物理的・lintレベルの両方で強制している。
 
@@ -48,17 +48,17 @@ Access Token 15分 + Refresh Token 7日（DB 管理）。UI は有効期限5分�
 
 ## コマンド
 
-### API（api-ts）
+### API（api）
 
 ```bash
-cd api-ts
+cd api
 pnpm -r build   # 全パッケージビルド（型チェック含む）
 pnpm -r lint    # ESLint（全パッケージ）
 pnpm -r test    # テスト全件（vitest）
-pnpm --filter @api-ts/<package-name> test  # パッケージ個別（例: @api-ts/features-webhook）
+pnpm --filter @api/<package-name> test  # パッケージ個別（例: @api/features-webhook）
 
 # DBスキーマ同期（ローカル/CI用。migration履歴は持たずschema.prismaへ同期するだけ）
-pnpm --filter @api-ts/tables exec prisma db push
+pnpm --filter @api/tables exec prisma db push
 ```
 
 ### UI
@@ -74,14 +74,14 @@ pnpm test       # Jest
 
 ```bash
 docker compose build
-docker compose up -d    # postgres:5432, api-ts:3001, ui:3000
+docker compose up -d    # postgres:5432, api:3001, ui:3000
 docker compose down
 ```
 
 ## 適用範囲と優先順位
 
 - ルート `CLAUDE.md` は全体ルール
-- `api-ts/CLAUDE.md` / `UI/CLAUDE.md` は各サブディレクトリでこのファイルより優先
+- `api/CLAUDE.md` / `UI/CLAUDE.md` は各サブディレクトリでこのファイルより優先
 - 競合時は「より深い階層」のルールを優先
 
 ## 共通ルール

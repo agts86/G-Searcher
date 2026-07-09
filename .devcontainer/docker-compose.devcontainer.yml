@@ -1,5 +1,5 @@
 services:
-  api-ts:
+  api:
     network_mode: bridge
     command: ["sleep", "infinity"]
     volumes:

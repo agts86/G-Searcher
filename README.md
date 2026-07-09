@@ -14,7 +14,7 @@ https://lin.ee/sOGflWx
 
 ■ 言語・FW<br>
 
--   TypeScript：Hono（API, `api-ts/`）
+-   TypeScript：Hono（API, `api/`）
 -   TypeScript：Next.js（UI）
 
 ■ DB
@@ -30,13 +30,13 @@ https://lin.ee/sOGflWx
 -   YOLP API
 -   Line Messaging API
 
-## API構成（`api-ts/`、pnpm workspace）
+## API構成（`api/`、pnpm workspace）
 
-- `api-ts/src/host` : Hono app組み立て / DI配線 / 起動設定
-- `api-ts/src/features/*` : Feature単位（auth / managed / webhook）の Router / Service / Dto
-- `api-ts/src/tables` : Prisma スキーマ
-- `api-ts/src/shared` : 共通 Validation / Utility / Interface
-- `api-ts/src/infrastructure` : Repository 実装 / Prisma Client / 外部APIクライアント
+- `api/src/host` : Hono app組み立て / DI配線 / 起動設定
+- `api/src/features/*` : Feature単位（auth / managed / webhook）の Router / Service / Dto
+- `api/src/tables` : Prisma スキーマ
+- `api/src/shared` : 共通 Validation / Utility / Interface
+- `api/src/infrastructure` : Repository 実装 / Prisma Client / 外部APIクライアント
 
 ## 前提
 
@@ -47,7 +47,7 @@ https://lin.ee/sOGflWx
 
 1. 環境変数ファイルの作成
 
-`api-ts/src/host/.env.example`をコピーして`api-ts/src/host/.env`を作成し、値を埋める。
+`api/src/host/.env.example`をコピーして`api/src/host/.env`を作成し、値を埋める。
 
   ```
   PORT=3001
@@ -88,15 +88,15 @@ https://lin.ee/sOGflWx
 
 7. DBスキーマ反映(初回だけ)
   ```
-      docker compose exec api-ts sh
+      docker compose exec api sh
       cd /app
-      pnpm --filter @api-ts/tables exec prisma db push
+      pnpm --filter @api/tables exec prisma db push
   ```
 
 ## UI 開発
 
-Next.js 開発サーバーは `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api-ts）へ中継する。  
-api-ts は Cookie の `Secure` 属性を `NODE_ENV === 'production'` で切り替えるため、開発時は HTTP で問題なく、証明書の設定は不要。
+Next.js 開発サーバーは `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api）へ中継する。  
+api は Cookie の `Secure` 属性を `NODE_ENV === 'production'` で切り替えるため、開発時は HTTP で問題なく、証明書の設定は不要。
 
 ```bash
 cd UI
@@ -108,5 +108,5 @@ UI は有効期限の5分前に `/api/v1/auth/refresh` を呼び、失敗時は 
 
 ## デプロイ用コンテナ
 
-`Dockerfile` は multi-stage build で `UI` をビルドし、生成物（`UI/out`）を api-ts コンテナの `wwwroot` に同梱する。  
+`Dockerfile` は multi-stage build で `UI` をビルドし、生成物（`UI/out`）を api コンテナの `wwwroot` に同梱する。  
 そのため、コンテナビルド時の context はリポジトリルート（`.`）を使用する。
