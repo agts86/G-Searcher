@@ -1,5 +1,5 @@
 {
-  "name": "@api-ts/infrastructure",
+  "name": "@api-ts/features-webhook",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,17 +11,16 @@
     "lint": "eslint src test --ext .ts"
   },
   "dependencies": {
-    "@api-ts/tables": "workspace:*",
     "@api-ts/shared": "workspace:*",
-    "@api-ts/features-auth": "workspace:*",
-    "@api-ts/features-managed": "workspace:*",
-    "@api-ts/features-webhook": "workspace:*",
-    "@prisma/client": "^6.1.0",
+    "@api-ts/tables": "workspace:*",
+    "hono": "^4.6.0",
+    "zod": "^3.24.0",
+    "@hono/zod-openapi": "^0.18.0",
     "@line/bot-sdk": "^11.2.0"
   },
   "devDependencies": {
     "typescript": "^6.0.0",
-    "@types/node": "^22.10.0",
-    "vitest": "^3.0.0"
+    "vitest": "^3.0.0",
+    "@types/node": "^22.10.0"
   }
 }

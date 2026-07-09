@@ -81,7 +81,7 @@ pnpm test       # Jest
 
 ```bash
 docker compose build
-docker compose up -d    # postgres:5432, backend:5001, ui:3000
+docker compose up -d    # postgres:5432, backend:5001, api-ts:3001, ui:3000
 docker compose down
 ```
 

@@ -164,18 +164,18 @@ UI/
 - 実行時に Next.js Node サーバーを別プロセスで常駐させる前提にする
 - UI と API を別ホスト前提で固定してしまう
 
-## 9.1 開発時の HTTPS 連携（Next.js dev）
+## 9.1 開発時のAPI連携（Next.js dev）
 
 ### ✅ やるべきこと
 
-- 開発時は `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `https://localhost:5001`）へ中継する
-- Node.js 側の証明書検証に備えて `NODE_EXTRA_CA_CERTS` を設定する
-- VSCode 起動では `prepare-ui-dev-ca` タスクで `${USERPROFILE}/.aspnet/https/WslLocalhost.pfx` から CA PEM を生成し、`NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem` を使う
+- 開発時は `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api-ts）へ中継する
+- api-ts はCookieの `Secure` 属性を `NODE_ENV === 'production'` で切り替える設計のため、開発時（api-ts宛て）はHTTPで問題ない。自己署名証明書やCA設定は不要
+- 旧.NET側（`https://localhost:5001`、Secure Cookie固定）に接続し直す場合のみ、`API_BASE_URL=https://localhost:5001` を指定した上で `NODE_EXTRA_CA_CERTS` を設定する（VSCode起動では `prepare-ui-dev-ca` タスクで `${USERPROFILE}/.aspnet/https/WslLocalhost.pfx` からCA PEMを生成し、`NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem` を使う）
 
 ### ❌ やってはいけないこと
 
 - `NODE_TLS_REJECT_UNAUTHORIZED=0` を常用する
-- 開発用に HTTP (`http://localhost:5000`) へ固定して、本来の HTTPS 構成を検証しない
+- 旧.NET側（HTTPS固定・Secure Cookie）に接続する際に、証明書検証を無効化する形で誤魔化す
 
 ## 10. 品質保証・必須コマンド
 

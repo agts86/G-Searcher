@@ -6,14 +6,15 @@
   "main": "./src/main.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "tsx watch --env-file=.env src/main.ts",
-    "start": "node --env-file=.env dist/main.js",
+    "dev": "tsx watch --inspect --env-file=.env src/main.ts",
+    "start": "tsx src/main.ts",
     "test": "vitest run",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
     "@api-ts/features-auth": "workspace:*",
     "@api-ts/features-managed": "workspace:*",
+    "@api-ts/features-webhook": "workspace:*",
     "@api-ts/infrastructure": "workspace:*",
     "@api-ts/shared": "workspace:*",
     "hono": "^4.6.0",

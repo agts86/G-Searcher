@@ -1,8 +1,18 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
+import { serveStatic } from '@hono/node-server/serve-static';
 import { swaggerUI } from '@hono/swagger-ui';
 import { createAuthRouter, AuthService, type AuthServiceConfig } from '@api-ts/features-auth';
 import { createManagedRouter, ManagedService } from '@api-ts/features-managed';
-import { getPrismaClient, PrismaAuthRepository, PrismaManagedRepository } from '@api-ts/infrastructure';
+import { createWebhookRouter, WebhookService, LineReplyService } from '@api-ts/features-webhook';
+import {
+  getPrismaClient,
+  PrismaAuthRepository,
+  PrismaManagedRepository,
+  PrismaWebhookRepository,
+  HttpAdapter,
+  YolpClientImpl,
+  LineReplyClientImpl,
+} from '@api-ts/infrastructure';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -52,10 +62,22 @@ export function createApp() {
   const managedService = new ManagedService(managedRepository);
   const managedRouter = createManagedRouter(managedService, config.jwt);
 
+  // 既存.NET側 LineReplyService.PostLocalAsync の `if (Env.IsDevelopment()) return;`
+  // と同じ考え方。開発環境ではLINEへの実際の返信APIコールをスキップする。
+  const skipLineApiCall = process.env.NODE_ENV !== 'production';
+  const httpAdapter = new HttpAdapter();
+  const yolpClient = new YolpClientImpl(httpAdapter, requireEnv('YAHOO_APP_ID'));
+  const lineReplyClient = new LineReplyClientImpl(requireEnv('LINE_CHANNEL_ACCESS_TOKEN'));
+  const lineReplyService = new LineReplyService(yolpClient, lineReplyClient, skipLineApiCall);
+  const webhookRepository = new PrismaWebhookRepository(prisma);
+  const webhookService = new WebhookService(lineReplyService, webhookRepository);
+  const webhookRouter = createWebhookRouter(webhookService, requireEnv('LINE_CHANNEL_SECRET'));
+
   const app = new OpenAPIHono();
   app.get('/health', (c) => c.text('ok'));
   app.route('/api/v1/auth', authRouter);
   app.route('/api/v1/managed', managedRouter);
+  app.route('/api/v1/webhook', webhookRouter);
 
   // 既存.NET側 Program.cs の `if (app.Environment.IsDevelopment())` と同じ考え方。
   // /doc・/ui は本番でAPI仕様を外部に露出させないため、本番では登録しない。
@@ -66,6 +88,16 @@ export function createApp() {
     });
     app.get('/ui', swaggerUI({ url: '/doc' }));
   }
+
+  // 既存.NET側 `UseDefaultFiles()+UseStaticFiles()` 相当。SPA fallback（未知パスをindex.htmlへ）は
+  // .NET側にも実装されていないため、ここでも同じ粒度（ディレクトリ配下のindex.html解決のみ）に留める。
+  app.use(
+    '*',
+    serveStatic({
+      root: './wwwroot',
+      rewriteRequestPath: (path) => (path.endsWith('/') ? `${path}index.html` : path),
+    }),
+  );
 
   return app;
 }

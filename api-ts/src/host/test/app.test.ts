@@ -9,6 +9,9 @@ beforeAll(() => {
   process.env.ADMIN_USERNAME = 'admin';
   process.env.ADMIN_PASSWORD = 'admin';
   process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/postgres?schema=public&sslmode=disable';
+  process.env.LINE_CHANNEL_SECRET = 'test-line-channel-secret';
+  process.env.LINE_CHANNEL_ACCESS_TOKEN = 'test-line-channel-access-token';
+  process.env.YAHOO_APP_ID = 'test-yahoo-app-id';
 });
 
 describe('createApp() 経由でマウントしたManagedルート', () => {
@@ -32,6 +35,20 @@ describe('createApp() 経由でマウントしたManagedルート', () => {
     const app = createApp();
 
     const res = await app.request('/api/v1/managed/gourmet/location');
+
+    expect(res.status).toBe(401);
+  });
+});
+
+describe('createApp() 経由でマウントしたWebhookルート', () => {
+  it('x-line-signatureヘッダーが無いまま POST /api/v1/webhook/local/accept を叩くと401を返す', async () => {
+    const app = createApp();
+
+    const res = await app.request('/api/v1/webhook/local/accept?genreCode=0301', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ destination: 'U123', events: [] }),
+    });
 
     expect(res.status).toBe(401);
   });

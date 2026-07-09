@@ -4,18 +4,19 @@
     "../docker-compose.yml",
     "docker-compose.devcontainer.yml"
   ],
-  "service": "backend",
+  "service": "api-ts",
   "workspaceFolder": "/workspaces/LineWebHookAPI",
   "remoteUser": "root",
-  "forwardPorts": [5000, 5001, 5432],
+  "forwardPorts": [3000, 3001, 5000, 5001, 5432],
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-dotnettools.csdevkit",
-        "ms-dotnettools.csharp",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "Prisma.prisma",
         "ms-azuretools.vscode-docker"
       ]
     }
   },
-  "postCreateCommand": "dotnet restore /workspaces/LineWebHookAPI/API/LineWebHookAPI/LineWebHookAPI.csproj"
+  "postCreateCommand": "cd /workspaces/LineWebHookAPI/api-ts && pnpm install --store-dir /tmp/pnpm-store && pnpm --filter @api-ts/tables exec prisma generate"
 }

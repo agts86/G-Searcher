@@ -1,10 +1,3 @@
-# ベースイメージ
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:80;https://+:443
-EXPOSE 80
-EXPOSE 443
-
 # UI ビルド
 FROM node:24-bookworm-slim AS ui-build
 WORKDIR /src/UI
@@ -16,39 +9,32 @@ RUN pnpm install --frozen-lockfile
 COPY UI/ ./
 RUN pnpm build
 
-# SDKイメージ
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-
-# csproj のみをコピーしてリストア
-COPY ["API/Host/Host.csproj", "API/Host/"]
-COPY ["API/Tables/Tables.csproj", "API/Tables/"]
-COPY ["API/Shared/Shared.csproj", "API/Shared/"]
-COPY ["API/Infrastructure/Infrastructure.csproj", "API/Infrastructure/"]
-COPY ["API/Features/Auth/Auth.csproj", "API/Features/Auth/"]
-COPY ["API/Features/Managed/Managed.csproj", "API/Features/Managed/"]
-COPY ["API/Features/Webhook/Webhook.csproj", "API/Features/Webhook/"]
-RUN dotnet restore "API/Host/Host.csproj"
-
-# 残りのファイルをコピーしてビルド
-COPY ["API/Host/", "API/Host/"]
-COPY ["API/Tables/", "API/Tables/"]
-COPY ["API/Shared/", "API/Shared/"]
-COPY ["API/Features/", "API/Features/"]
-COPY ["API/Infrastructure/", "API/Infrastructure/"]
-WORKDIR "/src/API/Host"
-RUN dotnet build "Host.csproj" -c publish -o /app/build
-
-# パブリッシュ
-FROM build AS publish
-RUN dotnet publish "Host.csproj" -c publish -o /app/publish /p:UseAppHost=false
+# api-ts ビルド
+FROM node:24-bookworm-slim AS api-ts-build
+WORKDIR /app/api-ts
+ENV PNPM_HOME=/pnpm
+ENV PATH=${PNPM_HOME}:${PATH}
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+RUN corepack enable && corepack prepare pnpm@10.26.0 --activate
+COPY api-ts/ ./
+RUN pnpm install --frozen-lockfile
+# pnpm -r build は全パッケージのtscを通す型チェックの安全弁（実行時はtsxで生ソースを直接動かすためdist自体は使わない）。
+# tables の build スクリプト内で prisma generate も実行されるが、明示のため個別にも実行しておく。
+RUN pnpm -r build
+RUN pnpm --filter @api-ts/tables exec prisma generate
 
 # 実行環境
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+FROM node:24-bookworm-slim AS final
+WORKDIR /app/api-ts/src/host
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+ENV NODE_ENV=production
+ENV PORT=80
+EXPOSE 80
+COPY --from=api-ts-build /app/api-ts /app/api-ts
 COPY --from=ui-build /src/UI/out ./wwwroot
-RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf && \
-    sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
 
-ENTRYPOINT ["dotnet", "LineWebHookAPI.dll"]
+ENTRYPOINT ["node_modules/.bin/tsx", "src/main.ts"]

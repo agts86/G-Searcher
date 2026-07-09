@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const isDev = process.env.NODE_ENV === 'development';
-const apiBaseUrl = (process.env.API_BASE_URL ?? 'https://localhost:5001').replace(/\/$/, '');
+const apiBaseUrl = (process.env.API_BASE_URL ?? 'http://localhost:3001').replace(/\/$/, '');
 
 const nextConfig: NextConfig = {
   output: isDev ? undefined : 'export',

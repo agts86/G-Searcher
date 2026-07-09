@@ -56,13 +56,20 @@
             "skipFiles": ["<node_internals>/**"]
         },
         {
+            // F5一発で完結: tsx watch --inspect を直接launchする。
+            // VSCodeのJSデバッガはintegratedTerminal上に出る
+            // "Debugger listening on ws://..." を検知して自動で再アタッチするため、
+            // watchによる再起動のたびに手動でattachし直す必要はない。
             "name": "api-ts: host dev",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "${workspaceFolder}/api-ts/src/host/node_modules/.bin/tsx",
+            "runtimeArgs": ["watch", "--inspect"],
             "program": "${workspaceFolder}/api-ts/src/host/src/main.ts",
             "cwd": "${workspaceFolder}/api-ts/src/host",
             "envFile": "${workspaceFolder}/api-ts/src/host/.env",
+            // watchによる再起動のたびに同じログ行が出るため、再起動ごとにも
+            // ブラウザが開き直される点に注意（tsx watch自体に初回/再起動の区別がないため）。
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "listening on\\s+(https?://\\S+)",
