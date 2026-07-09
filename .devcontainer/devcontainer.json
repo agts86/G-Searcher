@@ -7,7 +7,7 @@
   "service": "api-ts",
   "workspaceFolder": "/workspaces/LineWebHookAPI",
   "remoteUser": "root",
-  "forwardPorts": [3000, 3001, 5000, 5001, 5432],
+  "forwardPorts": [3000, 3001, 5432],
   "customizations": {
     "vscode": {
       "extensions": [

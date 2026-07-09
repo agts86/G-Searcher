@@ -2,42 +2,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/API/Host/Host.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/API/Host/Host.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/API/Host/Host.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "prepare-ui-next-cache",
             "command": "bash",
             "type": "process",
@@ -45,25 +9,6 @@
                 "-lc",
                 "set -euo pipefail; ui_dir=\"${workspaceFolder}/UI\"; next_dir=\"${ui_dir}/.next\"; if [ ! -d \"$next_dir\" ]; then exit 0; fi; if find \"$next_dir\" -not -user \"$(id -un)\" -print -quit | grep -q .; then echo \"Detected non-user-owned .next cache. Removing via docker.\"; docker run --rm -v \"$ui_dir:/app\" alpine:3.21 sh -c 'rm -rf /app/.next'; else rm -rf \"$next_dir\"; fi"
             ],
-            "problemMatcher": []
-        },
-        {
-            "label": "prepare-ui-dev-ca",
-            "command": "bash",
-            "type": "process",
-            "args": [
-                "-lc",
-                "set -euo pipefail; pfx_path=\"${USERPROFILE}/.aspnet/https/WslLocalhost.pfx\"; out_dir=\"/tmp/linewebhook-cert\"; out_file=\"${out_dir}/localhost-dev-root-ca.pem\"; if [ ! -f \"$pfx_path\" ]; then echo \"PFX certificate not found: $pfx_path\"; exit 1; fi; mkdir -p \"$out_dir\"; openssl pkcs12 -in \"$pfx_path\" -nokeys -cacerts -passin pass:WslLocalhost -out \"$out_file\""
-            ],
-            "problemMatcher": []
-        },
-        {
-            "label": "prepare-ui-dev",
-            "dependsOn": [
-                "prepare-ui-next-cache",
-                "prepare-ui-dev-ca"
-            ],
-            "dependsOrder": "sequence",
             "problemMatcher": []
         }
     ]

@@ -14,14 +14,12 @@ https://lin.ee/sOGflWx
 
 ■ 言語・FW<br>
 
--   C#：ASP.NET Core API
--   TypeScript：Next.js
--   Bat
--   PowerShell
+-   TypeScript：Hono（API, `api-ts/`）
+-   TypeScript：Next.js（UI）
 
 ■ DB
 
--   postgres
+-   postgres（Prisma ORM）
 
 ■ コンテナ
 
@@ -32,13 +30,13 @@ https://lin.ee/sOGflWx
 -   YOLP API
 -   Line Messaging API
 
-## API構成
+## API構成（`api-ts/`、pnpm workspace）
 
-- `API/Host` : Host（`Program.cs` / Middleware / 起動設定）
-- `API/Features` : Feature単位（Auth / Managed / Webhook）の Controller / Service / Dto
-- `API/Tables` : DB テーブル
-- `API/Shared` : 共通 Validation / Exception / Utility / Interface
-- `API/Infrastructure` : Repository 実装 / DbContext / Migrations
+- `api-ts/src/host` : Hono app組み立て / DI配線 / 起動設定
+- `api-ts/src/features/*` : Feature単位（auth / managed / webhook）の Router / Service / Dto
+- `api-ts/src/tables` : Prisma スキーマ
+- `api-ts/src/shared` : 共通 Validation / Utility / Interface
+- `api-ts/src/infrastructure` : Repository 実装 / Prisma Client / 外部APIクライアント
 
 ## 前提
 
@@ -47,83 +45,52 @@ https://lin.ee/sOGflWx
 
 ## 実行方法
 
-1. 証明書の発行
-      
-   ※WSLで利用する場合WSL側とホスト側の改行コードが違う場合がありますので実行環境側の改行コードに適宜変換してください
-   1. Powershellが使える場合
-      
-      `API/Dev-Certs-Link.ps1`をホスト側にコピーして管理者権限で実行
-      
-      ```
-      （必要に応じて）Unblock-File -Path . "{配置したPath}"
-      （必要に応じて）Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-      .\Dev-Certs-Link.ps1
-      ```
-   3. Windows端末でホスト側に.NETがインストールされている場合
-      
-      `API/Dev-Certs-Link.bat`をホスト側にコピーして管理者権限で実行
-      
-      ```
-      .\Dev-Certs-Link.bat
-      ```
+1. 環境変数ファイルの作成
 
-3. 設定ファイルの作成
+`api-ts/src/host/.env.example`をコピーして`api-ts/src/host/.env`を作成し、値を埋める。
 
-`appsettings.json`をコピーし`appsettings.Development.json`にリネームして以下を修正
   ```
-  {
-    "ConnectionStrings": {
-      "PostgreSQLConnection": "{docker compose使わない場合は任意に設定)}"
-    },
-    "Line": {
-      "Token": {取得したLine Developersのチャネルアクセストークン),
-      "ChannelSecret": {取得したLine 公式アカウントのチャンネルシークレット)
-    },
-    "Yahoo": {
-      "AppId": "{取得したYOLPのAPIキー)"
-    },
-    "Auth": {
-      "AdminUserName": "{管理画面の管理者ユーザー名}",
-      "AdminPassword": "{管理画面の管理者パスワード}",
-      "JwtKey": "{32文字以上の任意の秘密鍵}",
-      "Issuer": "LineWebHookAPI",
-      "Audience": "LineWebHookAdmin",
-      "ExpiresMinutes": 15,
-      "RefreshExpiresDays": 7
-    }
-  }
-  ``` 
+  PORT=3001
+  DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public&sslmode=disable
+  JWT_SECRET={32文字以上の任意の秘密鍵}
+  JWT_ISSUER=LineWebHookAPI
+  JWT_AUDIENCE=LineWebHookAdmin
+  ADMIN_USERNAME={管理画面の管理者ユーザー名}
+  ADMIN_PASSWORD={管理画面の管理者パスワード}
+  ACCESS_TOKEN_EXPIRES_MINUTES=15
+  REFRESH_TOKEN_EXPIRES_DAYS=7
+  LINE_CHANNEL_SECRET={取得したLine公式アカウントのチャンネルシークレット}
+  LINE_CHANNEL_ACCESS_TOKEN={取得したLine Developersのチャネルアクセストークン}
+  YAHOO_APP_ID={取得したYOLPのAPIキー}
+  ```
 
-3. ビルド
-   
+2. ビルド
+
   ```
       docker compose build
-  ```    
-4. コンテナ起動（実行）
+  ```
+3. コンテナ起動（実行）
   ```
       docker compose up -d
-  ``` 
-5. コンテナ停止
+  ```
+4. コンテナ停止
   ```
       docker compose down
-  ``` 
+  ```
 
-6. API確認
+5. API確認
 
-  https://localhost:5001/swagger/index.html
+  http://localhost:3001/ui （Swagger UI、開発環境のみ）
 
-7. UI確認
+6. UI確認
 
   http://localhost:3000/login/
 
-8. DBマイグレード(初回だけ)
+7. DBスキーマ反映(初回だけ)
   ```
-      docker compose exec backend bash
-      cd /app/Host
-      dotnet restore ./Host.csproj
-      dotnet ef database update \
-        --project ../Infrastructure/Infrastructure.csproj \
-        --startup-project ./Host.csproj
+      docker compose exec api-ts sh
+      cd /app
+      pnpm --filter @api-ts/tables exec prisma db push
   ```
 
 ## UI 開発
@@ -139,19 +106,7 @@ pnpm dev
 認証は `Access Token 15分 + Refresh Token 7日`。  
 UI は有効期限の5分前に `/api/v1/auth/refresh` を呼び、失敗時は `401` で再ログインへ遷移する。
 
-旧.NET側（`https://localhost:5001`、Secure Cookie固定）に接続し直す場合は、`API_BASE_URL=https://localhost:5001` を指定した上で、TLS検証のため `NODE_EXTRA_CA_CERTS` の設定が必要（VSCodeの `UI + API: 同時起動` を使う場合は `prepare-ui-dev-ca` タスクと `UI: Next.js dev` 設定で自動的に適用される）。
-
-```bash
-mkdir -p /tmp/linewebhook-cert
-openssl pkcs12 -in "${USERPROFILE}/.aspnet/https/WslLocalhost.pfx" \
-  -nokeys -cacerts -passin pass:WslLocalhost \
-  -out /tmp/linewebhook-cert/localhost-dev-root-ca.pem
-
-cd UI
-API_BASE_URL=https://localhost:5001 NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem pnpm dev -- --port 3000
-```
-
 ## デプロイ用コンテナ
 
-`Dockerfile` は multi-stage build で `UI` をビルドし、生成物（`UI/out`）を API コンテナの `wwwroot` に同梱する。  
+`Dockerfile` は multi-stage build で `UI` をビルドし、生成物（`UI/out`）を api-ts コンテナの `wwwroot` に同梱する。  
 そのため、コンテナビルド時の context はリポジトリルート（`.`）を使用する。

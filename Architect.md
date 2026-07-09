@@ -8,10 +8,10 @@ graph TD
     Admin["管理者ユーザー（Browser）"]
     LineAPI["LINE Messaging API"]
     Ui["UI（Next.js export）<br/>wwwroot で静的配信"]
-    Api["LineWebHookAPI<br/>ASP.NET Core (.NET 10)"]
+    Api["api-ts<br/>Hono (Node.js) / Prisma"]
     Yahoo["Yahoo!ローカルサーチ API (YOLP)"]
     DB["PostgreSQL"]
-    Worker["Cloudflare Workers<br/>cron-worker/CloudFlare (*/5分)"]
+    Worker["Cloudflare Workers<br/>cron-worker/CloudFlare"]
 
     User -->|位置情報/メッセージ| LineAPI
     LineAPI -->|Webhook| Api
@@ -25,72 +25,66 @@ graph TD
     Worker -->|GET /health| Api
 ```
 
-## 2. API 内部（Dependency）
+## 2. API 内部（Dependency、`api-ts/`）
 
 ```mermaid
 graph LR
-    subgraph Host
-      Middleware["Middleware (IMiddleware)"]
+    subgraph Host["src/host"]
+      App["createApp() (app.ts)<br/>Hono配線・DI組み立て"]
     end
 
-    subgraph Features
-      WebhookController["WebhookController"]
+    subgraph Features["src/features/*"]
+      WebhookRoutes["webhook.routes.ts"]
       WebhookService["WebhookService"]
-      AuthController["AuthController"]
+      LineReplyService["LineReplyService"]
+      AuthRoutes["auth.routes.ts"]
       AuthService["AuthService"]
-      ManagedController["ManagedController"]
+      ManagedRoutes["managed.routes.ts"]
       ManagedService["ManagedService"]
     end
 
-    subgraph Tables
-      AppModels["DB Tables"]
+    subgraph Tables["src/tables"]
+      Prisma["Prisma schema"]
     end
 
-    subgraph Shared
-      MiddlewareRepoI["IMiddleWareRepository"]
-      QueueI["IBackgroundJobQueue&lt;LocalJobDto&gt;"]
-      SharedComp["Exceptions / Validations / Utilities"]
+    subgraph Shared["src/shared"]
+      SharedComp["JWT / Cookie / JSTタイムスタンプ / AuthGuard middleware"]
     end
 
-    subgraph Infrastructure
-      YahooRepo["YahooRepository"]
-      AuthRepo["AuthRepository"]
-      ManagedRepo["ManagedRepository"]
-      MiddlewareRepo["MiddleWareRepository"]
-      QueueImpl["BackgroundJobQueue&lt;LocalJobDto&gt;"]
-      Bg["WebhookBackgroundService"]
-      DbContext["LineWebHookContext (DbContext)"]
+    subgraph Infrastructure["src/infrastructure"]
+      WebhookRepo["PrismaWebhookRepository"]
+      AuthRepo["PrismaAuthRepository"]
+      ManagedRepo["PrismaManagedRepository"]
+      YolpClient["YolpClientImpl (fetch)"]
+      LineReplyClient["LineReplyClientImpl"]
+      HttpAdapter["HttpAdapter"]
+      PrismaClient["PrismaClient"]
     end
 
-    LineSdk["LineMessagingClient"]
-    YOLP["IYOLPClient"]
+    LineBotSdk["@line/bot-sdk LineBotClient"]
     Pg["PostgreSQL"]
 
-    WebhookController --> WebhookService --> YahooRepo
-    AuthController --> AuthService --> AuthRepo
-    ManagedController --> ManagedService --> ManagedRepo
-    Middleware --> MiddlewareRepoI --> MiddlewareRepo
+    App --> WebhookRoutes --> WebhookService --> WebhookRepo
+    WebhookService --> LineReplyService --> YolpClient
+    LineReplyService --> LineReplyClient --> LineBotSdk
+    App --> AuthRoutes --> AuthService --> AuthRepo
+    App --> ManagedRoutes --> ManagedService --> ManagedRepo
 
-    WebhookController --> QueueI
-    Bg --> WebhookService
-    Bg --> QueueI
-    QueueI --> QueueImpl
+    YolpClient --> HttpAdapter
+    WebhookRepo --> PrismaClient
+    AuthRepo --> PrismaClient
+    ManagedRepo --> PrismaClient
+    PrismaClient --> Pg
 
-    YahooRepo --> LineSdk
-    YahooRepo --> YOLP
-    YahooRepo --> DbContext
-    AuthRepo --> DbContext
-    ManagedRepo --> DbContext
-    MiddlewareRepo --> DbContext
-    DbContext --> Pg
-
-    WebhookService -. uses .-> AppModels
-    AuthService -. uses .-> AppModels
-    ManagedService -. uses .-> AppModels
+    WebhookService -. uses .-> Prisma
+    AuthService -. uses .-> Prisma
+    ManagedService -. uses .-> Prisma
     WebhookService -. uses .-> SharedComp
     AuthService -. uses .-> SharedComp
     ManagedService -. uses .-> SharedComp
 ```
+
+pnpmの非hoisted node_modules + eslint-plugin-boundariesで、上記の参照方向（Host→Features→Tables/Shared、Infrastructure→Tables/Features/Shared）を物理的・lintレベルの両方で強制している。
 
 ## 3. UI 内部（Dependency）
 
@@ -112,7 +106,7 @@ graph LR
       Client["api/client (401時はauth refresh再試行)"]
     end
 
-    Api["LineWebHookAPI"]
+    Api["api-ts"]
 
     Login --> UseAuth
     Dashboard --> UseAuth
@@ -135,5 +129,5 @@ graph LR
 ```
 
 注記:
-- `Dockerfile` は multi-stage build で `UI` をビルドし、`UI/out` を API コンテナの `wwwroot` に同梱します。
+- `Dockerfile` は multi-stage build で `UI` と `api-ts` をビルドし、`UI/out` を api-ts コンテナの `wwwroot` に、`api-ts` 一式（node_modules込み）を同梱します。実行は `tsx` で `src/host/src/main.ts` を直接起動します。
 - 認証は `Access Token + Refresh Token` を利用し、`RefreshToken` は DB で管理します。

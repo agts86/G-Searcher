@@ -7,7 +7,7 @@
 
 ### 前提アーキテクチャ
 
-- バックエンド API: `API/Host`（ASP.NET Core）
+- バックエンド API: `api-ts/src/host`（Hono / TypeScript）
 - フロントエンド: `UI/`（Next.js）
 - デプロイ構成: 1コンテナで API と静的フロントを同居
 - Next.js は `output: 'export'` による静的出力を利用し、実行時は CSR（SPA）として動作
@@ -170,12 +170,10 @@ UI/
 
 - 開発時は `UI/next.config.ts` の `rewrites` で `/api/:path*` を `API_BASE_URL`（未指定時は `http://localhost:3001`、api-ts）へ中継する
 - api-ts はCookieの `Secure` 属性を `NODE_ENV === 'production'` で切り替える設計のため、開発時（api-ts宛て）はHTTPで問題ない。自己署名証明書やCA設定は不要
-- 旧.NET側（`https://localhost:5001`、Secure Cookie固定）に接続し直す場合のみ、`API_BASE_URL=https://localhost:5001` を指定した上で `NODE_EXTRA_CA_CERTS` を設定する（VSCode起動では `prepare-ui-dev-ca` タスクで `${USERPROFILE}/.aspnet/https/WslLocalhost.pfx` からCA PEMを生成し、`NODE_EXTRA_CA_CERTS=/tmp/linewebhook-cert/localhost-dev-root-ca.pem` を使う）
 
 ### ❌ やってはいけないこと
 
 - `NODE_TLS_REJECT_UNAUTHORIZED=0` を常用する
-- 旧.NET側（HTTPS固定・Secure Cookie）に接続する際に、証明書検証を無効化する形で誤魔化す
 
 ## 10. 品質保証・必須コマンド
 

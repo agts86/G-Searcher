@@ -1,12 +1,11 @@
 # Monorepo Agent Guide
 
 このファイルはリポジトリ全体の共通ルールを定義する。  
-現在の対象は `API` のみ（FrontEnd は未定義）。
+API は `api-ts/`（TypeScript / Hono / Prisma、pnpm workspace）。
 
 ## 1. 適用範囲と優先順位
 
 - ルート `AGENTS.md` は全体ルール
-- `API/AGENTS.md` は API 配下でこのファイルより優先
 - 競合時は「より深い階層」のルールを優先
 
 ## 2. 共通ルール

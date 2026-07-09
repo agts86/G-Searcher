@@ -3,35 +3,37 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 このファイルはリポジトリ全体の共通ルールを定義する。
-`API/` 配下の作業では [API/CLAUDE.md](API/CLAUDE.md)、`UI/` 配下では [UI/CLAUDE.md](UI/CLAUDE.md) も参照すること。
+`api-ts/` 配下の作業では [api-ts/CLAUDE.md](api-ts/CLAUDE.md)、`UI/` 配下では [UI/CLAUDE.md](UI/CLAUDE.md) も参照すること。
 
 ## プロジェクト概要
 
-LINE Messaging API の Webhook を受ける ASP.NET Core API と、管理画面の Next.js SPA のモノレポ。
+LINE Messaging API の Webhook を受ける Hono API と、管理画面の Next.js SPA のモノレポ。
 LINE ユーザーが位置情報やメッセージを送信すると、Yahoo!ローカルサーチ API で周辺のグルメ情報を検索して返信する。
+API はもともと C#/ASP.NET Core で実装されていたが、TypeScript(Hono + Prisma) へ完全移行済み（旧 `API/` は削除済み）。
 
 ### 技術スタック
 
-- **API**: C# / ASP.NET Core (.NET 10) / Entity Framework Core / PostgreSQL
+- **API**: TypeScript / Hono / Prisma / PostgreSQL（pnpm workspace モノレポ、`api-ts/`）
 - **UI**: TypeScript / Next.js (`output: 'export'` で静的出力 → CSR SPA)
 - **デプロイ**: Docker multi-stage build → GHCR → Azure Web App（API + UI を単一コンテナで配信）
 - **外部連携**: LINE Messaging API, Yahoo!ローカルサーチ API (YOLP)
-- **cron**: Cloudflare Workers（`cron-worker/CloudFlare`、5分間隔でヘルスチェック）
+- **cron**: Cloudflare Workers（`cron-worker/CloudFlare`、ヘルスチェック）
 
 ## アーキテクチャ
 
-### API レイヤ構成（5プロジェクト + Test）
+### API レイヤ構成（pnpm workspace）
 
-依存方向: `Controller → Service → Repository`（一方向のみ）
+依存方向: `Controller(routes) → Service → Repository`（一方向のみ）
 
-| プロジェクト | 役割 | 参照先 |
+| パッケージ | 役割 | 参照先 |
 |---|---|---|
-| `API/Host` | Program.cs / DI 登録 / Middleware / 起動設定 | Features, Infrastructure |
-| `API/Features` | Feature単位の Controller / Service / DTO | Tables, Shared |
-| `API/Tables` | DB テーブル | Shared |
-| `API/Shared` | 共通 Validation / Exception / Utility / Interface | なし（最内層） |
-| `API/Infrastructure` | Repository 実装 / DbContext / Migrations | Tables, Features, Shared |
-| `API/Test` | xUnit テスト | 全プロジェクト |
+| `api-ts/src/host` | Hono app組み立て / DI配線 / 起動設定 | Features, Infrastructure |
+| `api-ts/src/features/*` | Feature単位の Router / Service / DTO（auth, managed, webhook） | Tables, Shared, 同一Feature内 |
+| `api-ts/src/tables` | Prisma スキーマ | Shared |
+| `api-ts/src/shared` | 共通 Validation / Utility / Interface | なし（最内層） |
+| `api-ts/src/infrastructure` | Repository 実装 / Prisma Client / 外部APIクライアント | Tables, Features, Shared |
+
+pnpmの非hoisted node_modulesとeslint-plugin-boundariesで、この参照方向を物理的・lintレベルの両方で強制している。
 
 ### UI ディレクトリ構成
 
@@ -46,26 +48,17 @@ Access Token 15分 + Refresh Token 7日（DB 管理）。UI は有効期限5分�
 
 ## コマンド
 
-### API
+### API（api-ts）
 
 ```bash
-dotnet build API/Host/Host.csproj          # ビルド
-dotnet test API/Test/Test.csproj           # テスト全件
-dotnet test API/Test/Test.csproj --filter "FullyQualifiedName~ClassName"  # テスト個別
+cd api-ts
+pnpm -r build   # 全パッケージビルド（型チェック含む）
+pnpm -r lint    # ESLint（全パッケージ）
+pnpm -r test    # テスト全件（vitest）
+pnpm --filter @api-ts/<package-name> test  # パッケージ個別（例: @api-ts/features-webhook）
 
-# Migration
-dotnet tool run dotnet-ef migrations add <Name> \
-  --project API/Infrastructure/Infrastructure.csproj \
-  --startup-project API/Host/Host.csproj \
-  --output-dir Migrations
-
-dotnet tool run dotnet-ef migrations remove \
-  --project API/Infrastructure/Infrastructure.csproj \
-  --startup-project API/Host/Host.csproj
-
-dotnet tool run dotnet-ef database update \
-  --project API/Infrastructure/Infrastructure.csproj \
-  --startup-project API/Host/Host.csproj
+# DBスキーマ同期（ローカル/CI用。migration履歴は持たずschema.prismaへ同期するだけ）
+pnpm --filter @api-ts/tables exec prisma db push
 ```
 
 ### UI
@@ -81,22 +74,22 @@ pnpm test       # Jest
 
 ```bash
 docker compose build
-docker compose up -d    # postgres:5432, backend:5001, api-ts:3001, ui:3000
+docker compose up -d    # postgres:5432, api-ts:3001, ui:3000
 docker compose down
 ```
 
 ## 適用範囲と優先順位
 
 - ルート `CLAUDE.md` は全体ルール
-- `API/CLAUDE.md` / `UI/CLAUDE.md` は各サブディレクトリでこのファイルより優先
+- `api-ts/CLAUDE.md` / `UI/CLAUDE.md` は各サブディレクトリでこのファイルより優先
 - 競合時は「より深い階層」のルールを優先
 
 ## 共通ルール
 
 - 変更は最小差分で行う
 - 関連のないファイルは触らない
-- 生成物は原則コミットしない（`bin/`, `obj/` など）
-- パス指定は必ず `/` を使い、`\` は使わない（Linux/WSL で `bin\Debug` のような異常パスを防ぐ）
+- 生成物は原則コミットしない（`dist/`, `node_modules/`, `.next/` など）
+- パス指定は必ず `/` を使い、`\` は使わない（Linux/WSL で異常パスを防ぐ）
 - 高リスク操作（大量削除、履歴改変）は明示合意がある場合のみ行う
 - 仕様変更時はドキュメントも同時更新する
 

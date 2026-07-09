@@ -2,51 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-            "name": ".NET Core Launch (web)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/API/Host/bin/Debug/net10.0/LineWebHookAPI.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/API/Host",
-            "stopAtEntry": false,
-            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-                "uriFormat": "%s/swagger/index.html"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000",
-                "ASPNETCORE_Kestrel__Certificates__Default__Path": "${env:USERPROFILE}/.aspnet/https/WslLocalhost.pfx",
-                "ASPNETCORE_Kestrel__Certificates__Default__Password": "WslLocalhost"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            }
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach"
-        },
-        {
             "name": "UI: Next.js dev",
             "type": "node",
             "request": "launch",
-            "preLaunchTask": "prepare-ui-dev",
+            "preLaunchTask": "prepare-ui-next-cache",
             "program": "${workspaceFolder}/UI/node_modules/next/dist/bin/next",
             "args": ["dev"],
             "cwd": "${workspaceFolder}/UI",
             "runtimeExecutable": "node",
-            "env": {
-                "NODE_EXTRA_CA_CERTS": "/tmp/linewebhook-cert/localhost-dev-root-ca.pem"
-            },
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "- Local:\\s+(https?://\\S+)",
@@ -56,10 +19,6 @@
             "skipFiles": ["<node_internals>/**"]
         },
         {
-            // F5一発で完結: tsx watch --inspect を直接launchする。
-            // VSCodeのJSデバッガはintegratedTerminal上に出る
-            // "Debugger listening on ws://..." を検知して自動で再アタッチするため、
-            // watchによる再起動のたびに手動でattachし直す必要はない。
             "name": "api-ts: host dev",
             "type": "node",
             "request": "launch",
@@ -68,8 +27,6 @@
             "program": "${workspaceFolder}/api-ts/src/host/src/main.ts",
             "cwd": "${workspaceFolder}/api-ts/src/host",
             "envFile": "${workspaceFolder}/api-ts/src/host/.env",
-            // watchによる再起動のたびに同じログ行が出るため、再起動ごとにも
-            // ブラウザが開き直される点に注意（tsx watch自体に初回/再起動の区別がないため）。
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "listening on\\s+(https?://\\S+)",
@@ -83,7 +40,7 @@
         {
             "name": "UI + API: 同時起動",
             "configurations": [
-                ".NET Core Launch (web)",
+                "api-ts: host dev",
                 "UI: Next.js dev"
             ]
         }
