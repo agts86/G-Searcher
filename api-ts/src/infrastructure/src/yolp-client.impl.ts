@@ -17,7 +17,7 @@ interface YolpFeatureResponse {
       PcUrl1?: string;
       MobileUrl1?: string;
       ReviewUrl?: string;
-      Extra?: Record<string, string>;
+      YUrl?: string;
     };
   };
 }
@@ -27,31 +27,15 @@ interface YolpLocalSearchResponse {
 }
 
 /**
- * 既存.NET側 DetailInfo.Extra は StringComparer.OrdinalIgnoreCase の辞書（かつ
- * デシリアライズ全体が PropertyNameCaseInsensitive）で "YUrl" を検索していたため、
- * 実際のYOLPレスポンスのキーの大文字小文字が厳密一致しなくても拾えていた。
- * ここでも同じ大文字小文字非依存の挙動に合わせる。
- */
-function findExtraValueCaseInsensitive(extra: Record<string, string> | undefined, key: string): string | null {
-  if (!extra) {
-    return null;
-  }
-  const lowerKey = key.toLowerCase();
-  const foundKey = Object.keys(extra).find((k) => k.toLowerCase() === lowerKey);
-  return foundKey ? extra[foundKey] : null;
-}
-
-/**
- * "YUrl" はYOLPの公式ドキュメントに存在しないcassette固有の拡張フィールドで、
- * 実際のレスポンスの多くで Detail 自体が欠落する（存在しない場合キー自体が
- * 返らない仕様）。詳細リンクが表示されない結果が多発しないよう、公式フィールドの
- * PcUrl1 / MobileUrl1 / ReviewUrl、それも無ければ電話番号(Tel1)へのtelリンクまで
- * フォールバックする（Tel1はDetail配下ではなくPropertyの結果でほぼ確実に入っている）。
+ * 既存.NET側 DetailInfo.Extra ([JsonExtensionData])は「名前の一致しないJSONフィールドを
+ * 自動的に集めるC#側のデシリアライズ機構」であり、実際のレスポンスに"Extra"という入れ子
+ * オブジェクトが存在するわけではない。実データで確認したところ、YUrlはDetail直下の
+ * フラットなプロパティ（PcUrl1等と同階層）だった。
  */
 function resolveDetailUrl(property: YolpFeatureResponse['Property']): string | null {
   const detail = property?.Detail;
   const candidates = [
-    findExtraValueCaseInsensitive(detail?.Extra, 'YUrl'),
+    detail?.YUrl,
     detail?.PcUrl1,
     detail?.MobileUrl1,
     detail?.ReviewUrl,
@@ -102,8 +86,6 @@ export class YolpClientImpl implements YolpClient {
     const url = `${YOLP_BASE_URL}/search/local/V1/localSearch?${params.toString()}`;
 
     const response = await this.httpAdapter.get<YolpLocalSearchResponse>(url);
-    // eslint-disable-next-line no-console -- 一時調査用: 実際にDetail/Extraが返っているか確認するため
-    console.log('YOLP raw first feature Property:', JSON.stringify(response.Feature?.[0]?.Property));
     return (response.Feature ?? []).map(toYolpFeature);
   }
 }

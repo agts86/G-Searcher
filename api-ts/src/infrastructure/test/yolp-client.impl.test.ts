@@ -17,7 +17,7 @@ describe('YolpClientImpl.searchLocal', () => {
         {
           Gid: 'g1',
           Name: '店A',
-          Property: { Address: '東京都千代田区1-1', Detail: { Extra: { YUrl: 'https://example.com/g1' } } },
+          Property: { Address: '東京都千代田区1-1', Detail: { YUrl: 'https://example.com/g1' } },
         },
       ],
     });
@@ -52,18 +52,7 @@ describe('YolpClientImpl.searchLocal', () => {
     expect(result).toEqual([]);
   });
 
-  it('Extraのキーが大文字小文字違い(yurl)でもdetailUrlを拾う（既存.NET側のOrdinalIgnoreCase相当）', async () => {
-    const { adapter } = buildAdapter({
-      Feature: [{ Gid: 'g1', Name: '店A', Property: { Detail: { Extra: { yurl: 'https://example.com/g1' } } } }],
-    });
-    const client = new YolpClientImpl(adapter, 'app-id-1');
-
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
-
-    expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/g1' }]);
-  });
-
-  it('Extra.YUrlが無い場合はDetail.PcUrl1にフォールバックする', async () => {
+  it('Detail.YUrlが無い場合はDetail.PcUrl1にフォールバックする', async () => {
     const { adapter } = buildAdapter({
       Feature: [{ Gid: 'g1', Name: '店A', Property: { Detail: { PcUrl1: 'https://loco.yahoo.co.jp/place/g1/' } } }],
     });
@@ -89,6 +78,17 @@ describe('YolpClientImpl.searchLocal', () => {
       { gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/mobile/g1' },
       { gid: 'g2', name: '店B', address: null, detailUrl: 'https://example.com/review/g2' },
     ]);
+  });
+
+  it('Detail.PcUrl1が空文字列（実際のYOLPレスポンスで観測される）の場合は次の候補にフォールバックする', async () => {
+    const { adapter } = buildAdapter({
+      Feature: [{ Gid: 'g1', Name: '店A', Property: { Detail: { PcUrl1: '', YUrl: 'https://example.com/g1' } } }],
+    });
+    const client = new YolpClientImpl(adapter, 'app-id-1');
+
+    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
+
+    expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/g1' }]);
   });
 
   it('URL系フィールドが全て無くてもTel1があればtel:リンクにフォールバックする', async () => {
