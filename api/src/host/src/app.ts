@@ -3,7 +3,7 @@ import { serveStatic } from '@hono/node-server/serve-static';
 import { swaggerUI } from '@hono/swagger-ui';
 import { createAuthRouter, AuthService, type AuthServiceConfig } from '@api/features-auth';
 import { createManagedRouter, ManagedService } from '@api/features-managed';
-import { createWebhookRouter, WebhookService, LineReplyService } from '@api/features-webhook';
+import { createWebhookRouter, WebhookService, LineReplyService, BikeParkingReplyService, createBikeParkingRouter } from '@api/features-webhook';
 import {
   getPrismaClient,
   PrismaAuthRepository,
@@ -12,6 +12,7 @@ import {
   HttpAdapter,
   YolpClientImpl,
   LineReplyClientImpl,
+  BikeParkingClientImpl,
 } from '@api/infrastructure';
 
 function requireEnv(name: string): string {
@@ -65,19 +66,29 @@ export function createApp() {
   // 既存.NET側 LineReplyService.PostLocalAsync の `if (Env.IsDevelopment()) return;`
   // と同じ考え方。開発環境ではLINEへの実際の返信APIコールをスキップする。
   const skipLineApiCall = process.env.NODE_ENV !== 'production';
+  // ローカルでcurl等を使いLINE実機なしに疎通確認したい場合のみ明示的に無効化する。
+  // NODE_ENVに連動させるとテスト実行時(NODE_ENV=test)も自動でfalseになり、
+  // 既存の401検証テスト（署名なしリクエストの拒否）が壊れるため専用フラグにする。
+  const verifyLineSignature = process.env.DISABLE_LINE_SIGNATURE_VERIFICATION !== 'true';
   const httpAdapter = new HttpAdapter();
   const yolpClient = new YolpClientImpl(httpAdapter, requireEnv('YAHOO_APP_ID'));
   const lineReplyClient = new LineReplyClientImpl(requireEnv('LINE_CHANNEL_ACCESS_TOKEN'));
   const lineReplyService = new LineReplyService(yolpClient, lineReplyClient, skipLineApiCall);
   const webhookRepository = new PrismaWebhookRepository(prisma);
   const webhookService = new WebhookService(lineReplyService, webhookRepository);
-  const webhookRouter = createWebhookRouter(webhookService, requireEnv('LINE_CHANNEL_SECRET'));
+  const webhookRouter = createWebhookRouter(webhookService, requireEnv('LINE_CHANNEL_SECRET'), verifyLineSignature);
+
+  // 全国バイク駐車場案内(jmpsa.or.jp)検索版。DB永続化は行わずLINE返信のみ同期的に行う。
+  const bikeParkingClient = new BikeParkingClientImpl(httpAdapter);
+  const bikeParkingReplyService = new BikeParkingReplyService(bikeParkingClient, lineReplyClient, skipLineApiCall);
+  const bikeParkingRouter = createBikeParkingRouter(bikeParkingReplyService, requireEnv('LINE_CHANNEL_SECRET'), verifyLineSignature);
 
   const app = new OpenAPIHono();
   app.get('/health', (c) => c.text('ok'));
   app.route('/api/v1/auth', authRouter);
   app.route('/api/v1/managed', managedRouter);
   app.route('/api/v1/webhook', webhookRouter);
+  app.route('/api/v1/webhook', bikeParkingRouter);
 
   // 既存.NET側 Program.cs の `if (app.Environment.IsDevelopment())` と同じ考え方。
   // /doc・/ui は本番でAPI仕様を外部に露出させないため、本番では登録しない。

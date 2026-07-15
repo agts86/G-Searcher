@@ -1,0 +1,81 @@
+import * as cheerio from 'cheerio';
+import type { Element } from 'domhandler';
+import type { HttpAdapter } from './http-adapter.js';
+import type { BikeParkingClient, BikeParkingLocation, BikeParkingSpot } from '@api/features-webhook';
+
+const JMPSA_BASE_URL = 'https://www.jmpsa.or.jp/society/parking';
+const LIST_ITEM_SELECTOR = '.p-parking-prefecture-list-item';
+// 車両フィルタ(qr[])は3種すべて対象固定。maplist.phpのvs相当（記載なし対象外・予約制除く）の
+// 絞り込みはsearch.php/location.phpのフォーム自体には存在しないため、初回結果はサイト既定のまま返す。
+const VEHICLE_TYPES = ['1', '1', '1'];
+
+function buildUrl(location: BikeParkingLocation): string {
+  if ('lat' in location) {
+    const params = new URLSearchParams({ lng: String(location.lng), lat: String(location.lat) });
+    return `${JMPSA_BASE_URL}/location.php?${params.toString()}`;
+  }
+
+  const params = new URLSearchParams();
+  for (const type of VEHICLE_TYPES) {
+    params.append('qr[]', type);
+  }
+  params.append('q', location.query);
+  params.append('p_pref', '');
+  params.append('p_sect', '');
+  return `${JMPSA_BASE_URL}/search.php?${params.toString()}`;
+}
+
+/** Google Maps embed iframeのsrc（`q=<lat>,<lng>`）から座標を取り出す。iframeが無い項目はnullにする */
+function parseCoordinates(iframeSrc: string): { lat: number | null; lng: number | null } {
+  const match = /[?&]q=(-?[\d.]+),(-?[\d.]+)/.exec(iframeSrc);
+  if (!match) {
+    return { lat: null, lng: null };
+  }
+  return { lat: Number(match[1]), lng: Number(match[2]) };
+}
+
+function findTableValue($: cheerio.CheerioAPI, item: Element, label: string): string | null {
+  let value: string | null = null;
+  $(item)
+    .find('.p-parking-prefecture-table-txt-box')
+    .each((_, box) => {
+      const $box = $(box);
+      if ($box.find('.p-parking-prefecture-table-ttl').text().trim() === label) {
+        value = $box.find('.p-parking-prefecture-table-txt').text().trim();
+      }
+    });
+  return value;
+}
+
+function toSpot($: cheerio.CheerioAPI, item: Element): BikeParkingSpot {
+  const $item = $(item);
+  const anchor = $item.find('.p-parking-prefecture-map-ttl a');
+  anchor.find('.m-arrow').remove();
+  const iframeSrc = $item.find('.p-parking-prefecture-map-iframe iframe').attr('src') ?? '';
+
+  return {
+    name: anchor.text().trim(),
+    detailUrl: anchor.attr('href') ?? '',
+    address: $item.find('.p-parking-prefecture-map-txt').text().trim(),
+    holiday: findTableValue($, item, '定休日'),
+    fee: findTableValue($, item, '料金'),
+    ...parseCoordinates(iframeSrc),
+  };
+}
+
+/**
+ * jmpsa.or.jp（全国バイク駐車場・駐輪場案内）のfetch＋HTMLパースベース実装。
+ * location.php/search.phpはHTML断片ではなくページ全体を返すが、駐車場一覧部分
+ * （`.p-parking-prefecture-list-item`）だけをcheerioで抽出する。
+ */
+export class BikeParkingClientImpl implements BikeParkingClient {
+  constructor(private readonly httpAdapter: HttpAdapter) {}
+
+  async search(location: BikeParkingLocation): Promise<BikeParkingSpot[]> {
+    const html = await this.httpAdapter.getText(buildUrl(location));
+    const $ = cheerio.load(html);
+    return $(LIST_ITEM_SELECTOR)
+      .map((_, item) => toSpot($, item))
+      .get();
+  }
+}

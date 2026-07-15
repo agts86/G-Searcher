@@ -52,4 +52,16 @@ describe('createApp() 経由でマウントしたWebhookルート', () => {
 
     expect(res.status).toBe(401);
   });
+
+  it('x-line-signatureヘッダーが無いまま POST /api/v1/webhook/parking を叩くと401を返す', async () => {
+    const app = createApp();
+
+    const res = await app.request('/api/v1/webhook/parking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ destination: 'U123', events: [] }),
+    });
+
+    expect(res.status).toBe(401);
+  });
 });

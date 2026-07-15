@@ -5,30 +5,43 @@
  */
 export class HttpAdapter {
   async get<T>(url: string, headers?: Record<string, string>): Promise<T> {
-    return this.send<T>(url, { method: 'GET', headers });
+    return this.send<T>(url, { method: 'GET', headers }, (res) => res.json() as Promise<T>);
+  }
+
+  /** JSONではなくHTML/プレーンテキストを返すエンドポイント向け（外部サイトのHTML断片取得等） */
+  async getText(url: string, headers?: Record<string, string>): Promise<string> {
+    return this.send<string>(url, { method: 'GET', headers }, (res) => res.text());
   }
 
   async post<T, TBody>(url: string, body: TBody, headers?: Record<string, string>): Promise<T> {
-    return this.send<T>(url, {
-      method: 'POST',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    return this.send<T>(
+      url,
+      {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      },
+      (res) => res.json() as Promise<T>,
+    );
   }
 
   async put<T, TBody>(url: string, body: TBody, headers?: Record<string, string>): Promise<T> {
-    return this.send<T>(url, {
-      method: 'PUT',
-      headers: { ...headers, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    return this.send<T>(
+      url,
+      {
+        method: 'PUT',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      },
+      (res) => res.json() as Promise<T>,
+    );
   }
 
   async delete<T>(url: string, headers?: Record<string, string>): Promise<T> {
-    return this.send<T>(url, { method: 'DELETE', headers });
+    return this.send<T>(url, { method: 'DELETE', headers }, (res) => res.json() as Promise<T>);
   }
 
-  private async send<T>(url: string, init: RequestInit): Promise<T> {
+  private async send<T>(url: string, init: RequestInit, parse: (res: Response) => Promise<T>): Promise<T> {
     const res = await fetch(url, init);
     if (!res.ok) {
       const errorBody = await res.text();
@@ -36,6 +49,6 @@ export class HttpAdapter {
         `Request failed: ${res.status} ${res.statusText}\nRequest: ${init.method ?? 'GET'} ${url}\nResponse: ${errorBody}`,
       );
     }
-    return (await res.json()) as T;
+    return parse(res);
   }
 }

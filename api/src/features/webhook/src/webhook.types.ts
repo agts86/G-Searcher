@@ -52,3 +52,9 @@ export interface LocalJobResult {
   isSuccess: boolean;
   errorMessage: string | null;
 }
+
+/** バイク駐車場検索版のイベント結果（DB永続化しないためmetaは持たない） */
+export interface BikeParkingEventResult {
+  reply: LocalReply;
+  isReplySucceeded: boolean;
+}

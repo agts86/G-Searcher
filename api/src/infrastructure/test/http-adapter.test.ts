@@ -41,6 +41,44 @@ describe('HttpAdapter.get', () => {
   });
 });
 
+describe('HttpAdapter.getText', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('成功時はレスポンスボディを文字列のまま返す', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('<li>hello</li>', { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const adapter = new HttpAdapter();
+
+    const result = await adapter.getText('https://example.com/page.php');
+
+    expect(result).toBe('<li>hello</li>');
+    expect(fetchMock).toHaveBeenCalledWith('https://example.com/page.php', expect.objectContaining({ method: 'GET' }));
+  });
+
+  it('失敗時はステータスコードとレスポンス内容を含むエラーを投げる', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('boom', { status: 500, statusText: 'Internal Server Error' }));
+    vi.stubGlobal('fetch', fetchMock);
+    const adapter = new HttpAdapter();
+
+    await expect(adapter.getText('https://example.com/page.php')).rejects.toThrow(/500/);
+  });
+
+  it('headersを指定できる', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('ok', { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const adapter = new HttpAdapter();
+
+    await adapter.getText('https://example.com/page.php', { Authorization: 'Bearer token' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://example.com/page.php',
+      expect.objectContaining({ headers: { Authorization: 'Bearer token' } }),
+    );
+  });
+});
+
 describe('HttpAdapter.post', () => {
   afterEach(() => {
     vi.unstubAllGlobals();

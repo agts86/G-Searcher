@@ -32,3 +32,10 @@ const LocalEventResultSchema = z.object({
 });
 
 export const LocalReplyResponseSchema = z.array(LocalEventResultSchema).openapi('LocalReplyResponse');
+
+const BikeParkingEventResultSchema = z.object({
+  reply: z.object({ replyToken: z.string(), messages: z.array(z.unknown()) }),
+  isReplySucceeded: z.boolean(),
+});
+
+export const BikeParkingReplyResponseSchema = z.array(BikeParkingEventResultSchema).openapi('BikeParkingReplyResponse');

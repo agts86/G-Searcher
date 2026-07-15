@@ -1,0 +1,125 @@
+import type { webhook, messagingApi } from '@line/bot-sdk';
+import type { BikeParkingClient, BikeParkingLocation, BikeParkingSpot } from './bike-parking-client.js';
+import type { LineReplyClient, CarouselColumn } from './line-reply-client.js';
+import type { BikeParkingEventResult } from './webhook.types.js';
+
+export const NOT_FOUND_TEXT = 'ごめんなさい。。見つかりませんでした。。';
+const NOT_FOUND_ALT_TEXT = '検索結果';
+const DETAIL_LABEL = '詳細を見る';
+const MAX_CAROUSEL_COLUMNS = 10;
+const JMPSA_ORIGIN = 'https://www.jmpsa.or.jp';
+// 全角スペース(U+3000)を検出する。リテラル文字だとESLintのno-irregular-whitespaceに
+// 引っかかるためコードポイント(0x3000)から動的に生成する。
+const FULL_WIDTH_SPACE = new RegExp(String.fromCharCode(0x3000), 'g');
+
+function isMessageEvent(event: webhook.Event): event is webhook.MessageEvent {
+  return event.type === 'message';
+}
+
+function toSearchLocation(message: webhook.MessageContent): BikeParkingLocation | null {
+  if (message.type === 'text') {
+    return { query: message.text.replace(FULL_WIDTH_SPACE, ' ') };
+  }
+  if (message.type === 'location') {
+    return { lat: message.latitude, lng: message.longitude };
+  }
+  return null;
+}
+
+function toDetailUrl(detailUrl: string): string {
+  return `${JMPSA_ORIGIN}${detailUrl}`;
+}
+
+function toCarouselText(spot: BikeParkingSpot): string {
+  return [spot.address, spot.fee].filter((line): line is string => Boolean(line)).join('\n');
+}
+
+function dedupeAndCap(spots: BikeParkingSpot[]): BikeParkingSpot[] {
+  const seen = new Set<string>();
+  const result: BikeParkingSpot[] = [];
+  for (const spot of spots) {
+    // detailUrlが無いとLINEのuri actionが不正になりカラム全体が拒否されるため、
+    // 詳細URLを提示できない結果はカルーセルに含めない。
+    if (!spot.detailUrl) continue;
+    if (seen.has(spot.detailUrl)) continue;
+    seen.add(spot.detailUrl);
+    result.push(spot);
+    if (result.length >= MAX_CAROUSEL_COLUMNS) break;
+  }
+  return result;
+}
+
+function toCarouselColumns(spots: BikeParkingSpot[]): CarouselColumn[] {
+  return dedupeAndCap(spots).map((s) => ({
+    title: s.name,
+    text: toCarouselText(s),
+    detailUrl: toDetailUrl(s.detailUrl),
+  }));
+}
+
+function buildMessages(spots: BikeParkingSpot[]): unknown[] {
+  const columns = toCarouselColumns(spots);
+  if (columns.length === 0) {
+    const textMessage: messagingApi.TextMessage = { type: 'text', text: NOT_FOUND_TEXT };
+    return [textMessage];
+  }
+
+  const templateMessage: messagingApi.TemplateMessage = {
+    type: 'template',
+    altText: NOT_FOUND_ALT_TEXT,
+    template: {
+      type: 'carousel',
+      columns: columns.map((column) => ({
+        title: column.title,
+        text: column.text,
+        actions: [{ type: 'uri', label: DETAIL_LABEL, uri: column.detailUrl }],
+      })),
+    },
+  };
+  return [templateMessage];
+}
+
+/** jmpsa.or.jp（全国バイク駐車場・駐輪場案内）を使ったバイク駐車場検索版のLineReplyService相当 */
+export class BikeParkingReplyService {
+  constructor(
+    private readonly bikeParkingClient: BikeParkingClient,
+    private readonly lineReplyClient: LineReplyClient,
+    private readonly skipLineApiCall: boolean,
+  ) {}
+
+  processEvent = async (event: webhook.Event): Promise<BikeParkingEventResult | null> => {
+    if (!isMessageEvent(event) || !event.replyToken) {
+      return null;
+    }
+
+    const location = toSearchLocation(event.message);
+    if (!location) {
+      return null;
+    }
+
+    const spots = await this.bikeParkingClient.search(location);
+    const messages = buildMessages(spots);
+    const isReplySucceeded = await this.reply(event.replyToken, messages);
+
+    return { reply: { replyToken: event.replyToken, messages }, isReplySucceeded };
+  };
+
+  async processEvents(webhookBody: webhook.CallbackRequest): Promise<BikeParkingEventResult[]> {
+    const results: BikeParkingEventResult[] = [];
+    for (const event of webhookBody.events) {
+      const result = await this.processEvent(event);
+      if (result) {
+        results.push(result);
+      }
+    }
+    return results;
+  }
+
+  private async reply(replyToken: string, messages: unknown[]): Promise<boolean> {
+    if (this.skipLineApiCall) {
+      return true;
+    }
+
+    return this.lineReplyClient.send(replyToken, messages);
+  }
+}
