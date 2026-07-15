@@ -107,7 +107,7 @@ describe('BikeParkingReplyService.processEvent', () => {
           columns: [
             {
               title: '駐車場A',
-              text: '駐車場Aの住所\n駐車場Aの料金',
+              text: '駐車場Aの料金',
               actions: [
                 { type: 'uri', label: '詳細を見る', uri: 'https://www.jmpsa.or.jp/society/parking/area13/p-1.html' },
               ],
@@ -143,6 +143,78 @@ describe('BikeParkingReplyService.processEvent', () => {
     const [templateMessage] = messages as [{ template: { columns: { title: string }[] } }];
     expect(templateMessage.template.columns).toHaveLength(10);
     expect(templateMessage.template.columns[0].title).toBe('駐車場A-1');
+  });
+
+  it('textには住所ではなく料金を表示する', async () => {
+    const longAddressSpot: BikeParkingSpot = {
+      name: '駐車場A',
+      address: 'あ'.repeat(30),
+      fee: '15分40円 当日最大400円',
+      holiday: null,
+      detailUrl: '/society/parking/area13/p-1.html',
+      lat: null,
+      lng: null,
+    };
+    const { service, lineReplyClient } = buildService({ searchResults: [longAddressSpot] });
+
+    await service.processEvent(textMessageEvent('スカイツリー'));
+
+    const [, messages] = vi.mocked(lineReplyClient.send).mock.calls[0];
+    const [templateMessage] = messages as [{ template: { columns: { text: string }[] } }];
+    expect(templateMessage.template.columns[0].text).toBe('15分40円 当日最大400円');
+  });
+
+  it('料金が無い場合はtextが空文字になる', async () => {
+    const noFeeSpot: BikeParkingSpot = {
+      name: '駐車場A',
+      address: '住所',
+      fee: null,
+      holiday: null,
+      detailUrl: '/society/parking/area13/p-1.html',
+      lat: null,
+      lng: null,
+    };
+    const { service, lineReplyClient } = buildService({ searchResults: [noFeeSpot] });
+
+    await service.processEvent(textMessageEvent('スカイツリー'));
+
+    const [, messages] = vi.mocked(lineReplyClient.send).mock.calls[0];
+    const [templateMessage] = messages as [{ template: { columns: { text: string }[] } }];
+    expect(templateMessage.template.columns[0].text).toBe('');
+  });
+
+  it('textが60文字を超える場合は59文字+省略記号(60文字)に切り詰める（LINE Carousel Column textの上限）', async () => {
+    const longFeeSpot: BikeParkingSpot = {
+      name: '駐車場A',
+      address: 'あ'.repeat(30),
+      fee: 'い'.repeat(61),
+      holiday: null,
+      detailUrl: '/society/parking/area13/p-1.html',
+      lat: null,
+      lng: null,
+    };
+    const { service, lineReplyClient } = buildService({ searchResults: [longFeeSpot] });
+
+    await service.processEvent(textMessageEvent('スカイツリー'));
+
+    const [, messages] = vi.mocked(lineReplyClient.send).mock.calls[0];
+    const [templateMessage] = messages as [{ template: { columns: { text: string }[] } }];
+    const text = templateMessage.template.columns[0].text;
+    expect(text).toBe(`${'い'.repeat(59)}…`);
+    expect(text).toHaveLength(60);
+  });
+
+  it('titleが40文字を超える場合は39文字+省略記号(40文字)に切り詰める（LINE Carousel Column titleの上限）', async () => {
+    const longNameSpot = spot('/society/parking/area13/p-1.html', 'あ'.repeat(50));
+    const { service, lineReplyClient } = buildService({ searchResults: [longNameSpot] });
+
+    await service.processEvent(textMessageEvent('スカイツリー'));
+
+    const [, messages] = vi.mocked(lineReplyClient.send).mock.calls[0];
+    const [templateMessage] = messages as [{ template: { columns: { title: string }[] } }];
+    const title = templateMessage.template.columns[0].title;
+    expect(title).toBe(`${'あ'.repeat(39)}…`);
+    expect(title).toHaveLength(40);
   });
 
   it('isReplySucceededは返信結果を反映する', async () => {

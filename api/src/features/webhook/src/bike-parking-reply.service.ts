@@ -8,6 +8,9 @@ const NOT_FOUND_ALT_TEXT = '検索結果';
 const DETAIL_LABEL = '詳細を見る';
 const MAX_CAROUSEL_COLUMNS = 10;
 const JMPSA_ORIGIN = 'https://www.jmpsa.or.jp';
+// LINE Messaging API Carousel Column の上限（超過するとreplyMessage自体が400で拒否される）。
+const CAROUSEL_TITLE_MAX_LENGTH = 40;
+const CAROUSEL_TEXT_MAX_LENGTH = 60;
 // 全角スペース(U+3000)を検出する。リテラル文字だとESLintのno-irregular-whitespaceに
 // 引っかかるためコードポイント(0x3000)から動的に生成する。
 const FULL_WIDTH_SPACE = new RegExp(String.fromCharCode(0x3000), 'g');
@@ -30,8 +33,15 @@ function toDetailUrl(detailUrl: string): string {
   return `${JMPSA_ORIGIN}${detailUrl}`;
 }
 
+function truncate(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return `${text.slice(0, maxLength - 1)}…`;
+}
+
 function toCarouselText(spot: BikeParkingSpot): string {
-  return [spot.address, spot.fee].filter((line): line is string => Boolean(line)).join('\n');
+  return truncate(spot.fee ?? '', CAROUSEL_TEXT_MAX_LENGTH);
 }
 
 function dedupeAndCap(spots: BikeParkingSpot[]): BikeParkingSpot[] {
@@ -51,7 +61,7 @@ function dedupeAndCap(spots: BikeParkingSpot[]): BikeParkingSpot[] {
 
 function toCarouselColumns(spots: BikeParkingSpot[]): CarouselColumn[] {
   return dedupeAndCap(spots).map((s) => ({
-    title: s.name,
+    title: truncate(s.name, CAROUSEL_TITLE_MAX_LENGTH),
     text: toCarouselText(s),
     detailUrl: toDetailUrl(s.detailUrl),
   }));
