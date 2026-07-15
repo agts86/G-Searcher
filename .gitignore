@@ -394,3 +394,5 @@ CLAUDE.local.md
 dist/
 **/dist/
 *.tsbuildinfo
+
+.playwright-mcp/
