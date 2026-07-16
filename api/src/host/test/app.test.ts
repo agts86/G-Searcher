@@ -11,6 +11,8 @@ beforeAll(() => {
   process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/postgres?schema=public&sslmode=disable';
   process.env.LINE_CHANNEL_SECRET = 'test-line-channel-secret';
   process.env.LINE_CHANNEL_ACCESS_TOKEN = 'test-line-channel-access-token';
+  process.env.BIKE_PARKING_LINE_CHANNEL_SECRET = 'test-bike-parking-line-channel-secret';
+  process.env.BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN = 'test-bike-parking-line-channel-access-token';
   process.env.YAHOO_APP_ID = 'test-yahoo-app-id';
 });
 

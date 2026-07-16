@@ -79,9 +79,15 @@ export function createApp() {
   const webhookRouter = createWebhookRouter(webhookService, requireEnv('LINE_CHANNEL_SECRET'), verifyLineSignature);
 
   // 全国バイク駐車場案内(jmpsa.or.jp)検索版。DB永続化は行わずLINE返信のみ同期的に行う。
+  // グルメ検索とは別のLINEチャンネルで運用するためChannel Secret / Access Tokenを分離する。
   const bikeParkingClient = new BikeParkingClientImpl(httpAdapter);
-  const bikeParkingReplyService = new BikeParkingReplyService(bikeParkingClient, lineReplyClient, skipLineApiCall);
-  const bikeParkingRouter = createBikeParkingRouter(bikeParkingReplyService, requireEnv('LINE_CHANNEL_SECRET'), verifyLineSignature);
+  const bikeParkingLineReplyClient = new LineReplyClientImpl(requireEnv('BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN'));
+  const bikeParkingReplyService = new BikeParkingReplyService(bikeParkingClient, bikeParkingLineReplyClient, skipLineApiCall);
+  const bikeParkingRouter = createBikeParkingRouter(
+    bikeParkingReplyService,
+    requireEnv('BIKE_PARKING_LINE_CHANNEL_SECRET'),
+    verifyLineSignature,
+  );
 
   const app = new OpenAPIHono();
   app.get('/health', (c) => c.text('ok'));
