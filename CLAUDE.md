@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 このファイルはリポジトリ全体の共通ルールを定義する。
-`api/` 配下の作業では [api/CLAUDE.md](api/CLAUDE.md)、`ui/` 配下では [ui/CLAUDE.md](ui/CLAUDE.md) も参照すること。
+`server/` 配下の作業では [server/CLAUDE.md](server/CLAUDE.md)、`web/` 配下では [web/CLAUDE.md](web/CLAUDE.md) も参照すること。
 
 ## プロジェクト概要
 
@@ -13,9 +13,9 @@ API はもともと C#/ASP.NET Core で実装されていたが、TypeScript(Hon
 
 ### 技術スタック
 
-- **API**: TypeScript / Hono / Prisma / PostgreSQL（pnpm workspace モノレポ、`api/`）
-- **UI**: TypeScript / Next.js (`output: 'export'` で静的出力 → CSR SPA)
-- **デプロイ**: Docker multi-stage build によるコンテナイメージ（API + UI を単一コンテナで配信）。**メイン経路は Vercel**（Framework Preset: Container、`vercel.json` の `services` フィールドでコンテナサービスとして明示宣言し、ルート直下の `api/` が Vercel の zero-config Functions 規約と衝突するのを回避している）。GHCR → Azure Web App 経路も別途稼働中
+- **API**: TypeScript / Hono / Prisma / PostgreSQL（pnpm workspace モノレポ、`server/`）
+- **UI**: TypeScript / Next.js (`output: 'export'` で静的出力 → CSR SPA、`web/`)
+- **デプロイ**: Docker multi-stage build によるコンテナイメージ（API + UI を単一コンテナで配信）。**メイン経路は Vercel**（Framework Preset: Container、`vercel.json` の `services` フィールドでコンテナサービスとして明示宣言。バックエンドのディレクトリ名は`api/`ではなく`server/`としており、Vercel の zero-config Functions 規約（ルート直下`api/`の自動検出）との衝突を避けている）。GHCR → Azure Web App 経路も別途稼働中
 - **外部連携**: LINE Messaging API, Yahoo!ローカルサーチ API (YOLP)
 - **cron**: Cloudflare Workers（`cron-worker/CloudFlare`、ヘルスチェック）
 
@@ -27,11 +27,11 @@ API はもともと C#/ASP.NET Core で実装されていたが、TypeScript(Hon
 
 | パッケージ | 役割 | 参照先 |
 |---|---|---|
-| `api/src/host` | Hono app組み立て / DI配線 / 起動設定 | Features, Infrastructure |
-| `api/src/features/*` | Feature単位の Router / Service / DTO（auth, managed, webhook） | Tables, Shared, 同一Feature内 |
-| `api/src/tables` | Prisma スキーマ | Shared |
-| `api/src/shared` | 共通 Validation / Utility / Interface | なし（最内層） |
-| `api/src/infrastructure` | Repository 実装 / Prisma Client / 外部APIクライアント | Tables, Features, Shared |
+| `server/src/host` | Hono app組み立て / DI配線 / 起動設定 | Features, Infrastructure |
+| `server/src/features/*` | Feature単位の Router / Service / DTO（auth, managed, webhook） | Tables, Shared, 同一Feature内 |
+| `server/src/tables` | Prisma スキーマ | Shared |
+| `server/src/shared` | 共通 Validation / Utility / Interface | なし（最内層） |
+| `server/src/infrastructure` | Repository 実装 / Prisma Client / 外部APIクライアント | Tables, Features, Shared |
 
 pnpmの非hoisted node_modulesとeslint-plugin-boundariesで、この参照方向を物理的・lintレベルの両方で強制している。
 
@@ -48,10 +48,10 @@ Access Token 15分 + Refresh Token 7日（DB 管理）。UI は有効期限5分�
 
 ## コマンド
 
-### API（api）
+### API（server）
 
 ```bash
-cd api
+cd server
 pnpm -r build   # 全パッケージビルド（型チェック含む）
 pnpm -r lint    # ESLint（全パッケージ）
 pnpm -r test    # テスト全件（vitest）
@@ -61,10 +61,10 @@ pnpm --filter @api/<package-name> test  # パッケージ個別（例: @api/feat
 pnpm --filter @api/tables exec prisma db push
 ```
 
-### UI
+### UI（web）
 
 ```bash
-cd ui
+cd web
 pnpm lint       # ESLint
 pnpm build      # 静的出力（out/）
 pnpm test       # Jest
@@ -74,14 +74,14 @@ pnpm test       # Jest
 
 ```bash
 docker compose build
-docker compose up -d    # postgres:5432, api:3001, ui:3000
+docker compose up -d    # postgres:5432, server:3001, web:3000
 docker compose down
 ```
 
 ## 適用範囲と優先順位
 
 - ルート `CLAUDE.md` は全体ルール
-- `api/CLAUDE.md` / `ui/CLAUDE.md` は各サブディレクトリでこのファイルより優先
+- `server/CLAUDE.md` / `web/CLAUDE.md` は各サブディレクトリでこのファイルより優先
 - 競合時は「より深い階層」のルールを優先
 
 ## 共通ルール

@@ -1,8 +1,8 @@
 services:
-  ui:
-    container_name: ui
+  web:
+    container_name: web
     build:
-      context: ./ui
+      context: ./web
       dockerfile: dockerfile.dev
     working_dir: /app
     command: >
@@ -15,15 +15,15 @@ services:
       - API_BASE_URL=http://localhost:3001
     network_mode: "host"
     volumes:
-      - ./ui:/app
-      - ui_node_modules:/app/node_modules
+      - ./web:/app
+      - web_node_modules:/app/node_modules
     depends_on:
-      - api
+      - server
 
-  api:
-    container_name: api
+  server:
+    container_name: server
     build:
-      context: ./api
+      context: ./server
       dockerfile: Dockerfile.dev
     working_dir: /app/src/host
     command: >
@@ -35,10 +35,10 @@ services:
       - TZ=Asia/Tokyo
       - NODE_ENV=development
     env_file:
-      - ./api/src/host/.env
+      - ./server/src/host/.env
     network_mode: "host"
     volumes:
-      - ./api:/app
+      - ./server:/app
     depends_on:
       - postgres
 
@@ -57,4 +57,4 @@ services:
 
 volumes:
   postgres_data:
-  ui_node_modules:
+  web_node_modules:

@@ -8,8 +8,8 @@ on:
     branches:
       - develop
     paths:
-      - 'api/**'
-      - 'ui/**'
+      - 'server/**'
+      - 'web/**'
       - 'Dockerfile'
       - '.github/workflows/ContainerDeploy.yml'
   workflow_dispatch:

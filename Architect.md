@@ -8,7 +8,7 @@ graph TD
     Admin["管理者ユーザー（Browser）"]
     LineAPI["LINE Messaging API"]
     Ui["UI（Next.js export）<br/>wwwroot で静的配信"]
-    Api["api<br/>Hono (Node.js) / Prisma"]
+    Api["server<br/>Hono (Node.js) / Prisma"]
     Yahoo["Yahoo!ローカルサーチ API (YOLP)"]
     DB["PostgreSQL"]
     Worker["Cloudflare Workers<br/>cron-worker/CloudFlare"]
@@ -25,7 +25,7 @@ graph TD
     Worker -->|GET /health| Api
 ```
 
-## 2. API 内部（Dependency、`api/`）
+## 2. API 内部（Dependency、`server/`）
 
 ```mermaid
 graph LR
@@ -106,7 +106,7 @@ graph LR
       Client["api/client (401時はauth refresh再試行)"]
     end
 
-    Api["api"]
+    Api["server"]
 
     Login --> UseAuth
     Dashboard --> UseAuth
@@ -129,5 +129,5 @@ graph LR
 ```
 
 注記:
-- `Dockerfile` は multi-stage build で `ui` と `api` をビルドし、`ui/out` を api コンテナの `wwwroot` に、`api` 一式（node_modules込み）を同梱します。実行は `tsx` で `src/host/src/main.ts` を直接起動します。
+- `Dockerfile` は multi-stage build で `web` と `server` をビルドし、`web/out` を server コンテナの `wwwroot` に、`server` 一式（node_modules込み）を同梱します。実行は `tsx` で `src/host/src/main.ts` を直接起動します。
 - 認証は `Access Token + Refresh Token` を利用し、`RefreshToken` は DB で管理します。

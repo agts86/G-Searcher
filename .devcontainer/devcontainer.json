@@ -4,7 +4,7 @@
     "../docker-compose.yml",
     "docker-compose.devcontainer.yml"
   ],
-  "service": "api",
+  "service": "server",
   "workspaceFolder": "/workspaces/LineWebHookAPI",
   "remoteUser": "root",
   "forwardPorts": [3000, 3001, 5432],
@@ -18,5 +18,5 @@
       ]
     }
   },
-  "postCreateCommand": "cd /workspaces/LineWebHookAPI/api && pnpm install --store-dir /tmp/pnpm-store && pnpm --filter @api/tables exec prisma generate"
+  "postCreateCommand": "cd /workspaces/LineWebHookAPI/server && pnpm install --store-dir /tmp/pnpm-store && pnpm --filter @api/tables exec prisma generate"
 }

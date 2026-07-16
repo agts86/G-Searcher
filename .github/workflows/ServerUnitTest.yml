@@ -1,16 +1,16 @@
-name: ApiUnitTest
+name: ServerUnitTest
 
 on:
   push:
     branches: [ "develop" ]
     paths:
-      - 'api/**'
-      - '.github/workflows/ApiUniTest.yml'
+      - 'server/**'
+      - '.github/workflows/ServerUnitTest.yml'
   pull_request:
     branches: [ "develop" ]
     paths:
-      - 'api/**'
-      - '.github/workflows/ApiUniTest.yml'
+      - 'server/**'
+      - '.github/workflows/ServerUnitTest.yml'
 
 jobs:
   test:
@@ -50,28 +50,28 @@ jobs:
       with:
         node-version: 24
         cache: pnpm
-        cache-dependency-path: api/pnpm-lock.yaml
+        cache-dependency-path: server/pnpm-lock.yaml
 
     - name: Install dependencies
-      working-directory: api
+      working-directory: server
       run: pnpm install --frozen-lockfile
 
     - name: Sync DB schema
       # prisma migrateは使わない（EF Coreがスキーマの記録上の所有者のため）。
       # schema.prismaの内容をそのままCI用の使い捨てDBへ反映するだけのdb pushを使う。
-      working-directory: api
+      working-directory: server
       run: pnpm --filter @api/tables exec prisma db push --skip-generate
 
     - name: Build
-      working-directory: api
+      working-directory: server
       run: pnpm -r build
 
     - name: Lint
-      working-directory: api
+      working-directory: server
       run: pnpm -r lint
 
     - name: Test with coverage
-      working-directory: api
+      working-directory: server
       # GitHub ActionsはCI=trueを自動設定するため、素のままだとvitestが
       # ANSIカラーコードを強制出力し、tee先のログ→job summaryが文字化けする。
       # NO_COLOR=1でそれを抑止する。
@@ -89,7 +89,7 @@ jobs:
       with:
         name: 'shared'
         comment-on: 'none'
-        json-summary-path: 'api/src/shared/coverage/coverage-summary.json'
+        json-summary-path: 'server/src/shared/coverage/coverage-summary.json'
 
     - name: Report Coverage - tables
       uses: davelosert/vitest-coverage-report-action@v2
@@ -97,7 +97,7 @@ jobs:
       with:
         name: 'tables'
         comment-on: 'none'
-        json-summary-path: 'api/src/tables/coverage/coverage-summary.json'
+        json-summary-path: 'server/src/tables/coverage/coverage-summary.json'
 
     - name: Report Coverage - features/auth
       uses: davelosert/vitest-coverage-report-action@v2
@@ -105,7 +105,7 @@ jobs:
       with:
         name: 'features/auth'
         comment-on: 'none'
-        json-summary-path: 'api/src/features/auth/coverage/coverage-summary.json'
+        json-summary-path: 'server/src/features/auth/coverage/coverage-summary.json'
 
     - name: Report Coverage - features/managed
       uses: davelosert/vitest-coverage-report-action@v2
@@ -113,7 +113,7 @@ jobs:
       with:
         name: 'features/managed'
         comment-on: 'none'
-        json-summary-path: 'api/src/features/managed/coverage/coverage-summary.json'
+        json-summary-path: 'server/src/features/managed/coverage/coverage-summary.json'
 
     - name: Report Coverage - features/webhook
       uses: davelosert/vitest-coverage-report-action@v2
@@ -121,7 +121,7 @@ jobs:
       with:
         name: 'features/webhook'
         comment-on: 'none'
-        json-summary-path: 'api/src/features/webhook/coverage/coverage-summary.json'
+        json-summary-path: 'server/src/features/webhook/coverage/coverage-summary.json'
 
     - name: Report Coverage - infrastructure
       uses: davelosert/vitest-coverage-report-action@v2
@@ -129,7 +129,7 @@ jobs:
       with:
         name: 'infrastructure'
         comment-on: 'none'
-        json-summary-path: 'api/src/infrastructure/coverage/coverage-summary.json'
+        json-summary-path: 'server/src/infrastructure/coverage/coverage-summary.json'
 
     - name: Report Coverage - host
       uses: davelosert/vitest-coverage-report-action@v2
@@ -137,4 +137,4 @@ jobs:
       with:
         name: 'host'
         comment-on: 'none'
-        json-summary-path: 'api/src/host/coverage/coverage-summary.json'
+        json-summary-path: 'server/src/host/coverage/coverage-summary.json'

@@ -2,13 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ui: Next.js dev",
+            "name": "web: Next.js dev",
             "type": "node",
             "request": "launch",
-            "preLaunchTask": "prepare-ui-next-cache",
-            "program": "${workspaceFolder}/ui/node_modules/next/dist/bin/next",
+            "preLaunchTask": "prepare-web-next-cache",
+            "program": "${workspaceFolder}/web/node_modules/next/dist/bin/next",
             "args": ["dev"],
-            "cwd": "${workspaceFolder}/ui",
+            "cwd": "${workspaceFolder}/web",
             "runtimeExecutable": "node",
             "serverReadyAction": {
                 "action": "openExternally",
@@ -19,14 +19,14 @@
             "skipFiles": ["<node_internals>/**"]
         },
         {
-            "name": "api: host dev",
+            "name": "server: host dev",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "${workspaceFolder}/api/src/host/node_modules/.bin/tsx",
+            "runtimeExecutable": "${workspaceFolder}/server/src/host/node_modules/.bin/tsx",
             "runtimeArgs": ["watch", "--inspect"],
-            "program": "${workspaceFolder}/api/src/host/src/main.ts",
-            "cwd": "${workspaceFolder}/api/src/host",
-            "envFile": "${workspaceFolder}/api/src/host/.env",
+            "program": "${workspaceFolder}/server/src/host/src/main.ts",
+            "cwd": "${workspaceFolder}/server/src/host",
+            "envFile": "${workspaceFolder}/server/src/host/.env",
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "listening on\\s+(https?://\\S+)",
@@ -38,10 +38,10 @@
     ],
     "compounds": [
         {
-            "name": "ui + API: 同時起動",
+            "name": "web + server: 同時起動",
             "configurations": [
-                "api: host dev",
-                "ui: Next.js dev"
+                "server: host dev",
+                "web: Next.js dev"
             ]
         }
     ]

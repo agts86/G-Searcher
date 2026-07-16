@@ -1,24 +1,24 @@
-# ui ビルド
-FROM node:24-bookworm-slim AS ui-build
-WORKDIR /src/ui
+# web ビルド
+FROM node:24-bookworm-slim AS web-build
+WORKDIR /src/web
 ENV PNPM_HOME=/pnpm
 ENV PATH=${PNPM_HOME}:${PATH}
 RUN corepack enable && corepack prepare pnpm@10.26.0 --activate
-COPY ui/package.json ui/pnpm-lock.yaml ./
+COPY web/package.json web/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
-COPY ui/ ./
+COPY web/ ./
 RUN pnpm build
 
-# api ビルド
-FROM node:24-bookworm-slim AS api-build
-WORKDIR /app/api
+# server ビルド
+FROM node:24-bookworm-slim AS server-build
+WORKDIR /app/server
 ENV PNPM_HOME=/pnpm
 ENV PATH=${PNPM_HOME}:${PATH}
 RUN apt-get update \
     && apt-get install -y --no-install-recommends openssl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@10.26.0 --activate
-COPY api/ ./
+COPY server/ ./
 RUN pnpm install --frozen-lockfile
 # pnpm -r build は全パッケージのtscを通す型チェックの安全弁（実行時はtsxで生ソースを直接動かすためdist自体は使わない）。
 # tables の build スクリプト内で prisma generate も実行されるが、明示のため個別にも実行しておく。
@@ -27,13 +27,13 @@ RUN pnpm --filter @api/tables exec prisma generate
 
 # 実行環境
 FROM node:24-bookworm-slim AS final
-WORKDIR /app/api/src/host
+WORKDIR /app/server/src/host
 RUN apt-get update \
     && apt-get install -y --no-install-recommends openssl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production
-COPY --from=api-build /app/api /app/api
-COPY --from=ui-build /src/ui/out ./wwwroot
+COPY --from=server-build /app/server /app/server
+COPY --from=web-build /src/web/out ./wwwroot
 
 # main.ts が process.env.PORT を実行時に直接読むため、.NET版のようなシェル経由の
 # 変数埋め込みは不要（Vercelが注入するPORTをそのまま拾う。未指定時はmain.ts側の既定3000）。

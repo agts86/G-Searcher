@@ -1,12 +1,12 @@
-# api 設計原則・コーディング規約指示書
+# server 設計原則・コーディング規約指示書
 
 ## 1. 目的
 
-このドキュメントは `api/` 配下の実装ルールを定義する。
+このドキュメントは `server/` 配下の実装ルールを定義する。
 対象は Hono（TypeScript）で実装するAPIで、`API/`（.NET）からのストラングラーフィグ移行の一部。
 `API/`の5プロジェクト分割（Host/Features/Tables/Shared/Infrastructure）と同じ考え方を、pnpm workspaceの複数パッケージで再現する。
 
-**重要**: レイヤ・Feature間の分離は、書面のルールだけに頼らない。`API/`の5プロジェクト分割が「Controller/ServiceからDbContextを直接使わせない」ために物理的な壁（コンパイラのプロジェクト参照）として機能しているのと同じ理由で、`api/`でも**各パッケージの`package.json`の`dependencies`を物理的な壁として使う**。pnpmはデフォルトで`node_modules`をhoistしないため、パッケージが宣言していない依存はimportしようとした時点で解決できずビルド/実行が失敗する（lintより強い、コンパイルエラー相当の強制力）。
+**重要**: レイヤ・Feature間の分離は、書面のルールだけに頼らない。`API/`の5プロジェクト分割が「Controller/ServiceからDbContextを直接使わせない」ために物理的な壁（コンパイラのプロジェクト参照）として機能しているのと同じ理由で、`server/`でも**各パッケージの`package.json`の`dependencies`を物理的な壁として使う**。pnpmはデフォルトで`node_modules`をhoistしないため、パッケージが宣言していない依存はimportしようとした時点で解決できずビルド/実行が失敗する（lintより強い、コンパイルエラー相当の強制力）。
 
 ## 1.2 Node組み込み型（`@types/node`）
 
@@ -23,7 +23,7 @@
 ## 2. ディレクトリ構成
 
 ```
-api/
+server/
   src/
     host/                  # ~ API/Host: 起動・DI配線（Program.cs相当）
       src/
@@ -99,7 +99,7 @@ api/
 
 - フレームワーク: Vitest（workspace root から `pnpm -r test` で全パッケージ横断実行）
 - ユニットテスト: `shared/`配下の純粋関数（JWT生成/検証、Cookie属性生成、ハッシュ化）はDBなしでテストする
-- 統合テスト: `features/*/test/*.routes.test.ts`や`infrastructure/test/*.impl.test.ts`はHonoの`app.request()`や実際のPrisma Clientを通してテストする（モックしない）。DBは`tables/test-support/`のvitest `globalSetup`が`localhost:5433`（開発用DBの5432とは別ポート）にPGlite（WASM版Postgres、`@electric-sql/pglite` + `@electric-sql/pglite-socket`）を自動起動するため、`docker-compose.yml`のPostgresを手動起動する必要はない（`.NET`版がEF CoreのSQLite in-memoryでDBレスにテストしていたのと同じ発想。ただしスキーマがPostgreSQL固有型（`@db.Uuid`等）に依存しているためSQLiteではなくPostgres互換のPGliteを使う）。ポートをあえて開発用DBと分けているのは、テストの`deleteMany()`等で開発用DBのデータを壊さないため（「空いていればPGlite、埋まっていれば既存DBを使う」というフォールバックはしない）。CI（`.github/workflows/ApiUniTest.yml`）は本番相当の実PostgreSQLを使い続ける。`tables`/`infrastructure`の`.env`のDATABASE_URLに`connection_limit=1&pgbouncer=true`が必須（PGliteは複数コネクションでのprepared statement名前空間分離に対応しないため）。`host/.env`は開発時のアプリ起動用のため5432のまま・上記パラメータなしでよい
+- 統合テスト: `features/*/test/*.routes.test.ts`や`infrastructure/test/*.impl.test.ts`はHonoの`app.request()`や実際のPrisma Clientを通してテストする（モックしない）。DBは`tables/test-support/`のvitest `globalSetup`が`localhost:5433`（開発用DBの5432とは別ポート）にPGlite（WASM版Postgres、`@electric-sql/pglite` + `@electric-sql/pglite-socket`）を自動起動するため、`docker-compose.yml`のPostgresを手動起動する必要はない（`.NET`版がEF CoreのSQLite in-memoryでDBレスにテストしていたのと同じ発想。ただしスキーマがPostgreSQL固有型（`@db.Uuid`等）に依存しているためSQLiteではなくPostgres互換のPGliteを使う）。ポートをあえて開発用DBと分けているのは、テストの`deleteMany()`等で開発用DBのデータを壊さないため（「空いていればPGlite、埋まっていれば既存DBを使う」というフォールバックはしない）。CI（`.github/workflows/ServerUniTest.yml`）は本番相当の実PostgreSQLを使い続ける。`tables`/`infrastructure`の`.env`のDATABASE_URLに`connection_limit=1&pgbouncer=true`が必須（PGliteは複数コネクションでのprepared statement名前空間分離に対応しないため）。`host/.env`は開発時のアプリ起動用のため5432のまま・上記パラメータなしでよい
 - 既存`API/Test/`にある期待仕様と振る舞いが一致することを、移行対象ごとに確認する
 
 ## 11. 環境変数

@@ -2,12 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "prepare-ui-next-cache",
+            "label": "prepare-web-next-cache",
             "command": "bash",
             "type": "process",
             "args": [
                 "-lc",
-                "set -euo pipefail; ui_dir=\"${workspaceFolder}/ui\"; next_dir=\"${ui_dir}/.next\"; if [ ! -d \"$next_dir\" ]; then exit 0; fi; if find \"$next_dir\" -not -user \"$(id -un)\" -print -quit | grep -q .; then echo \"Detected non-user-owned .next cache. Removing via docker.\"; docker run --rm -v \"$ui_dir:/app\" alpine:3.21 sh -c 'rm -rf /app/.next'; else rm -rf \"$next_dir\"; fi"
+                "set -euo pipefail; web_dir=\"${workspaceFolder}/web\"; next_dir=\"${web_dir}/.next\"; if [ ! -d \"$next_dir\" ]; then exit 0; fi; if find \"$next_dir\" -not -user \"$(id -un)\" -print -quit | grep -q .; then echo \"Detected non-user-owned .next cache. Removing via docker.\"; docker run --rm -v \"$web_dir:/app\" alpine:3.21 sh -c 'rm -rf /app/.next'; else rm -rf \"$next_dir\"; fi"
             ],
             "problemMatcher": []
         }
