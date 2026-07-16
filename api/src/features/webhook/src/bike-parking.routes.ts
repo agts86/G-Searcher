@@ -35,7 +35,10 @@ export function createBikeParkingRouter(
   verifySignature = true,
 ): OpenAPIHono {
   const app = new OpenAPIHono();
-  app.use('*', createLineSignatureGuard(channelSecret, verifySignature));
+  // '*'にすると、ホスト側で他のルーター（webhookRouter等）と同じベースパスに
+  // app.route()で並べてマウントした際、このミドルウェアが他ルーターのパスにも先に
+  // 適用され誤ったchannelSecretで検証されてしまうため、自身が処理するパスに限定する。
+  app.use('/parking', createLineSignatureGuard(channelSecret, verifySignature));
 
   app.openapi(parkingRoute, async (c) => {
     const body = c.req.valid('json');

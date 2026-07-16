@@ -57,7 +57,11 @@ function toCallbackRequest(body: { destination: string; events: unknown[] }): we
  */
 export function createWebhookRouter(service: WebhookService, channelSecret: string, verifySignature = true): OpenAPIHono {
   const app = new OpenAPIHono();
-  app.use('*', createLineSignatureGuard(channelSecret, verifySignature));
+  // '*'にすると、ホスト側で他のルーター（bikeParkingRouter等）と同じベースパスに
+  // app.route()で並べてマウントした際、このミドルウェアが他ルーターのパスにも先に
+  // 適用され誤ったchannelSecretで検証されてしまうため、自身が処理するパスに限定する。
+  app.use('/local', createLineSignatureGuard(channelSecret, verifySignature));
+  app.use('/local/accept', createLineSignatureGuard(channelSecret, verifySignature));
 
   const jobQueue = new AsyncQueue<LocalJob>();
   const resultQueue = new AsyncQueue<LocalJobResult>();
