@@ -102,7 +102,6 @@ describe('BikeParkingClientImpl.search', () => {
     const [url] = getTextMock.mock.calls[0];
     expect(url).toContain('https://www.jmpsa.or.jp/society/parking/search.php');
     expect(url).toContain('q=%E3%82%B9%E3%82%AB%E3%82%A4%E3%83%84%E3%83%AA%E3%83%BC');
-    expect(url).toContain('qr%5B%5D=1');
   });
 
   it('該当駐車場が無ければ空配列を返す', async () => {

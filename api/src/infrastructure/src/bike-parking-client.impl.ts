@@ -5,11 +5,8 @@ import type { BikeParkingClient, BikeParkingLocation, BikeParkingSpot } from '@a
 
 const JMPSA_BASE_URL = 'https://www.jmpsa.or.jp/society/parking';
 const LIST_ITEM_SELECTOR = '.p-parking-prefecture-list-item';
-// 車両フィルタ(qr[])は3種すべて対象固定。
-const VEHICLE_TYPES = ['1', '1', '1'];
 // 「駐車可能車両を変更」「予約制の駐車場を除く」の絞り込みは、location.php/search.phpの
-// URLクエリではなくCookieの`vs`値でサーバー側に伝わる（フォーム操作時にJSがdocument.cookieへ
-// 保存するだけで、qr[]自体はクエリの個数が変わるのみでフィルタには影響しない）。
+// URLクエリではなくCookieの`vs`値でサーバー側に伝わる（`qr[]`クエリは実際には無視される、実機検証済み）。
 // 50cc/51-125cc/126cc以上は対象、記載なしは対象外、予約制の駐車場は除外、で固定する。
 const VS_COOKIE = 'vs=1,1,1,0,1';
 
@@ -19,13 +16,7 @@ function buildUrl(location: BikeParkingLocation): string {
     return `${JMPSA_BASE_URL}/location.php?${params.toString()}`;
   }
 
-  const params = new URLSearchParams();
-  for (const type of VEHICLE_TYPES) {
-    params.append('qr[]', type);
-  }
-  params.append('q', location.query);
-  params.append('p_pref', '');
-  params.append('p_sect', '');
+  const params = new URLSearchParams({ q: location.query, p_pref: '', p_sect: '' });
   return `${JMPSA_BASE_URL}/search.php?${params.toString()}`;
 }
 
