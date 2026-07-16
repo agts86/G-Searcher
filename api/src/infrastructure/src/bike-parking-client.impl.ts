@@ -5,9 +5,13 @@ import type { BikeParkingClient, BikeParkingLocation, BikeParkingSpot } from '@a
 
 const JMPSA_BASE_URL = 'https://www.jmpsa.or.jp/society/parking';
 const LIST_ITEM_SELECTOR = '.p-parking-prefecture-list-item';
-// 車両フィルタ(qr[])は3種すべて対象固定。maplist.phpのvs相当（記載なし対象外・予約制除く）の
-// 絞り込みはsearch.php/location.phpのフォーム自体には存在しないため、初回結果はサイト既定のまま返す。
+// 車両フィルタ(qr[])は3種すべて対象固定。
 const VEHICLE_TYPES = ['1', '1', '1'];
+// 「駐車可能車両を変更」「予約制の駐車場を除く」の絞り込みは、location.php/search.phpの
+// URLクエリではなくCookieの`vs`値でサーバー側に伝わる（フォーム操作時にJSがdocument.cookieへ
+// 保存するだけで、qr[]自体はクエリの個数が変わるのみでフィルタには影響しない）。
+// 50cc/51-125cc/126cc以上は対象、記載なしは対象外、予約制の駐車場は除外、で固定する。
+const VS_COOKIE = 'vs=1,1,1,0,1';
 
 function buildUrl(location: BikeParkingLocation): string {
   if ('lat' in location) {
@@ -72,7 +76,7 @@ export class BikeParkingClientImpl implements BikeParkingClient {
   constructor(private readonly httpAdapter: HttpAdapter) {}
 
   async search(location: BikeParkingLocation): Promise<BikeParkingSpot[]> {
-    const html = await this.httpAdapter.getText(buildUrl(location));
+    const html = await this.httpAdapter.getText(buildUrl(location), { Cookie: VS_COOKIE });
     const $ = cheerio.load(html);
     return $(LIST_ITEM_SELECTOR)
       .map((_, item) => toSpot($, item))

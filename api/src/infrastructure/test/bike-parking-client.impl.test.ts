@@ -113,4 +113,14 @@ describe('BikeParkingClientImpl.search', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('車両フィルタ・予約制除くの絞り込みはCookieのvs値でサーバー側に伝わるため、Cookieヘッダーを付与する', async () => {
+    const { adapter, getTextMock } = buildAdapter('');
+    const client = new BikeParkingClientImpl(adapter);
+
+    await client.search({ lat: 35.83842406478811, lng: 139.7962472487242 });
+
+    const [, headers] = getTextMock.mock.calls[0];
+    expect(headers).toEqual({ Cookie: 'vs=1,1,1,0,1' });
+  });
 });
