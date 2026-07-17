@@ -2,12 +2,11 @@ export type { WebhookRepository, NewGourmetLocationLog, NewGourmetWordLog, NewJo
 export type { YolpClient, YolpSearchQuery, YolpFeature, YolpLocation } from './yolp-client.js';
 export type { BikeParkingClient, BikeParkingLocation, BikeParkingSpot } from './bike-parking-client.js';
 export type { LineReplyClient, CarouselColumn } from './line-reply-client.js';
-export type { LocalJob, GourmetLogEntry, LocalEventResult, LocalJobResult, BikeParkingEventResult } from './webhook.types.js';
+export type { GourmetLogEntry, LocalEventResult, BikeParkingEventResult } from './webhook.types.js';
 export * from './webhook.dto.js';
 export { createLineSignatureGuard } from './line-signature-guard.js';
 export { LineReplyService } from './line-reply.service.js';
 export { BikeParkingReplyService } from './bike-parking-reply.service.js';
 export { WebhookService } from './webhook.service.js';
-export { AsyncQueue } from './async-queue.js';
 export { createWebhookRouter } from './webhook.routes.js';
 export { createBikeParkingRouter } from './bike-parking.routes.js';

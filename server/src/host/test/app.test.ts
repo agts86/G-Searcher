@@ -48,10 +48,10 @@ describe('createApp() 経由でマウントしたManagedルート', () => {
 });
 
 describe('createApp() 経由でマウントしたWebhookルート', () => {
-  it('x-line-signatureヘッダーが無いまま POST /api/v1/webhook/local/accept を叩くと401を返す', async () => {
+  it('x-line-signatureヘッダーが無いまま POST /api/v1/webhook/local を叩くと401を返す', async () => {
     const app = createApp();
 
-    const res = await app.request('/api/v1/webhook/local/accept?genreCode=0301', {
+    const res = await app.request('/api/v1/webhook/local?genreCode=0301', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ destination: 'U123', events: [] }),
@@ -90,11 +90,11 @@ describe('createApp() 経由でマウントしたWebhookルート', () => {
     expect(res.status).not.toBe(401);
   });
 
-  it('LINE_CHANNEL_SECRETで正しく署名したPOST /api/v1/webhook/local/acceptは401にならない', async () => {
+  it('LINE_CHANNEL_SECRETで正しく署名したPOST /api/v1/webhook/localは401にならない', async () => {
     const app = createApp();
     const body = JSON.stringify({ destination: 'U123', events: [] });
 
-    const res = await app.request('/api/v1/webhook/local/accept', {
+    const res = await app.request('/api/v1/webhook/local', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-line-signature': sign('test-line-channel-secret', body) },
       body,

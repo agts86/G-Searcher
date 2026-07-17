@@ -34,30 +34,6 @@ function setup(): { app: ReturnType<typeof createWebhookRouter>; repo: WebhookRe
   return { app, repo };
 }
 
-describe('POST /local/accept', () => {
-  it('署名が正しければ202とjob idを即座に返す（DB書込を待たない）', async () => {
-    const { app } = setup();
-
-    const res = await app.request('/local/accept?genreCode=0101', buildRequestInit({ destination: 'U1', events: [] }));
-
-    expect(res.status).toBe(202);
-    const body = await res.json();
-    expect(body.id).toBeTruthy();
-  });
-
-  it('署名が無ければ401を返す', async () => {
-    const { app } = setup();
-
-    const res = await app.request('/local/accept', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ destination: 'U1', events: [] }),
-    });
-
-    expect(res.status).toBe(401);
-  });
-});
-
 describe('POST /local', () => {
   it('署名が正しければ同期処理し200とmeta配列を返す', async () => {
     const { app } = setup();

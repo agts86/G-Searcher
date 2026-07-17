@@ -1,11 +1,3 @@
-import type { webhook } from '@line/bot-sdk';
-
-export interface LocalJob {
-  id: string;
-  webhookBody: webhook.CallbackRequest;
-  genreCode: string | undefined;
-}
-
 /** メッセージ種別ごとの検索条件・永続化データを組み立てる際に使う内部表現 */
 export type GourmetLogEntry =
   | { type: 'location'; lat: number; lng: number }
@@ -44,13 +36,6 @@ export interface LocalEventResult {
   reply: LocalReply;
   meta: PersistedMeta;
   isReplySucceeded: boolean;
-}
-
-export interface LocalJobResult {
-  job: LocalJob;
-  results: LocalEventResult[];
-  isSuccess: boolean;
-  errorMessage: string | null;
 }
 
 /** バイク駐車場検索版のイベント結果（DB永続化しないためmetaは持たない） */

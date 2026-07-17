@@ -2,17 +2,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "composite": false,
-    "baseUrl": ".",
-    "paths": {
-      "@api/shared": ["./src/shared/src/index.ts"],
-      "@api/tables": ["./src/tables/src/index.ts"],
-      "@api/infrastructure": ["./src/infrastructure/src/index.ts"],
-      "@api/features-auth": ["./src/features/auth/src/index.ts"],
-      "@api/features-managed": ["./src/features/managed/src/index.ts"],
-      "@api/features-webhook": ["./src/features/webhook/src/index.ts"],
-      "@api/host": ["./src/host/src/index.ts"]
-    }
+    "composite": false
   },
   "include": ["src/**/*.ts"]
 }

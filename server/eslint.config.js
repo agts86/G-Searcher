@@ -59,7 +59,10 @@ export default tseslint.config(
 
     settings: {
       'import/resolver': {
-        typescript: { project: resolve(import.meta.dirname, 'tsconfig.eslint.json') },
+        typescript: {
+          project: resolve(import.meta.dirname, 'tsconfig.eslint.json'),
+          conditionNames: ['development', 'types', 'import', 'require', 'node', 'default'],
+        },
       },
       'boundaries/root-path': resolve(import.meta.dirname),
       'boundaries/elements': [

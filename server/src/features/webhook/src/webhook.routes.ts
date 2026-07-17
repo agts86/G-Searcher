@@ -1,28 +1,10 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import type { webhook } from '@line/bot-sdk';
 import { createLineSignatureGuard } from './line-signature-guard.js';
-import { AsyncQueue } from './async-queue.js';
 import type { WebhookService } from './webhook.service.js';
-import type { LocalJob, LocalJobResult } from './webhook.types.js';
-import { WebhookRequestBodySchema, GenreCodeQuerySchema, AcceptResponseSchema, LocalReplyResponseSchema } from './webhook.dto.js';
+import { WebhookRequestBodySchema, GenreCodeQuerySchema, LocalReplyResponseSchema } from './webhook.dto.js';
 
 const tags = ['Webhook'];
-
-const acceptRoute = createRoute({
-  tags,
-  method: 'post',
-  path: '/local/accept',
-  request: {
-    query: GenreCodeQuerySchema,
-    body: { content: { 'application/json': { schema: WebhookRequestBodySchema } } },
-  },
-  responses: {
-    202: {
-      description: 'ジョブをキューに登録した（DB書込・YOLP検索・LINE返信は非同期で後から実行される）',
-      content: { 'application/json': { schema: AcceptResponseSchema } },
-    },
-  },
-});
 
 const localRoute = createRoute({
   tags,
@@ -50,10 +32,8 @@ function toCallbackRequest(body: { destination: string; events: unknown[] }): we
 }
 
 /**
- * local/accept・local の2エンドポイントを実装するOpenAPIHonoルーター。
- * ホスト側で /api/v1/webhook にマウントする。
- * キューワーカー（ジョブ処理・結果永続化）はルーター生成時に起動する（既存.NET側の
- * BackgroundServiceに相当、プロセス常駐中ずっと動き続ける）。
+ * /local を実装するOpenAPIHonoルーター。ホスト側で /api/v1/webhook にマウントする。
+ * YOLP検索・LINE返信・DB保存までリクエスト内で同期的に完了する。
  */
 export function createWebhookRouter(service: WebhookService, channelSecret: string, verifySignature = true): OpenAPIHono {
   const app = new OpenAPIHono();
@@ -61,20 +41,6 @@ export function createWebhookRouter(service: WebhookService, channelSecret: stri
   // app.route()で並べてマウントした際、このミドルウェアが他ルーターのパスにも先に
   // 適用され誤ったchannelSecretで検証されてしまうため、自身が処理するパスに限定する。
   app.use('/local', createLineSignatureGuard(channelSecret, verifySignature));
-  app.use('/local/accept', createLineSignatureGuard(channelSecret, verifySignature));
-
-  const jobQueue = new AsyncQueue<LocalJob>();
-  const resultQueue = new AsyncQueue<LocalJobResult>();
-  runJobWorker(jobQueue, resultQueue, service);
-  runResultWorker(resultQueue, service);
-
-  app.openapi(acceptRoute, (c) => {
-    const body = c.req.valid('json');
-    const { genreCode } = c.req.valid('query');
-    const job = service.enqueueLocalJob(toCallbackRequest(body), genreCode);
-    jobQueue.enqueue(job);
-    return c.json({ id: job.id }, 202);
-  });
 
   app.openapi(localRoute, async (c) => {
     const body = c.req.valid('json');
@@ -84,29 +50,4 @@ export function createWebhookRouter(service: WebhookService, channelSecret: stri
   });
 
   return app;
-}
-
-function runJobWorker(jobQueue: AsyncQueue<LocalJob>, resultQueue: AsyncQueue<LocalJobResult>, service: WebhookService): void {
-  const loop = async (): Promise<void> => {
-    for (;;) {
-      const job = await jobQueue.dequeue();
-      const result = await service.processJob(job);
-      resultQueue.enqueue(result);
-    }
-  };
-  void loop();
-}
-
-function runResultWorker(resultQueue: AsyncQueue<LocalJobResult>, service: WebhookService): void {
-  const loop = async (): Promise<void> => {
-    for (;;) {
-      const result = await resultQueue.dequeue();
-      try {
-        await service.persistJobResult(result);
-      } catch {
-        // 既存.NET側BackgroundServiceと同様、永続化失敗で常駐ループ自体を落とさない
-      }
-    }
-  };
-  void loop();
 }
