@@ -1,12 +1,9 @@
 {
-  "services": {
-    "app": {
-      "root": ".",
-      "runtime": "container",
-      "entrypoint": "Dockerfile"
-    }
-  },
+  "framework": null,
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm --filter @api/tables exec prisma generate && cd web && pnpm install --frozen-lockfile && pnpm build",
+  "outputDirectory": "web/out",
   "rewrites": [
-    { "source": "/(.*)", "destination": { "service": "app" } }
+    { "source": "/health", "destination": "/api/health" }
   ]
 }
