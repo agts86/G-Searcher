@@ -1,12 +1,9 @@
 {
-  "services": {
-    "app": {
-      "root": ".",
-      "runtime": "container",
-      "entrypoint": "Dockerfile"
-    }
-  },
+  "framework": null,
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm -r build && cd web && pnpm install --frozen-lockfile --ignore-workspace && pnpm build",
+  "outputDirectory": "web/out",
   "rewrites": [
-    { "source": "/(.*)", "destination": { "service": "app" } }
+    { "source": "/health", "destination": "/api/health" }
   ]
 }
