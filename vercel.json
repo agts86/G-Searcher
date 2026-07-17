@@ -1,7 +1,7 @@
 {
   "framework": null,
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm --filter @api/tables exec prisma generate && cd web && pnpm install --frozen-lockfile && pnpm build",
+  "buildCommand": "pnpm --filter @api/tables exec prisma generate && cd web && pnpm install --frozen-lockfile --ignore-workspace && pnpm build",
   "outputDirectory": "web/out",
   "rewrites": [
     { "source": "/health", "destination": "/api/health" }
