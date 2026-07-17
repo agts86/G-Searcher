@@ -1,0 +1,10 @@
+{
+  "name": "@api/vercel",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@api/host": "workspace:*",
+    "@hono/node-server": "^1.13.0"
+  }
+}

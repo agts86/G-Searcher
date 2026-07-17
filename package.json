@@ -1,0 +1,6 @@
+{
+  "name": "linewebhook-root",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.26.0"
+}

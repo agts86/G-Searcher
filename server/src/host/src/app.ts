@@ -1,5 +1,4 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { serveStatic } from '@hono/node-server/serve-static';
 import { swaggerUI } from '@hono/swagger-ui';
 import { createAuthRouter, AuthService, type AuthServiceConfig } from '@api/features-auth';
 import { createManagedRouter, ManagedService } from '@api/features-managed';
@@ -105,16 +104,6 @@ export function createApp() {
     });
     app.get('/ui', swaggerUI({ url: '/doc' }));
   }
-
-  // 既存.NET側 `UseDefaultFiles()+UseStaticFiles()` 相当。SPA fallback（未知パスをindex.htmlへ）は
-  // .NET側にも実装されていないため、ここでも同じ粒度（ディレクトリ配下のindex.html解決のみ）に留める。
-  app.use(
-    '*',
-    serveStatic({
-      root: './wwwroot',
-      rewriteRequestPath: (path) => (path.endsWith('/') ? `${path}index.html` : path),
-    }),
-  );
 
   return app;
 }

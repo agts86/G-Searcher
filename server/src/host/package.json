@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "main": "./src/main.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch --inspect --env-file=.env src/main.ts",
