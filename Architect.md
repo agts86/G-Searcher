@@ -11,7 +11,6 @@ graph TD
     Api["server<br/>Hono (Node.js) / Prisma"]
     Yahoo["Yahoo!ローカルサーチ API (YOLP)"]
     DB["PostgreSQL"]
-    Worker["Cloudflare Workers<br/>cron-worker/CloudFlare"]
 
     User -->|位置情報/メッセージ| LineAPI
     LineAPI -->|Webhook| Api
@@ -22,7 +21,6 @@ graph TD
     Api -->|ログ保存/参照| DB
     Api -->|Reply API| LineAPI
     LineAPI -->|返信| User
-    Worker -->|GET /health| Api
 ```
 
 ## 2. API 内部（Dependency、`server/`）
