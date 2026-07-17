@@ -66,7 +66,7 @@ pnpm --filter @api/tables exec prisma db push
 cd web
 pnpm lint       # ESLint
 pnpm build      # 静的出力（out/）
-pnpm test       # Jest
+pnpm test       # Vitest
 ```
 
 ### Docker（ローカル開発）

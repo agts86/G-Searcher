@@ -11,7 +11,7 @@
 - 地図: react-leaflet（CSR 向け）
 - Lint: ESLint v9 + `@typescript-eslint`
 - Format: Prettier
-- Test: Jest + ts-jest
+- Test: Vitest
 
 ## 2. 実装ルール
 
