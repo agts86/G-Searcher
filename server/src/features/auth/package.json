@@ -21,13 +21,13 @@
   "dependencies": {
     "@api/shared": "workspace:*",
     "@api/tables": "workspace:*",
-    "hono": "^4.6.0",
-    "zod": "^3.24.0",
-    "@hono/zod-openapi": "^0.18.0"
+    "@hono/zod-openapi": "^0.18.0",
+    "hono": "^4.12.30",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@types/node": "^22.10.0",
     "typescript": "^6.0.0",
-    "vitest": "^3.0.0",
-    "@types/node": "^22.10.0"
+    "vitest": "^3.0.0"
   }
 }

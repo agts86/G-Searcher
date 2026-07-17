@@ -2,3 +2,6 @@ packages:
   - 'server/src/*'
   - 'server/src/features/*'
   - 'api'
+
+overrides:
+  hono: 4.12.30
