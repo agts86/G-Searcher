@@ -13,9 +13,9 @@ importers:
       '@api/host':
         specifier: workspace:*
         version: link:../server/src/host
-      '@hono/node-server':
-        specifier: ^1.13.0
-        version: 1.19.14(hono@4.12.30)
+      hono:
+        specifier: ^4.6.0
+        version: 4.12.30
 
   server/src/features/auth:
     dependencies:
