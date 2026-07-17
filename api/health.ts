@@ -1,3 +1,3 @@
-export default function handler(_request: Request): Response {
+export function GET(): Response {
   return new Response('ok');
 }
