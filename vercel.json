@@ -3,6 +3,9 @@
   "installCommand": "pnpm install",
   "buildCommand": "pnpm -r build && cd web && pnpm install --frozen-lockfile --ignore-workspace && pnpm build",
   "outputDirectory": "web/out",
+  "functions": {
+    "api/[[...route]].ts": { "maxDuration": 10 }
+  },
   "rewrites": [
     { "source": "/health", "destination": "/api/health" }
   ]
