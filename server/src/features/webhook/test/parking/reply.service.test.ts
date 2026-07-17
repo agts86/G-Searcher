@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { webhook } from '@line/bot-sdk';
-import { BikeParkingReplyService, NOT_FOUND_TEXT } from '../src/bike-parking-reply.service.js';
-import type { BikeParkingClient, BikeParkingSpot } from '../src/bike-parking-client.js';
-import type { LineReplyClient } from '../src/line-reply-client.js';
+import { ParkingReplyService, NOT_FOUND_TEXT } from '../../src/parking/reply.service.js';
+import type { ParkingClient, ParkingSpot } from '../../src/parking/client.js';
+import type { LineReplyClient } from '../../src/line-reply-client.js';
 
 function callbackRequest(events: webhook.Event[]): webhook.CallbackRequest {
   return { destination: 'U1', events };
@@ -32,7 +32,7 @@ function locationMessageEvent(latitude: number, longitude: number): webhook.Mess
   };
 }
 
-function spot(detailUrl: string, name: string): BikeParkingSpot {
+function spot(detailUrl: string, name: string): ParkingSpot {
   return {
     name,
     address: `${name}の住所`,
@@ -45,34 +45,34 @@ function spot(detailUrl: string, name: string): BikeParkingSpot {
 }
 
 function buildService(options: {
-  searchResults?: BikeParkingSpot[];
+  searchResults?: ParkingSpot[];
   skipLineApiCall?: boolean;
-}): { service: BikeParkingReplyService; bikeParkingClient: BikeParkingClient; lineReplyClient: LineReplyClient } {
-  const bikeParkingClient: BikeParkingClient = {
+}): { service: ParkingReplyService; parkingClient: ParkingClient; lineReplyClient: LineReplyClient } {
+  const parkingClient: ParkingClient = {
     search: vi.fn().mockResolvedValue(options.searchResults ?? []),
   };
   const lineReplyClient: LineReplyClient = {
     send: vi.fn().mockResolvedValue(true),
   };
-  const service = new BikeParkingReplyService(bikeParkingClient, lineReplyClient, options.skipLineApiCall ?? false);
-  return { service, bikeParkingClient, lineReplyClient };
+  const service = new ParkingReplyService(parkingClient, lineReplyClient, options.skipLineApiCall ?? false);
+  return { service, parkingClient, lineReplyClient };
 }
 
-describe('BikeParkingReplyService.processEvent', () => {
+describe('ParkingReplyService.processEvent', () => {
   it('テキストメッセージは全角スペースを半角に置換して文字列検索する', async () => {
-    const { service, bikeParkingClient } = buildService({ searchResults: [spot('/society/parking/area13/p-1.html', '駐車場A')] });
+    const { service, parkingClient } = buildService({ searchResults: [spot('/society/parking/area13/p-1.html', '駐車場A')] });
 
     await service.processEvent(textMessageEvent('スカイツリー　周辺'));
 
-    expect(vi.mocked(bikeParkingClient.search)).toHaveBeenCalledWith({ query: 'スカイツリー 周辺' });
+    expect(vi.mocked(parkingClient.search)).toHaveBeenCalledWith({ query: 'スカイツリー 周辺' });
   });
 
   it('ロケーションメッセージは緯度経度で位置情報検索する', async () => {
-    const { service, bikeParkingClient } = buildService({ searchResults: [spot('/society/parking/area13/p-1.html', '駐車場A')] });
+    const { service, parkingClient } = buildService({ searchResults: [spot('/society/parking/area13/p-1.html', '駐車場A')] });
 
     await service.processEvent(locationMessageEvent(35.5, 139.5));
 
-    expect(vi.mocked(bikeParkingClient.search)).toHaveBeenCalledWith({ lat: 35.5, lng: 139.5 });
+    expect(vi.mocked(parkingClient.search)).toHaveBeenCalledWith({ lat: 35.5, lng: 139.5 });
   });
 
   it('reply.replyTokenは元イベントのreplyTokenと一致する', async () => {
@@ -121,7 +121,7 @@ describe('BikeParkingReplyService.processEvent', () => {
   });
 
   it('detailUrlが無い結果はカルーセルから除外し、全て除外されたらNotFoundテキストを返信する', async () => {
-    const noUrlSpot: BikeParkingSpot = { name: '駐車場A', address: '住所', fee: null, holiday: null, detailUrl: '', lat: null, lng: null };
+    const noUrlSpot: ParkingSpot = { name: '駐車場A', address: '住所', fee: null, holiday: null, detailUrl: '', lat: null, lng: null };
     const { service, lineReplyClient } = buildService({ searchResults: [noUrlSpot] });
 
     await service.processEvent(textMessageEvent('スカイツリー'));
@@ -146,7 +146,7 @@ describe('BikeParkingReplyService.processEvent', () => {
   });
 
   it('textには住所ではなく料金を表示する', async () => {
-    const longAddressSpot: BikeParkingSpot = {
+    const longAddressSpot: ParkingSpot = {
       name: '駐車場A',
       address: 'あ'.repeat(30),
       fee: '15分40円 当日最大400円',
@@ -165,7 +165,7 @@ describe('BikeParkingReplyService.processEvent', () => {
   });
 
   it('料金が無い場合はtextが空文字になる', async () => {
-    const noFeeSpot: BikeParkingSpot = {
+    const noFeeSpot: ParkingSpot = {
       name: '駐車場A',
       address: '住所',
       fee: null,
@@ -184,7 +184,7 @@ describe('BikeParkingReplyService.processEvent', () => {
   });
 
   it('textが60文字を超える場合は59文字+省略記号(60文字)に切り詰める（LINE Carousel Column textの上限）', async () => {
-    const longFeeSpot: BikeParkingSpot = {
+    const longFeeSpot: ParkingSpot = {
       name: '駐車場A',
       address: 'あ'.repeat(30),
       fee: 'い'.repeat(61),
@@ -254,7 +254,7 @@ describe('BikeParkingReplyService.processEvent', () => {
   });
 });
 
-describe('BikeParkingReplyService.processEvents', () => {
+describe('ParkingReplyService.processEvents', () => {
   it('全イベントを処理し、null（非対象イベント）は結果から除外する', async () => {
     const { service } = buildService({ searchResults: [spot('/society/parking/area13/p-1.html', '駐車場A')] });
     const followEvent = {

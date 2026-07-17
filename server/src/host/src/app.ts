@@ -2,7 +2,7 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { swaggerUI } from '@hono/swagger-ui';
 import { createAuthRouter, AuthService, type AuthServiceConfig } from '@api/features-auth';
 import { createManagedRouter, ManagedService } from '@api/features-managed';
-import { createWebhookRouter, WebhookService, LineReplyService, BikeParkingReplyService, createBikeParkingRouter } from '@api/features-webhook';
+import { createSpotRouter, SpotService, SpotReplyService, ParkingReplyService, createParkingRouter } from '@api/features-webhook';
 import {
   getPrismaClient,
   PrismaAuthRepository,
@@ -11,7 +11,7 @@ import {
   HttpAdapter,
   YolpClientImpl,
   LineReplyClientImpl,
-  BikeParkingClientImpl,
+  ParkingClientImpl,
 } from '@api/infrastructure';
 
 function requireEnv(name: string): string {
@@ -70,20 +70,20 @@ export function createApp() {
   // 既存の401検証テスト（署名なしリクエストの拒否）が壊れるため専用フラグにする。
   const verifyLineSignature = process.env.DISABLE_LINE_SIGNATURE_VERIFICATION !== 'true';
   const httpAdapter = new HttpAdapter();
-  const yolpClient = new YolpClientImpl(httpAdapter, requireEnv('YAHOO_APP_ID'));
+  const spotSearchClient = new YolpClientImpl(httpAdapter, requireEnv('YAHOO_APP_ID'));
   const lineReplyClient = new LineReplyClientImpl(requireEnv('LINE_CHANNEL_ACCESS_TOKEN'));
-  const lineReplyService = new LineReplyService(yolpClient, lineReplyClient, skipLineApiCall);
+  const spotReplyService = new SpotReplyService(spotSearchClient, lineReplyClient, skipLineApiCall);
   const webhookRepository = new PrismaWebhookRepository(prisma);
-  const webhookService = new WebhookService(lineReplyService, webhookRepository);
-  const webhookRouter = createWebhookRouter(webhookService, requireEnv('LINE_CHANNEL_SECRET'), verifyLineSignature);
+  const spotService = new SpotService(spotReplyService, webhookRepository);
+  const spotRouter = createSpotRouter(spotService, requireEnv('LINE_CHANNEL_SECRET'), verifyLineSignature);
 
   // 全国バイク駐車場案内(jmpsa.or.jp)検索版。DB永続化は行わずLINE返信のみ同期的に行う。
-  // グルメ検索とは別のLINEチャンネルで運用するためChannel Secret / Access Tokenを分離する。
-  const bikeParkingClient = new BikeParkingClientImpl(httpAdapter);
-  const bikeParkingLineReplyClient = new LineReplyClientImpl(requireEnv('BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN'));
-  const bikeParkingReplyService = new BikeParkingReplyService(bikeParkingClient, bikeParkingLineReplyClient, skipLineApiCall);
-  const bikeParkingRouter = createBikeParkingRouter(
-    bikeParkingReplyService,
+  // スポット検索とは別のLINEチャンネルで運用するためChannel Secret / Access Tokenを分離する。
+  const parkingClient = new ParkingClientImpl(httpAdapter);
+  const parkingLineReplyClient = new LineReplyClientImpl(requireEnv('BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN'));
+  const parkingReplyService = new ParkingReplyService(parkingClient, parkingLineReplyClient, skipLineApiCall);
+  const parkingRouter = createParkingRouter(
+    parkingReplyService,
     requireEnv('BIKE_PARKING_LINE_CHANNEL_SECRET'),
     verifyLineSignature,
   );
@@ -92,8 +92,8 @@ export function createApp() {
   app.get('/health', (c) => c.text('ok'));
   app.route('/api/v1/auth', authRouter);
   app.route('/api/v1/managed', managedRouter);
-  app.route('/api/v1/webhook', webhookRouter);
-  app.route('/api/v1/webhook', bikeParkingRouter);
+  app.route('/api/v1/webhook', spotRouter);
+  app.route('/api/v1/webhook', parkingRouter);
 
   // 既存.NET側 Program.cs の `if (app.Environment.IsDevelopment())` と同じ考え方。
   // /doc・/ui は本番でAPI仕様を外部に露出させないため、本番では登録しない。

@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import type { Element } from 'domhandler';
 import type { HttpAdapter } from './http-adapter.js';
-import type { BikeParkingClient, BikeParkingLocation, BikeParkingSpot } from '@api/features-webhook';
+import type { ParkingClient, ParkingLocation, ParkingSpot } from '@api/features-webhook';
 
 const JMPSA_BASE_URL = 'https://www.jmpsa.or.jp/society/parking';
 const LIST_ITEM_SELECTOR = '.p-parking-prefecture-list-item';
@@ -10,7 +10,7 @@ const LIST_ITEM_SELECTOR = '.p-parking-prefecture-list-item';
 // 50cc/51-125cc/126cc以上は対象、記載なしは対象外、予約制の駐車場は除外、で固定する。
 const VS_COOKIE = 'vs=1,1,1,0,1';
 
-function buildUrl(location: BikeParkingLocation): string {
+function buildUrl(location: ParkingLocation): string {
   if ('lat' in location) {
     const params = new URLSearchParams({ lng: String(location.lng), lat: String(location.lat) });
     return `${JMPSA_BASE_URL}/location.php?${params.toString()}`;
@@ -42,7 +42,7 @@ function findTableValue($: cheerio.CheerioAPI, item: Element, label: string): st
   return value;
 }
 
-function toSpot($: cheerio.CheerioAPI, item: Element): BikeParkingSpot {
+function toSpot($: cheerio.CheerioAPI, item: Element): ParkingSpot {
   const $item = $(item);
   const anchor = $item.find('.p-parking-prefecture-map-ttl a');
   anchor.find('.m-arrow').remove();
@@ -63,10 +63,10 @@ function toSpot($: cheerio.CheerioAPI, item: Element): BikeParkingSpot {
  * location.php/search.phpはHTML断片ではなくページ全体を返すが、駐車場一覧部分
  * （`.p-parking-prefecture-list-item`）だけをcheerioで抽出する。
  */
-export class BikeParkingClientImpl implements BikeParkingClient {
+export class ParkingClientImpl implements ParkingClient {
   constructor(private readonly httpAdapter: HttpAdapter) {}
 
-  async search(location: BikeParkingLocation): Promise<BikeParkingSpot[]> {
+  async search(location: ParkingLocation): Promise<ParkingSpot[]> {
     const html = await this.httpAdapter.getText(buildUrl(location), { Cookie: VS_COOKIE });
     const $ = cheerio.load(html);
     return $(LIST_ITEM_SELECTOR)

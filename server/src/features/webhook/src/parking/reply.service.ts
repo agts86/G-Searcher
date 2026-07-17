@@ -1,7 +1,7 @@
 import type { webhook, messagingApi } from '@line/bot-sdk';
-import type { BikeParkingClient, BikeParkingLocation, BikeParkingSpot } from './bike-parking-client.js';
-import type { LineReplyClient, CarouselColumn } from './line-reply-client.js';
-import type { BikeParkingEventResult } from './webhook.types.js';
+import type { ParkingClient, ParkingLocation, ParkingSpot } from './client.js';
+import type { LineReplyClient, CarouselColumn } from '../line-reply-client.js';
+import type { ParkingEventResult } from './types.js';
 
 export const NOT_FOUND_TEXT = 'ごめんなさい。。見つかりませんでした。。';
 const NOT_FOUND_ALT_TEXT = '検索結果';
@@ -19,7 +19,7 @@ function isMessageEvent(event: webhook.Event): event is webhook.MessageEvent {
   return event.type === 'message';
 }
 
-function toSearchLocation(message: webhook.MessageContent): BikeParkingLocation | null {
+function toSearchLocation(message: webhook.MessageContent): ParkingLocation | null {
   if (message.type === 'text') {
     return { query: message.text.replace(FULL_WIDTH_SPACE, ' ') };
   }
@@ -40,13 +40,13 @@ function truncate(text: string, maxLength: number): string {
   return `${text.slice(0, maxLength - 1)}…`;
 }
 
-function toCarouselText(spot: BikeParkingSpot): string {
+function toCarouselText(spot: ParkingSpot): string {
   return truncate(spot.fee ?? '', CAROUSEL_TEXT_MAX_LENGTH);
 }
 
-function dedupeAndCap(spots: BikeParkingSpot[]): BikeParkingSpot[] {
+function dedupeAndCap(spots: ParkingSpot[]): ParkingSpot[] {
   const seen = new Set<string>();
-  const result: BikeParkingSpot[] = [];
+  const result: ParkingSpot[] = [];
   for (const spot of spots) {
     // detailUrlが無いとLINEのuri actionが不正になりカラム全体が拒否されるため、
     // 詳細URLを提示できない結果はカルーセルに含めない。
@@ -59,7 +59,7 @@ function dedupeAndCap(spots: BikeParkingSpot[]): BikeParkingSpot[] {
   return result;
 }
 
-function toCarouselColumns(spots: BikeParkingSpot[]): CarouselColumn[] {
+function toCarouselColumns(spots: ParkingSpot[]): CarouselColumn[] {
   return dedupeAndCap(spots).map((s) => ({
     title: truncate(s.name, CAROUSEL_TITLE_MAX_LENGTH),
     text: toCarouselText(s),
@@ -67,7 +67,7 @@ function toCarouselColumns(spots: BikeParkingSpot[]): CarouselColumn[] {
   }));
 }
 
-function buildMessages(spots: BikeParkingSpot[]): unknown[] {
+function buildMessages(spots: ParkingSpot[]): unknown[] {
   const columns = toCarouselColumns(spots);
   if (columns.length === 0) {
     const textMessage: messagingApi.TextMessage = { type: 'text', text: NOT_FOUND_TEXT };
@@ -89,15 +89,15 @@ function buildMessages(spots: BikeParkingSpot[]): unknown[] {
   return [templateMessage];
 }
 
-/** jmpsa.or.jp（全国バイク駐車場・駐輪場案内）を使ったバイク駐車場検索版のLineReplyService相当 */
-export class BikeParkingReplyService {
+/** jmpsa.or.jp（全国バイク駐車場・駐輪場案内）を使ったバイク駐車場検索版のReplyService相当 */
+export class ParkingReplyService {
   constructor(
-    private readonly bikeParkingClient: BikeParkingClient,
+    private readonly parkingClient: ParkingClient,
     private readonly lineReplyClient: LineReplyClient,
     private readonly skipLineApiCall: boolean,
   ) {}
 
-  processEvent = async (event: webhook.Event): Promise<BikeParkingEventResult | null> => {
+  processEvent = async (event: webhook.Event): Promise<ParkingEventResult | null> => {
     if (!isMessageEvent(event) || !event.replyToken) {
       return null;
     }
@@ -107,15 +107,15 @@ export class BikeParkingReplyService {
       return null;
     }
 
-    const spots = await this.bikeParkingClient.search(location);
+    const spots = await this.parkingClient.search(location);
     const messages = buildMessages(spots);
     const isReplySucceeded = await this.reply(event.replyToken, messages);
 
     return { reply: { replyToken: event.replyToken, messages }, isReplySucceeded };
   };
 
-  async processEvents(webhookBody: webhook.CallbackRequest): Promise<BikeParkingEventResult[]> {
-    const results: BikeParkingEventResult[] = [];
+  async processEvents(webhookBody: webhook.CallbackRequest): Promise<ParkingEventResult[]> {
+    const results: ParkingEventResult[] = [];
     for (const event of webhookBody.events) {
       const result = await this.processEvent(event);
       if (result) {

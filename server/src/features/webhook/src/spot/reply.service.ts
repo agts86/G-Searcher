@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import type { webhook, messagingApi } from '@line/bot-sdk';
 import { formatAsJstIsoString } from '@api/shared';
-import type { YolpClient, YolpFeature, YolpLocation } from './yolp-client.js';
-import type { LineReplyClient, CarouselColumn } from './line-reply-client.js';
-import type { GourmetLogEntry, LocalEventResult, PersistedMeta } from './webhook.types.js';
+import type { SpotSearchClient, SpotFeature, SpotLocation } from './search-client.js';
+import type { LineReplyClient, CarouselColumn } from '../line-reply-client.js';
+import type { GourmetLogEntry, SpotEventResult, PersistedMeta } from './types.js';
 
 export const NOT_FOUND_TEXT = 'ごめんなさい。。見つかりませんでした。。';
 const NOT_FOUND_ALT_TEXT = '検索結果';
@@ -41,16 +41,16 @@ function toPersistedMeta(entry: GourmetLogEntry): PersistedMeta {
   return { id, text: entry.text, createdAt: now, updatedAt: now };
 }
 
-function toQueryLocation(entry: GourmetLogEntry): YolpLocation {
+function toQueryLocation(entry: GourmetLogEntry): SpotLocation {
   if (entry.type === 'location') {
     return { lat: entry.lat, lon: entry.lng };
   }
   return { query: (entry.text ?? '').replace(FULL_WIDTH_SPACE, ' ') };
 }
 
-function dedupeAndCap(features: YolpFeature[]): YolpFeature[] {
+function dedupeAndCap(features: SpotFeature[]): SpotFeature[] {
   const seen = new Set<string>();
-  const result: YolpFeature[] = [];
+  const result: SpotFeature[] = [];
   for (const feature of features) {
     // detailUrlが無いとLINEのuri actionが不正になりカラム全体が拒否されるため、
     // 詳細URLを提示できない結果はカルーセルに含めない。
@@ -63,7 +63,7 @@ function dedupeAndCap(features: YolpFeature[]): YolpFeature[] {
   return result;
 }
 
-function toCarouselColumns(features: YolpFeature[]): CarouselColumn[] {
+function toCarouselColumns(features: SpotFeature[]): CarouselColumn[] {
   return dedupeAndCap(features).map((f) => ({
     title: f.name,
     text: f.address ?? '',
@@ -75,7 +75,7 @@ function toCarouselColumns(features: YolpFeature[]): CarouselColumn[] {
  * 既存.NET側 LineReplyService.PostLocalAsync がReplyを組み立てる部分と同じ振る舞い。
  * メッセージ本文の組み立てをここに集約し、実際に送った内容をレスポンスにも含められるようにする。
  */
-function buildMessages(features: YolpFeature[]): unknown[] {
+function buildMessages(features: SpotFeature[]): unknown[] {
   const columns = toCarouselColumns(features);
   if (columns.length === 0) {
     const textMessage: messagingApi.TextMessage = { type: 'text', text: NOT_FOUND_TEXT };
@@ -97,15 +97,15 @@ function buildMessages(features: YolpFeature[]): unknown[] {
   return [templateMessage];
 }
 
-/** 既存.NET側 LineReplyService と同じ振る舞い（メッセージ解析→YOLP検索→カルーセル/NotFound返信） */
-export class LineReplyService {
+/** 既存.NET側 LineReplyService と同じ振る舞い（メッセージ解析→スポット検索→カルーセル/NotFound返信） */
+export class SpotReplyService {
   constructor(
-    private readonly yolpClient: YolpClient,
+    private readonly spotSearchClient: SpotSearchClient,
     private readonly lineReplyClient: LineReplyClient,
     private readonly skipLineApiCall: boolean,
   ) {}
 
-  processEvent = async (event: webhook.Event, genreCode: string | undefined): Promise<LocalEventResult | null> => {
+  processEvent = async (event: webhook.Event, genreCode: string | undefined): Promise<SpotEventResult | null> => {
     if (!isMessageEvent(event) || !event.replyToken) {
       return null;
     }
@@ -116,7 +116,7 @@ export class LineReplyService {
     }
     const meta = toPersistedMeta(entry);
 
-    const features = await this.yolpClient.searchLocal({
+    const features = await this.spotSearchClient.search({
       genreCode: genreCode ?? '',
       location: toQueryLocation(entry),
     });

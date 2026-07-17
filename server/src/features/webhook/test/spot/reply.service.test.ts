@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { webhook } from '@line/bot-sdk';
-import { LineReplyService, NOT_FOUND_TEXT } from '../src/line-reply.service.js';
-import type { YolpClient, YolpFeature } from '../src/yolp-client.js';
-import type { LineReplyClient } from '../src/line-reply-client.js';
+import { SpotReplyService, NOT_FOUND_TEXT } from '../../src/spot/reply.service.js';
+import type { SpotSearchClient, SpotFeature } from '../../src/spot/search-client.js';
+import type { LineReplyClient } from '../../src/line-reply-client.js';
 
 function textMessageEvent(text: string): webhook.MessageEvent {
   return {
@@ -28,31 +28,31 @@ function locationMessageEvent(latitude: number, longitude: number): webhook.Mess
   };
 }
 
-function feature(gid: string, name: string): YolpFeature {
+function feature(gid: string, name: string): SpotFeature {
   return { gid, name, address: `${name}の住所`, detailUrl: `https://example.com/${gid}` };
 }
 
 function buildService(options: {
-  searchResults?: YolpFeature[];
+  searchResults?: SpotFeature[];
   skipLineApiCall?: boolean;
-}): { service: LineReplyService; yolpClient: YolpClient; lineReplyClient: LineReplyClient } {
-  const yolpClient: YolpClient = {
-    searchLocal: vi.fn().mockResolvedValue(options.searchResults ?? []),
+}): { service: SpotReplyService; spotSearchClient: SpotSearchClient; lineReplyClient: LineReplyClient } {
+  const spotSearchClient: SpotSearchClient = {
+    search: vi.fn().mockResolvedValue(options.searchResults ?? []),
   };
   const lineReplyClient: LineReplyClient = {
     send: vi.fn().mockResolvedValue(true),
   };
-  const service = new LineReplyService(yolpClient, lineReplyClient, options.skipLineApiCall ?? false);
-  return { service, yolpClient, lineReplyClient };
+  const service = new SpotReplyService(spotSearchClient, lineReplyClient, options.skipLineApiCall ?? false);
+  return { service, spotSearchClient, lineReplyClient };
 }
 
-describe('LineReplyService.processEvent', () => {
+describe('SpotReplyService.processEvent', () => {
   it('テキストメッセージはGourmetWordLogに変換し、全角スペースを半角に置換してYOLP検索する', async () => {
-    const { service, yolpClient } = buildService({ searchResults: [feature('g1', '店A')] });
+    const { service, spotSearchClient } = buildService({ searchResults: [feature('g1', '店A')] });
 
     const result = await service.processEvent(textMessageEvent('ラーメン　うどん'), 'genre1');
 
-    expect(vi.mocked(yolpClient.searchLocal)).toHaveBeenCalledWith({
+    expect(vi.mocked(spotSearchClient.search)).toHaveBeenCalledWith({
       genreCode: 'genre1',
       location: { query: 'ラーメン うどん' },
     });
@@ -62,11 +62,11 @@ describe('LineReplyService.processEvent', () => {
   });
 
   it('ロケーションメッセージはGourmetLocationLogに変換し、緯度経度でYOLP検索する', async () => {
-    const { service, yolpClient } = buildService({ searchResults: [feature('g1', '店A')] });
+    const { service, spotSearchClient } = buildService({ searchResults: [feature('g1', '店A')] });
 
     const result = await service.processEvent(locationMessageEvent(35.5, 139.5), 'genre1');
 
-    expect(vi.mocked(yolpClient.searchLocal)).toHaveBeenCalledWith({
+    expect(vi.mocked(spotSearchClient.search)).toHaveBeenCalledWith({
       genreCode: 'genre1',
       location: { lat: 35.5, lon: 139.5 },
     });
@@ -118,7 +118,7 @@ describe('LineReplyService.processEvent', () => {
   });
 
   it('detailUrlが無い結果はカルーセルから除外し、全て除外されたらNotFoundテキストを返信する', async () => {
-    const noUrlFeature: YolpFeature = { gid: 'g1', name: '店A', address: '店Aの住所', detailUrl: null };
+    const noUrlFeature: SpotFeature = { gid: 'g1', name: '店A', address: '店Aの住所', detailUrl: null };
     const { service, lineReplyClient } = buildService({ searchResults: [noUrlFeature] });
 
     await service.processEvent(textMessageEvent('ラーメン'), 'genre1');
@@ -127,7 +127,7 @@ describe('LineReplyService.processEvent', () => {
   });
 
   it('detailUrlが無い結果は除いて、有効な結果だけでカルーセルを返信する', async () => {
-    const noUrlFeature: YolpFeature = { gid: 'g1', name: '店A', address: '店Aの住所', detailUrl: null };
+    const noUrlFeature: SpotFeature = { gid: 'g1', name: '店A', address: '店Aの住所', detailUrl: null };
     const { service, lineReplyClient } = buildService({ searchResults: [noUrlFeature, feature('g2', '店B')] });
 
     await service.processEvent(textMessageEvent('ラーメン'), 'genre1');

@@ -1,8 +1,9 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import type { webhook } from '@line/bot-sdk';
-import { createLineSignatureGuard } from './line-signature-guard.js';
-import type { BikeParkingReplyService } from './bike-parking-reply.service.js';
-import { WebhookRequestBodySchema, BikeParkingReplyResponseSchema } from './webhook.dto.js';
+import { createLineSignatureGuard } from '../line-signature-guard.js';
+import type { ParkingReplyService } from './reply.service.js';
+import { WebhookRequestBodySchema } from '../common.dto.js';
+import { ParkingReplyResponseSchema } from './dto.js';
 
 const tags = ['Webhook'];
 
@@ -16,7 +17,7 @@ const parkingRoute = createRoute({
   responses: {
     200: {
       description: 'jmpsa.or.jp（全国バイク駐車場案内）検索・LINE返信まで同期的に完了し、送信した返信内容・返信成否の一覧を返す',
-      content: { 'application/json': { schema: BikeParkingReplyResponseSchema } },
+      content: { 'application/json': { schema: ParkingReplyResponseSchema } },
     },
   },
 });
@@ -27,15 +28,15 @@ function toCallbackRequest(body: { destination: string; events: unknown[] }): we
 
 /**
  * /parking を実装するOpenAPIHonoルーター。ホスト側で /api/v1/webhook にマウントする。
- * DB永続化・非同期ジョブキューは持たず、既存 /local と同じLINE署名検証のみを適用する。
+ * DB永続化・非同期ジョブキューは持たず、/spot と同じLINE署名検証のみを適用する。
  */
-export function createBikeParkingRouter(
-  service: BikeParkingReplyService,
+export function createParkingRouter(
+  service: ParkingReplyService,
   channelSecret: string,
   verifySignature = true,
 ): OpenAPIHono {
   const app = new OpenAPIHono();
-  // '*'にすると、ホスト側で他のルーター（webhookRouter等）と同じベースパスに
+  // '*'にすると、ホスト側で他のルーター（spotRouter等）と同じベースパスに
   // app.route()で並べてマウントした際、このミドルウェアが他ルーターのパスにも先に
   // 適用され誤ったchannelSecretで検証されてしまうため、自身が処理するパスに限定する。
   app.use('/parking', createLineSignatureGuard(channelSecret, verifySignature));

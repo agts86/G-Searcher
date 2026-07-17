@@ -1,3 +1,5 @@
+import type { Reply } from '../common.types.js';
+
 /** メッセージ種別ごとの検索条件・永続化データを組み立てる際に使う内部表現 */
 export type GourmetLogEntry =
   | { type: 'location'; lat: number; lng: number }
@@ -25,21 +27,9 @@ export type PersistedGourmetWordLog = {
 
 export type PersistedMeta = PersistedGourmetLocationLog | PersistedGourmetWordLog;
 
-/** 既存.NET側 LineDevSdk.DTO.MessagingAPIs.Reply と同じ形（replyToken + messages） */
-export interface LocalReply {
-  replyToken: string;
-  messages: unknown[];
-}
-
 /** 既存.NET側 LocalEventResultDto と同じ形 */
-export interface LocalEventResult {
-  reply: LocalReply;
+export interface SpotEventResult {
+  reply: Reply;
   meta: PersistedMeta;
-  isReplySucceeded: boolean;
-}
-
-/** バイク駐車場検索版のイベント結果（DB永続化しないためmetaは持たない） */
-export interface BikeParkingEventResult {
-  reply: LocalReply;
   isReplySucceeded: boolean;
 }

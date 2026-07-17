@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import type { HttpAdapter } from '../src/http-adapter.js';
-import { BikeParkingClientImpl } from '../src/bike-parking-client.impl.js';
+import { ParkingClientImpl } from '../src/parking-client.impl.js';
 
 type GetTextMock = Mock<(url: string, headers?: Record<string, string>) => Promise<string>>;
 
@@ -60,10 +60,10 @@ const TWO_SPOTS_HTML = `
 </li>
 `;
 
-describe('BikeParkingClientImpl.search', () => {
-  it('緯度経度指定の場合はlocation.phpをlng/latで呼び、結果をBikeParkingSpotへ変換する', async () => {
+describe('ParkingClientImpl.search', () => {
+  it('緯度経度指定の場合はlocation.phpをlng/latで呼び、結果をParkingSpotへ変換する', async () => {
     const { adapter, getTextMock } = buildAdapter(TWO_SPOTS_HTML);
-    const client = new BikeParkingClientImpl(adapter);
+    const client = new ParkingClientImpl(adapter);
 
     const result = await client.search({ lat: 35.83842406478811, lng: 139.7962472487242 });
 
@@ -95,7 +95,7 @@ describe('BikeParkingClientImpl.search', () => {
 
   it('文字列検索の場合はsearch.phpをqで呼ぶ', async () => {
     const { adapter, getTextMock } = buildAdapter('');
-    const client = new BikeParkingClientImpl(adapter);
+    const client = new ParkingClientImpl(adapter);
 
     await client.search({ query: 'スカイツリー' });
 
@@ -106,7 +106,7 @@ describe('BikeParkingClientImpl.search', () => {
 
   it('該当駐車場が無ければ空配列を返す', async () => {
     const { adapter } = buildAdapter('');
-    const client = new BikeParkingClientImpl(adapter);
+    const client = new ParkingClientImpl(adapter);
 
     const result = await client.search({ query: '該当なし' });
 
@@ -115,7 +115,7 @@ describe('BikeParkingClientImpl.search', () => {
 
   it('車両フィルタ・予約制除くの絞り込みはCookieのvs値でサーバー側に伝わるため、Cookieヘッダーを付与する', async () => {
     const { adapter, getTextMock } = buildAdapter('');
-    const client = new BikeParkingClientImpl(adapter);
+    const client = new ParkingClientImpl(adapter);
 
     await client.search({ lat: 35.83842406478811, lng: 139.7962472487242 });
 

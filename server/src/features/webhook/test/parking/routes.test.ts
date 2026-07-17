@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createHmac } from 'node:crypto';
-import { createBikeParkingRouter } from '../src/bike-parking.routes.js';
-import type { BikeParkingReplyService } from '../src/bike-parking-reply.service.js';
+import { createParkingRouter } from '../../src/parking/routes.js';
+import type { ParkingReplyService } from '../../src/parking/reply.service.js';
 
 const CHANNEL_SECRET = 'test-channel-secret';
 
@@ -18,11 +18,11 @@ function buildRequestInit(body: object): RequestInit {
   };
 }
 
-function setup(processEventsResult: unknown[] = []): { app: ReturnType<typeof createBikeParkingRouter> } {
+function setup(processEventsResult: unknown[] = []): { app: ReturnType<typeof createParkingRouter> } {
   const service = {
     processEvents: vi.fn().mockResolvedValue(processEventsResult),
-  } as unknown as BikeParkingReplyService;
-  const app = createBikeParkingRouter(service, CHANNEL_SECRET, true);
+  } as unknown as ParkingReplyService;
+  const app = createParkingRouter(service, CHANNEL_SECRET, true);
   return { app };
 }
 

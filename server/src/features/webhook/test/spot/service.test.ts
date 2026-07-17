@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { webhook } from '@line/bot-sdk';
-import { WebhookService } from '../src/webhook.service.js';
-import type { LineReplyService } from '../src/line-reply.service.js';
-import type { WebhookRepository } from '../src/webhook.repository.js';
-import type { LocalEventResult } from '../src/webhook.types.js';
+import { SpotService } from '../../src/spot/service.js';
+import type { SpotReplyService } from '../../src/spot/reply.service.js';
+import type { WebhookRepository } from '../../src/spot/repository.js';
+import type { SpotEventResult } from '../../src/spot/types.js';
 
 function buildWebhookBody(events: webhook.Event[] = []): webhook.CallbackRequest {
   return { destination: 'U123', events };
@@ -26,29 +26,29 @@ function wordMeta(text: string): { id: string; text: string; createdAt: string; 
 }
 
 function buildService(
-  processEventResult: LocalEventResult | null = {
+  processEventResult: SpotEventResult | null = {
     reply: { replyToken: 'token-1', messages: [] },
     meta: wordMeta('ラーメン'),
     isReplySucceeded: true,
   },
 ): {
-  service: WebhookService;
+  service: SpotService;
   repo: WebhookRepository;
-  lineReplyService: LineReplyService;
+  spotReplyService: SpotReplyService;
 } {
-  const lineReplyService = {
+  const spotReplyService = {
     processEvent: vi.fn().mockResolvedValue(processEventResult),
-  } as unknown as LineReplyService;
+  } as unknown as SpotReplyService;
   const repo: WebhookRepository = {
     createGourmetLocationLog: vi.fn().mockResolvedValue(undefined),
     createGourmetWordLog: vi.fn().mockResolvedValue(undefined),
     createJobLog: vi.fn().mockResolvedValue(undefined),
   };
-  const service = new WebhookService(lineReplyService, repo);
-  return { service, repo, lineReplyService };
+  const service = new SpotService(spotReplyService, repo);
+  return { service, repo, spotReplyService };
 }
 
-describe('WebhookService.processSync', () => {
+describe('SpotService.processSync', () => {
   it('イベントを処理し、metaをDB保存してreply/meta/isReplySucceededの配列を返す（JobLogは保存しない）', async () => {
     const { service, repo } = buildService();
 

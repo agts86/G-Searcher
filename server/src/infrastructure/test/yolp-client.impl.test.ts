@@ -10,8 +10,8 @@ function buildAdapter(response: unknown): { adapter: HttpAdapter; getMock: GetMo
   return { adapter: { get: getMock } as unknown as HttpAdapter, getMock };
 }
 
-describe('YolpClientImpl.searchLocal', () => {
-  it('緯度経度指定の場合はlat/lonクエリでYOLPを呼び、結果をYolpFeatureへ変換する', async () => {
+describe('YolpClientImpl.search', () => {
+  it('緯度経度指定の場合はlat/lonクエリでYOLPを呼び、結果をSpotFeatureへ変換する', async () => {
     const { adapter, getMock } = buildAdapter({
       Feature: [
         {
@@ -23,7 +23,7 @@ describe('YolpClientImpl.searchLocal', () => {
     });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { lat: 35.5, lon: 139.5 } });
+    const result = await client.search({ genreCode: 'genre1', location: { lat: 35.5, lon: 139.5 } });
 
     expect(result).toEqual([{ gid: 'g1', name: '店A', address: '東京都千代田区1-1', detailUrl: 'https://example.com/g1' }]);
     const [url] = getMock.mock.calls[0];
@@ -37,7 +37,7 @@ describe('YolpClientImpl.searchLocal', () => {
     const { adapter, getMock } = buildAdapter({ Feature: [] });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    await client.searchLocal({ genreCode: 'genre1', location: { query: 'ラーメン うどん' } });
+    await client.search({ genreCode: 'genre1', location: { query: 'ラーメン うどん' } });
 
     const [url] = getMock.mock.calls[0];
     expect(url).toContain(new URLSearchParams({ query: 'ラーメン うどん' }).toString());
@@ -47,7 +47,7 @@ describe('YolpClientImpl.searchLocal', () => {
     const { adapter } = buildAdapter({});
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: 'ラーメン' } });
+    const result = await client.search({ genreCode: 'genre1', location: { query: 'ラーメン' } });
 
     expect(result).toEqual([]);
   });
@@ -58,7 +58,7 @@ describe('YolpClientImpl.searchLocal', () => {
     });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
+    const result = await client.search({ genreCode: 'genre1', location: { query: '店A' } });
 
     expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'https://loco.yahoo.co.jp/place/g1/' }]);
   });
@@ -72,7 +72,7 @@ describe('YolpClientImpl.searchLocal', () => {
     });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店' } });
+    const result = await client.search({ genreCode: 'genre1', location: { query: '店' } });
 
     expect(result).toEqual([
       { gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/mobile/g1' },
@@ -86,7 +86,7 @@ describe('YolpClientImpl.searchLocal', () => {
     });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
+    const result = await client.search({ genreCode: 'genre1', location: { query: '店A' } });
 
     expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'https://example.com/g1' }]);
   });
@@ -97,7 +97,7 @@ describe('YolpClientImpl.searchLocal', () => {
     });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店A' } });
+    const result = await client.search({ genreCode: 'genre1', location: { query: '店A' } });
 
     expect(result).toEqual([{ gid: 'g1', name: '店A', address: null, detailUrl: 'tel:0312345678' }]);
   });
@@ -106,7 +106,7 @@ describe('YolpClientImpl.searchLocal', () => {
     const { adapter } = buildAdapter({ Feature: [{ Id: 'id-1', Name: '店B' }] });
     const client = new YolpClientImpl(adapter, 'app-id-1');
 
-    const result = await client.searchLocal({ genreCode: 'genre1', location: { query: '店B' } });
+    const result = await client.search({ genreCode: 'genre1', location: { query: '店B' } });
 
     expect(result).toEqual([{ gid: 'id-1', name: '店B', address: null, detailUrl: null }]);
   });

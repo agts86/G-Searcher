@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Hono } from 'hono';
 import { createHmac } from 'node:crypto';
-import { createLineSignatureGuard } from '../src/line-signature-guard.js';
+import { createLineSignatureGuard } from '../../src/line-signature-guard.js';
 
 const CHANNEL_SECRET = 'test-channel-secret';
 

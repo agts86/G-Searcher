@@ -1,5 +1,5 @@
 import type { HttpAdapter } from './http-adapter.js';
-import type { YolpClient, YolpSearchQuery, YolpFeature } from '@api/features-webhook';
+import type { SpotSearchClient, SpotSearchQuery, SpotFeature } from '@api/features-webhook';
 
 const YOLP_BASE_URL = 'https://map.yahooapis.jp';
 const RESULTS = 20;
@@ -44,7 +44,7 @@ function resolveDetailUrl(property: YolpFeatureResponse['Property']): string | n
   return candidates.find((candidate) => Boolean(candidate)) ?? null;
 }
 
-function toYolpFeature(feature: YolpFeatureResponse): YolpFeature {
+function toYolpFeature(feature: YolpFeatureResponse): SpotFeature {
   const property = feature.Property;
   return {
     gid: feature.Gid ?? feature.Id ?? '',
@@ -54,7 +54,7 @@ function toYolpFeature(feature: YolpFeatureResponse): YolpFeature {
   };
 }
 
-function buildQueryParams(appId: string, query: YolpSearchQuery): URLSearchParams {
+function buildQueryParams(appId: string, query: SpotSearchQuery): URLSearchParams {
   const params = new URLSearchParams({
     appid: appId,
     output: 'json',
@@ -75,13 +75,13 @@ function buildQueryParams(appId: string, query: YolpSearchQuery): URLSearchParam
 }
 
 /** Yahoo!ローカルサーチAPI(YOLP)のfetchベース実装。既存.NET側 YOLPClient.GetLocalSearchResultAsync と同じクエリを送る */
-export class YolpClientImpl implements YolpClient {
+export class YolpClientImpl implements SpotSearchClient {
   constructor(
     private readonly httpAdapter: HttpAdapter,
     private readonly appId: string,
   ) {}
 
-  async searchLocal(query: YolpSearchQuery): Promise<YolpFeature[]> {
+  async search(query: SpotSearchQuery): Promise<SpotFeature[]> {
     const params = buildQueryParams(this.appId, query);
     const url = `${YOLP_BASE_URL}/search/local/V1/localSearch?${params.toString()}`;
 
