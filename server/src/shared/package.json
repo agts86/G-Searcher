@@ -1,30 +1,30 @@
 {
-  "name": "@api/shared",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "development": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
-    "lint": "eslint src test --ext .ts"
-  },
-  "dependencies": {
-    "hono": "^4.12.30",
-    "jose": "^5.9.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.0",
-    "typescript": "^6.0.0",
-    "vitest": "^3.0.0"
-  }
+	"name": "@api/shared",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"development": "./src/index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
+		"lint": "eslint src test --ext .ts"
+	},
+	"dependencies": {
+		"hono": "^4.12.30",
+		"jose": "^5.9.0"
+	},
+	"devDependencies": {
+		"@types/node": "^22.10.0",
+		"typescript": "^6.0.0",
+		"vitest": "^3.0.0"
+	}
 }

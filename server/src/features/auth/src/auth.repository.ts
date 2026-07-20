@@ -1,14 +1,14 @@
 export interface StoredRefreshToken {
-  id: string;
-  userName: string;
-  tokenHash: string;
-  expiresAt: Date;
+	id: string;
+	userName: string;
+	tokenHash: string;
+	expiresAt: Date;
 }
 
 export interface NewRefreshToken {
-  userName: string;
-  tokenHash: string;
-  expiresAt: Date;
+	userName: string;
+	tokenHash: string;
+	expiresAt: Date;
 }
 
 /**
@@ -22,10 +22,10 @@ export interface NewRefreshToken {
  * あえて「削除+作成」をセットにしたメソッドにしている。個別のdelete/createに分けない。
  */
 export interface AuthRepository {
-  findByTokenHash(tokenHash: string): Promise<StoredRefreshToken | null>;
-  /** 指定ユーザーの既存トークンを全削除し、新規トークンを1件作成する（アトミック。ログイン時に使う） */
-  replaceUserTokens(userName: string, newToken: NewRefreshToken): Promise<void>;
-  /** 指定IDのトークンを削除し、新規トークンを1件作成する（アトミック。リフレッシュのローテーションに使う） */
-  rotateToken(oldId: string, newToken: NewRefreshToken): Promise<void>;
-  revoke(id: string): Promise<void>;
+	findByTokenHash(tokenHash: string): Promise<StoredRefreshToken | null>;
+	/** 指定ユーザーの既存トークンを全削除し、新規トークンを1件作成する（アトミック。ログイン時に使う） */
+	replaceUserTokens(userName: string, newToken: NewRefreshToken): Promise<void>;
+	/** 指定IDのトークンを削除し、新規トークンを1件作成する（アトミック。リフレッシュのローテーションに使う） */
+	rotateToken(oldId: string, newToken: NewRefreshToken): Promise<void>;
+	revoke(id: string): Promise<void>;
 }

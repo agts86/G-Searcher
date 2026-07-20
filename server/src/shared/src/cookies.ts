@@ -1,12 +1,12 @@
-export const AUTH_COOKIE_NAME = 'linewebhook_auth';
-export const AUTH_REFRESH_COOKIE_NAME = 'linewebhook_refresh';
+export const AUTH_COOKIE_NAME = "linewebhook_auth";
+export const AUTH_REFRESH_COOKIE_NAME = "linewebhook_refresh";
 
 export interface AuthCookieOptions {
-  httpOnly: true;
-  secure: boolean;
-  sameSite: 'Strict';
-  path: '/';
-  expires: Date;
+	httpOnly: true;
+	secure: boolean;
+	sameSite: "Strict";
+	path: "/";
+	expires: Date;
 }
 
 /**
@@ -15,11 +15,11 @@ export interface AuthCookieOptions {
  * Try it out するには、Secure Cookieがブラウザに保存されないため false を渡す必要がある。
  */
 export function buildAuthCookieOptions(expiresAt: Date, secure = true): AuthCookieOptions {
-  return {
-    httpOnly: true,
-    secure,
-    sameSite: 'Strict',
-    path: '/',
-    expires: expiresAt,
-  };
+	return {
+		httpOnly: true,
+		secure,
+		sameSite: "Strict",
+		path: "/",
+		expires: expiresAt,
+	};
 }

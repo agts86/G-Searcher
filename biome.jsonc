@@ -1,26 +1,30 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
-  "files": {
-    "includes": [
-      "**",
-      "!**/coverage",
-      "!**/TestResults",
-      "!**/pnpm-lock.yaml",
-      "!**/*.d.ts"
-    ]
-  },
-  "formatter": {
-    "enabled": true
-  },
-  "linter": {
-    "enabled": false
-  },
-  "assist": {
-    "enabled": false
-  }
+	"$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": [
+			"**",
+			"!**/coverage",
+			"!**/TestResults",
+			"!.claude",
+			"!.vscode",
+			"!.mcp.json",
+			"!**/pnpm-lock.yaml",
+			"!**/*.d.ts"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"lineWidth": 100
+	},
+	"linter": {
+		"enabled": false
+	},
+	"assist": {
+		"enabled": false
+	}
 }

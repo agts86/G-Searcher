@@ -1,11 +1,11 @@
 {
-  "framework": null,
-  "installCommand": "pnpm install",
-  "buildCommand": "pnpm -r build && cd web && pnpm install --frozen-lockfile --ignore-workspace && pnpm build",
-  "outputDirectory": "web/out",
-  "functions": { "api/index.ts": { "maxDuration": 10 } },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/health", "destination": "/api" }
-  ]
+	"framework": null,
+	"installCommand": "pnpm install",
+	"buildCommand": "pnpm -r build && cd web && pnpm install --frozen-lockfile --ignore-workspace && pnpm build",
+	"outputDirectory": "web/out",
+	"functions": { "api/index.ts": { "maxDuration": 10 } },
+	"rewrites": [
+		{ "source": "/api/(.*)", "destination": "/api" },
+		{ "source": "/health", "destination": "/api" }
+	]
 }

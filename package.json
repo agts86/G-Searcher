@@ -1,9 +1,13 @@
 {
-  "name": "linewebhook-root",
-  "private": true,
-  "version": "0.0.0",
-  "packageManager": "pnpm@10.26.0",
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.4"
-  }
+	"name": "linewebhook-root",
+	"private": true,
+	"version": "0.0.0",
+	"packageManager": "pnpm@10.26.0",
+	"scripts": {
+		"format": "biome format --write .",
+		"format:check": "biome format ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.4"
+	}
 }

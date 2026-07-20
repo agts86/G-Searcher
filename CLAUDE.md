@@ -47,6 +47,15 @@ Access Token 15分 + Refresh Token 7日（DB 管理）。UI は有効期限5分�
 
 ## コマンド
 
+### フォーマット（リポジトリ全体）
+
+整形は Biome、静的解析は ESLint と担当を分けている（`biome.jsonc` で linter を無効化）。
+
+```bash
+pnpm format        # biome format --write .（server/web 両方）
+pnpm format:check  # 差分があれば失敗（CI と同じ）
+```
+
 ### API（server）
 
 ```bash

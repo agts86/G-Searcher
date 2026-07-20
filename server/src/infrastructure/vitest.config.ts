@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 /**
  * このパッケージのテストは実際のPostgreSQLに対して各テーブルをdeleteMany()で
@@ -7,8 +7,8 @@ import { defineConfig } from 'vitest/config';
  * タイミング競合でflakyになる。ファイル単位を直列実行にして競合を防ぐ。
  */
 export default defineConfig({
-  test: {
-    fileParallelism: false,
-    globalSetup: ['../tables/test-support/vitest-global-setup.ts'],
-  },
+	test: {
+		fileParallelism: false,
+		globalSetup: ["../tables/test-support/vitest-global-setup.ts"],
+	},
 });

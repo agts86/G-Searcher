@@ -1,5 +1,5 @@
-import { handle } from 'hono/vercel';
-import { createApp } from '@api/host';
+import { handle } from "hono/vercel";
+import { createApp } from "@api/host";
 
 const app = createApp();
 

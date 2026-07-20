@@ -44,13 +44,6 @@ pnpm lint:check
 
 ## VS Code連携
 
-以下の設定を`.vscode/settings.json`に追加すると、保存時に自動修正されます：
+設定はリポジトリルートの`.vscode/settings.json`にコミット済み。整形はBiome拡張（`biomejs.biome`）、自動修正はESLint拡張が担当する。
 
-```json
-{
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "eslint.validate": ["typescript"]
-}
-```
+Biomeのlinterは`biome.jsonc`で無効化しているため、両拡張の診断が二重に出ることはない。ESLint設定には整形ルールを追加しないこと（Biomeと競合するため）。

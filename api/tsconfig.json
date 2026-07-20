@@ -1,10 +1,10 @@
 {
-  "extends": "../server/tsconfig.base.json",
-  "compilerOptions": {
-    "noEmit": true,
-    "composite": false,
-    "lib": ["ES2022", "DOM"],
-    "types": []
-  },
-  "include": ["*.ts"]
+	"extends": "../server/tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"composite": false,
+		"lib": ["ES2022", "DOM"],
+		"types": []
+	},
+	"include": ["*.ts"]
 }

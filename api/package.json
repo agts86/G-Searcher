@@ -1,10 +1,10 @@
 {
-  "name": "@api/vercel",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "@api/host": "workspace:*",
-    "hono": "^4.6.0"
-  }
+	"name": "@api/vercel",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"dependencies": {
+		"@api/host": "workspace:*",
+		"hono": "^4.6.0"
+	}
 }

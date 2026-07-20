@@ -1,9 +1,9 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 // 実PostgreSQLの代わりにPGlite(WASM版Postgres)をlocalhost:5432で起動し、
 // DATABASE_URLはdocker-composeの実DBと同じ接続先のまま実行する（モックしない方針を維持）。
 export default defineConfig({
-  test: {
-    globalSetup: ['./test-support/vitest-global-setup.ts'],
-  },
+	test: {
+		globalSetup: ["./test-support/vitest-global-setup.ts"],
+	},
 });

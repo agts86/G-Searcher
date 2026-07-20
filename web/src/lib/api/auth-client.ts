@@ -1,14 +1,13 @@
-import type { LoginRequest, LoginResponse, MeResponse } from '@/types/api';
-import { apiClient } from './client';
+import type { LoginRequest, LoginResponse, MeResponse } from "@/types/api";
+import { apiClient } from "./client";
 
 export const authClient = {
-  login: (req: LoginRequest): Promise<LoginResponse> =>
-    apiClient.post<LoginResponse>('/auth/login', req),
+	login: (req: LoginRequest): Promise<LoginResponse> =>
+		apiClient.post<LoginResponse>("/auth/login", req),
 
-  refresh: (): Promise<LoginResponse> =>
-    apiClient.post<LoginResponse>('/auth/refresh', {}),
+	refresh: (): Promise<LoginResponse> => apiClient.post<LoginResponse>("/auth/refresh", {}),
 
-  logout: (): Promise<void> => apiClient.post<void>('/auth/logout', {}),
+	logout: (): Promise<void> => apiClient.post<void>("/auth/logout", {}),
 
-  me: (): Promise<MeResponse> => apiClient.get<MeResponse>('/auth/me'),
+	me: (): Promise<MeResponse> => apiClient.get<MeResponse>("/auth/me"),
 };

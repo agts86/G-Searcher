@@ -1,32 +1,32 @@
 {
-  "name": "@api/tables",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "development": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "scripts": {
-    "build": "prisma generate && tsc -p tsconfig.json",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
-    "lint": "echo \"no lint target in tables\" && exit 0"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.1.0"
-  },
-  "devDependencies": {
-    "@electric-sql/pglite": "^0.5.4",
-    "@electric-sql/pglite-socket": "^0.2.7",
-    "@types/node": "^22.10.0",
-    "prisma": "^6.1.0",
-    "typescript": "^6.0.0",
-    "vitest": "^3.0.0"
-  }
+	"name": "@api/tables",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"development": "./src/index.ts",
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "prisma generate && tsc -p tsconfig.json",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
+		"lint": "echo \"no lint target in tables\" && exit 0"
+	},
+	"dependencies": {
+		"@prisma/client": "^6.1.0"
+	},
+	"devDependencies": {
+		"@electric-sql/pglite": "^0.5.4",
+		"@electric-sql/pglite-socket": "^0.2.7",
+		"@types/node": "^22.10.0",
+		"prisma": "^6.1.0",
+		"typescript": "^6.0.0",
+		"vitest": "^3.0.0"
+	}
 }

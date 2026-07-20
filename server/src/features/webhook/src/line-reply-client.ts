@@ -1,7 +1,7 @@
 export interface CarouselColumn {
-  title: string;
-  text: string;
-  detailUrl: string;
+	title: string;
+	text: string;
+	detailUrl: string;
 }
 
 /**
@@ -12,5 +12,5 @@ export interface CarouselColumn {
  * （レスポンスに実際に送った内容をそのまま含める必要があるため、組み立てをfeature層に寄せている）。
  */
 export interface LineReplyClient {
-  send: (replyToken: string, messages: unknown[]) => Promise<boolean>;
+	send: (replyToken: string, messages: unknown[]) => Promise<boolean>;
 }

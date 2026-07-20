@@ -1,13 +1,13 @@
 export type ParkingLocation = { lat: number; lng: number } | { query: string };
 
 export interface ParkingSpot {
-  name: string;
-  address: string;
-  fee: string | null;
-  holiday: string | null;
-  detailUrl: string;
-  lat: number | null;
-  lng: number | null;
+	name: string;
+	address: string;
+	fee: string | null;
+	holiday: string | null;
+	detailUrl: string;
+	lat: number | null;
+	lng: number | null;
 }
 
 /**
@@ -15,5 +15,5 @@ export interface ParkingSpot {
  * 実装（fetch＋HTMLパースベース）は @api/infrastructure が提供する。
  */
 export interface ParkingClient {
-  search: (location: ParkingLocation) => Promise<ParkingSpot[]>;
+	search: (location: ParkingLocation) => Promise<ParkingSpot[]>;
 }

@@ -1,32 +1,32 @@
 export interface GourmetLocationLogRow {
-  id: string;
-  lat: number;
-  lng: number;
-  createdAt: Date;
-  updatedAt: Date;
+	id: string;
+	lat: number;
+	lng: number;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface GourmetWordLogRow {
-  id: string;
-  text: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+	id: string;
+	text: string | null;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface ErrorLogRow {
-  id: string;
-  contents: string;
-  createdAt: Date;
-  updatedAt: Date;
+	id: string;
+	contents: string;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface JobLogRow {
-  id: string;
-  isSuccess: boolean;
-  contents: string | null;
-  info: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+	id: string;
+	isSuccess: boolean;
+	contents: string | null;
+	info: string | null;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 /**
@@ -35,8 +35,8 @@ export interface JobLogRow {
  * 全メソッドとも既存.NET側 ManagedRepository と同じく createdAt 降順の全件取得。
  */
 export interface ManagedRepository {
-  findGourmetLocationLogs(): Promise<GourmetLocationLogRow[]>;
-  findGourmetWordLogs(): Promise<GourmetWordLogRow[]>;
-  findErrorLogs(): Promise<ErrorLogRow[]>;
-  findJobLogs(): Promise<JobLogRow[]>;
+	findGourmetLocationLogs(): Promise<GourmetLocationLogRow[]>;
+	findGourmetWordLogs(): Promise<GourmetWordLogRow[]>;
+	findErrorLogs(): Promise<ErrorLogRow[]>;
+	findJobLogs(): Promise<JobLogRow[]>;
 }

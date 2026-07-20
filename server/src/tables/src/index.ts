@@ -1,1 +1,1 @@
-export type { RefreshToken } from '@prisma/client';
+export type { RefreshToken } from "@prisma/client";
