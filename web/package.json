@@ -6,9 +6,10 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint src --ext .ts,.tsx",
-		"lint:fix": "eslint src --ext .ts,.tsx --fix",
-		"lint:check": "eslint src --ext .ts,.tsx --max-warnings 0",
+		"lint": "eslint src tests --ext .ts,.tsx",
+		"lint:fix": "eslint src tests --ext .ts,.tsx --fix",
+		"lint:check": "eslint src tests --ext .ts,.tsx --max-warnings 0",
+		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary"
 	},

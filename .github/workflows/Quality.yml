@@ -24,7 +24,7 @@ jobs:
     - name: Format check
       run: biome format .
 
-  web-lint:
+  web:
     runs-on: ubuntu-latest
 
     permissions:
@@ -52,3 +52,11 @@ jobs:
     - name: Lint
       working-directory: web
       run: pnpm lint:check
+
+    - name: Typecheck
+      working-directory: web
+      run: pnpm typecheck
+
+    - name: Test
+      working-directory: web
+      run: pnpm test

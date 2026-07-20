@@ -10,7 +10,7 @@
 - データ取得: React Query / TanStack Query（Query Key は feature 単位）
 - 地図: react-leaflet（CSR 向け）
 - Lint: ESLint v9 + `@typescript-eslint`
-- Format: Prettier
+- Format: Biome（リポジトリルートの `biome.jsonc` で一元管理。linterは無効化しESLintと担当を分離）
 - Test: Vitest
 
 ## 2. 実装ルール

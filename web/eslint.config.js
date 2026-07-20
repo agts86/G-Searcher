@@ -6,6 +6,78 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import nextPlugin from "@next/eslint-plugin-next";
 
+const commonRules = {
+	// === AGENTS.md 規約対応ルール ===
+
+	// 戻り値型必須化（4章対応）
+	"@typescript-eslint/explicit-function-return-type": "error",
+
+	// any型禁止（3章対応）
+	"@typescript-eslint/no-explicit-any": "error",
+
+	// 未使用変数のチェックをunused-importsプラグインに委譲
+	"@typescript-eslint/no-unused-vars": "off",
+	"unused-imports/no-unused-imports": "error",
+
+	// === 複雑度管理（10章対応） ===
+
+	// 循環的複雑度を10以下に制限
+	complexity: ["error", 10],
+
+	// ネストの深さを3階層以下に制限
+	"max-depth": ["error", 3],
+
+	// 1メソッド50行以下を推奨（警告レベル）
+	"max-lines-per-function": ["warn", 50],
+
+	// === インポート規則（8章対応） ===
+
+	// 型のみのインポートでimport typeを強制
+	"@typescript-eslint/consistent-type-imports": [
+		"error",
+		{
+			prefer: "type-imports",
+		},
+	],
+
+	// === React ルール ===
+	"react/react-in-jsx-scope": "off",
+	"react/prop-types": "off",
+	"react-hooks/rules-of-hooks": "error",
+	"react-hooks/exhaustive-deps": "warn",
+
+	// === Next.js ルール ===
+	"@next/next/no-html-link-for-pages": "error",
+	"@next/next/no-img-element": "warn",
+
+	// === エラーハンドリング（7章対応） ===
+
+	// Promise の適切な処理を強制
+	"@typescript-eslint/no-floating-promises": "error",
+
+	// console.log の使用を警告（Logger使用を推奨）
+	"no-console": "warn",
+};
+
+const languageOptions = {
+	parser: tseslint.parser,
+	parserOptions: {
+		project: "./tsconfig.json",
+		sourceType: "module",
+	},
+};
+
+const plugins = {
+	"unused-imports": unusedImports,
+	react,
+	"react-hooks": reactHooks,
+	"@next/next": nextPlugin,
+};
+
+const settings = {
+	react: { version: "detect" },
+};
+
 export default tseslint.config(
 	// 基本設定
 	eslint.configs.recommended,
@@ -15,80 +87,24 @@ export default tseslint.config(
 	{
 		// 対象ファイルの指定
 		files: ["src/**/*.{ts,tsx}"],
+		languageOptions,
+		plugins,
+		settings,
+		rules: commonRules,
+	},
 
-		// TypeScript用パーサー設定
-		languageOptions: {
-			parser: tseslint.parser,
-			parserOptions: {
-				project: "./tsconfig.json",
-				sourceType: "module",
-			},
-		},
+	{
+		// tests/ 配下は品質ルールのみ適用する
+		files: ["tests/**/*.{ts,tsx}"],
+		languageOptions,
+		plugins,
+		settings,
 
-		// プラグインの登録
-		plugins: {
-			"unused-imports": unusedImports,
-			react,
-			"react-hooks": reactHooks,
-			"@next/next": nextPlugin,
-		},
-
-		settings: {
-			react: { version: "detect" },
-		},
-
-		// ルール設定
 		rules: {
-			// === AGENTS.md 規約対応ルール ===
-
-			// 戻り値型必須化（4章対応）
-			"@typescript-eslint/explicit-function-return-type": "error",
-
-			// any型禁止（3章対応）
-			"@typescript-eslint/no-explicit-any": "error",
-
-			// 未使用変数のチェックをunused-importsプラグインに委譲
-			"@typescript-eslint/no-unused-vars": "off",
-			"unused-imports/no-unused-imports": "error",
-
-			// === 複雑度管理（10章対応） ===
-
-			// 循環的複雑度を10以下に制限
-			complexity: ["error", 10],
-
-			// ネストの深さを3階層以下に制限
-			"max-depth": ["error", 3],
-
-			// 1メソッド50行以下を推奨（警告レベル）
-			"max-lines-per-function": ["warn", 50],
-
-			// === インポート規則（8章対応） ===
-
-			// 型のみのインポートでimport typeを強制
-			"@typescript-eslint/consistent-type-imports": [
-				"error",
-				{
-					prefer: "type-imports",
-				},
-			],
-
-			// === React ルール ===
-			"react/react-in-jsx-scope": "off",
-			"react/prop-types": "off",
-			"react-hooks/rules-of-hooks": "error",
-			"react-hooks/exhaustive-deps": "warn",
-
-			// === Next.js ルール ===
-			"@next/next/no-html-link-for-pages": "error",
-			"@next/next/no-img-element": "warn",
-
-			// === エラーハンドリング（7章対応） ===
-
-			// Promise の適切な処理を強制
-			"@typescript-eslint/no-floating-promises": "error",
-
-			// console.log の使用を警告（Logger使用を推奨）
-			"no-console": "warn",
+			...commonRules,
+			// describe()はit()を束ねる入れ物であり、行数はテストケース数に比例する。
+			// 分割しても構造化の役に立たないため、テストファイルでは行数制限を課さない。
+			"max-lines-per-function": "off",
 		},
 	},
 
