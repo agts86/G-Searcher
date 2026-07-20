@@ -17,7 +17,7 @@
 		"start": "tsx src/main.ts",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
-		"lint": "eslint src --ext .ts"
+		"lint": "eslint src test --ext .ts --max-warnings 0"
 	},
 	"dependencies": {
 		"@api/features-auth": "workspace:*",

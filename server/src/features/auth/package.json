@@ -16,7 +16,7 @@
 		"build": "tsc -p tsconfig.json",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
-		"lint": "eslint src test --ext .ts"
+		"lint": "eslint src test --ext .ts --max-warnings 0"
 	},
 	"dependencies": {
 		"@api/shared": "workspace:*",
