@@ -138,6 +138,9 @@ export default tseslint.config(
 			...commonRules,
 			// テスト用Fake実装はインターフェース適合のためasyncだが内部にawaitを持たないことがある
 			"@typescript-eslint/require-await": "off",
+			// describe()はit()を束ねる入れ物であり、行数はテストケース数に比例する。
+			// 分割しても構造化の役に立たないため、テストファイルでは行数制限を課さない。
+			"max-lines-per-function": "off",
 		},
 	},
 

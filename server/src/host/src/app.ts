@@ -47,6 +47,67 @@ function buildAuthServiceConfig(): AuthServiceConfig {
 	};
 }
 
+type PrismaClient = ReturnType<typeof getPrismaClient>;
+
+/** 認証ルーターを組み立てる（Repository → Service → Router のDI配線）。 */
+function buildAuthRouter(
+	prisma: PrismaClient,
+	config: AuthServiceConfig,
+	cookieSecure: boolean,
+): OpenAPIHono {
+	const authRepository = new PrismaAuthRepository(prisma);
+	const authService = new AuthService(authRepository, config);
+	return createAuthRouter(authService, config.jwt, cookieSecure);
+}
+
+/** 管理画面向けルーターを組み立てる（Repository → Service → Router のDI配線）。 */
+function buildManagedRouter(prisma: PrismaClient, config: AuthServiceConfig): OpenAPIHono {
+	const managedRepository = new PrismaManagedRepository(prisma);
+	const managedService = new ManagedService(managedRepository);
+	return createManagedRouter(managedService, config.jwt);
+}
+
+/** スポット検索(YOLP)のWebhookルーターを組み立てる。検索結果はDBへ永続化する。 */
+function buildSpotRouter(
+	prisma: PrismaClient,
+	httpAdapter: HttpAdapter,
+	skipLineApiCall: boolean,
+	verifyLineSignature: boolean,
+): OpenAPIHono {
+	const spotSearchClient = new YolpClientImpl(httpAdapter, requireEnv("YAHOO_APP_ID"));
+	const lineReplyClient = new LineReplyClientImpl(requireEnv("LINE_CHANNEL_ACCESS_TOKEN"));
+	const spotReplyService = new SpotReplyService(spotSearchClient, lineReplyClient, skipLineApiCall);
+	const webhookRepository = new PrismaWebhookRepository(prisma);
+	const spotService = new SpotService(spotReplyService, webhookRepository);
+	return createSpotRouter(spotService, requireEnv("LINE_CHANNEL_SECRET"), verifyLineSignature);
+}
+
+/**
+ * 全国バイク駐車場案内(jmpsa.or.jp)検索版のWebhookルーターを組み立てる。
+ * DB永続化は行わずLINE返信のみ同期的に行う。
+ * スポット検索とは別のLINEチャンネルで運用するためChannel Secret / Access Tokenを分離する。
+ */
+function buildParkingRouter(
+	httpAdapter: HttpAdapter,
+	skipLineApiCall: boolean,
+	verifyLineSignature: boolean,
+): OpenAPIHono {
+	const parkingClient = new ParkingClientImpl(httpAdapter);
+	const parkingLineReplyClient = new LineReplyClientImpl(
+		requireEnv("BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN"),
+	);
+	const parkingReplyService = new ParkingReplyService(
+		parkingClient,
+		parkingLineReplyClient,
+		skipLineApiCall,
+	);
+	return createParkingRouter(
+		parkingReplyService,
+		requireEnv("BIKE_PARKING_LINE_CHANNEL_SECRET"),
+		verifyLineSignature,
+	);
+}
+
 /**
  * Honoアプリを組み立てる（DI配線: Program.cs相当）。テストからも呼べるようexportする。
  * 戻り値型は意図的に明示しない: Honoの`.route()`は呼び出しごとに型を細分化するため、
@@ -59,15 +120,6 @@ export function createApp() {
 	// 本番以外（Swagger UIが見える環境と同じ条件）はSecure Cookieを外し、
 	// HTTPのローカル開発環境でもSwagger UIの Try it out からログイン状態を維持できるようにする。
 	const cookieSecure = process.env.NODE_ENV === "production";
-
-	const authRepository = new PrismaAuthRepository(prisma);
-	const authService = new AuthService(authRepository, config);
-	const authRouter = createAuthRouter(authService, config.jwt, cookieSecure);
-
-	const managedRepository = new PrismaManagedRepository(prisma);
-	const managedService = new ManagedService(managedRepository);
-	const managedRouter = createManagedRouter(managedService, config.jwt);
-
 	// 既存.NET側 LineReplyService.PostLocalAsync の `if (Env.IsDevelopment()) return;`
 	// と同じ考え方。開発環境ではLINEへの実際の返信APIコールをスキップする。
 	const skipLineApiCall = process.env.NODE_ENV !== "production";
@@ -76,40 +128,19 @@ export function createApp() {
 	// 既存の401検証テスト（署名なしリクエストの拒否）が壊れるため専用フラグにする。
 	const verifyLineSignature = process.env.DISABLE_LINE_SIGNATURE_VERIFICATION !== "true";
 	const httpAdapter = new HttpAdapter();
-	const spotSearchClient = new YolpClientImpl(httpAdapter, requireEnv("YAHOO_APP_ID"));
-	const lineReplyClient = new LineReplyClientImpl(requireEnv("LINE_CHANNEL_ACCESS_TOKEN"));
-	const spotReplyService = new SpotReplyService(spotSearchClient, lineReplyClient, skipLineApiCall);
-	const webhookRepository = new PrismaWebhookRepository(prisma);
-	const spotService = new SpotService(spotReplyService, webhookRepository);
-	const spotRouter = createSpotRouter(
-		spotService,
-		requireEnv("LINE_CHANNEL_SECRET"),
-		verifyLineSignature,
-	);
-
-	// 全国バイク駐車場案内(jmpsa.or.jp)検索版。DB永続化は行わずLINE返信のみ同期的に行う。
-	// スポット検索とは別のLINEチャンネルで運用するためChannel Secret / Access Tokenを分離する。
-	const parkingClient = new ParkingClientImpl(httpAdapter);
-	const parkingLineReplyClient = new LineReplyClientImpl(
-		requireEnv("BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN"),
-	);
-	const parkingReplyService = new ParkingReplyService(
-		parkingClient,
-		parkingLineReplyClient,
-		skipLineApiCall,
-	);
-	const parkingRouter = createParkingRouter(
-		parkingReplyService,
-		requireEnv("BIKE_PARKING_LINE_CHANNEL_SECRET"),
-		verifyLineSignature,
-	);
 
 	const app = new OpenAPIHono();
 	app.get("/health", (c) => c.text("ok"));
-	app.route("/api/v1/auth", authRouter);
-	app.route("/api/v1/managed", managedRouter);
-	app.route("/api/v1/webhook", spotRouter);
-	app.route("/api/v1/webhook", parkingRouter);
+	app.route("/api/v1/auth", buildAuthRouter(prisma, config, cookieSecure));
+	app.route("/api/v1/managed", buildManagedRouter(prisma, config));
+	app.route(
+		"/api/v1/webhook",
+		buildSpotRouter(prisma, httpAdapter, skipLineApiCall, verifyLineSignature),
+	);
+	app.route(
+		"/api/v1/webhook",
+		buildParkingRouter(httpAdapter, skipLineApiCall, verifyLineSignature),
+	);
 
 	// 既存.NET側 Program.cs の `if (app.Environment.IsDevelopment())` と同じ考え方。
 	// /doc・/ui は本番でAPI仕様を外部に露出させないため、本番では登録しない。
