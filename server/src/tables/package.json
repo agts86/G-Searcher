@@ -16,7 +16,7 @@
 		"build": "prisma generate && tsc -p tsconfig.json",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage --coverage.reporter=text-summary --coverage.reporter=json-summary",
-		"lint": "echo \"no lint target in tables\" && exit 0"
+		"lint": "eslint src test test-support --ext .ts --max-warnings 0"
 	},
 	"dependencies": {
 		"@prisma/client": "^6.1.0"

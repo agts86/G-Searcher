@@ -67,6 +67,7 @@ export async function startPGliteServer(): Promise<void> {
 		);
 	} catch (error) {
 		const { stdout, stderr } = error as { stdout?: string; stderr?: string };
+		// eslint-disable-next-line no-console -- db push失敗時の原因はprismaの標準出力にしか出ないため
 		console.error(stdout, stderr);
 		throw error;
 	}

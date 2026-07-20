@@ -118,8 +118,8 @@ export default tseslint.config(
 	},
 
 	{
-		// test/ 配下は品質ルールのみ適用し、境界ルール（boundaries）は課さない
-		files: ["**/test/**/*.ts"],
+		// test/・test-support/ 配下は品質ルールのみ適用し、境界ルール（boundaries）は課さない
+		files: ["**/test/**/*.ts", "**/test-support/**/*.ts"],
 
 		languageOptions: {
 			parser: tseslint.parser,

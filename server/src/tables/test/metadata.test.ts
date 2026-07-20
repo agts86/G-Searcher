@@ -5,13 +5,13 @@ import { PrismaClient } from "@prisma/client";
 // Prismaのスキーマ宣言（@default(now()) / @updatedAt）が再現しているかを実DBで検証する。
 const prisma = new PrismaClient();
 
-function sampleToken(
-	overrides: Partial<{
-		userName: string;
-		tokenHash: string;
-		expiresAt: Date;
-	}> = {},
-) {
+type SampleToken = {
+	userName: string;
+	tokenHash: string;
+	expiresAt: Date;
+};
+
+function sampleToken(overrides: Partial<SampleToken> = {}): SampleToken {
 	return {
 		userName: "admin",
 		tokenHash: `test-hash-${crypto.randomUUID()}`,
