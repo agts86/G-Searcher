@@ -23,6 +23,10 @@ importers:
       hono:
         specifier: 4.12.30
         version: 4.12.30
+    devDependencies:
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.3
 
   server/src/features/auth:
     dependencies:
