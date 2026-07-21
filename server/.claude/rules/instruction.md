@@ -3,7 +3,7 @@
 ## 1. 目的
 
 このドキュメントは `server/` 配下の実装ルールを定義する。
-対象は Hono（TypeScript）で実装するAPIで、`API/`（.NET）からのストラングラーフィグ移行の一部。
+対象は Hono（TypeScript）で実装するAPIで、`API/`（.NET）からストラングラーフィグ移行で置き換えたもの（移行完了済み、旧`API/`は削除済み）。
 `API/`の5プロジェクト分割（Host/Features/Tables/Shared/Infrastructure）と同じ考え方を、pnpm workspaceの複数パッケージで再現する。
 
 **重要**: レイヤ・Feature間の分離は、書面のルールだけに頼らない。`API/`の5プロジェクト分割が「Controller/ServiceからDbContextを直接使わせない」ために物理的な壁（コンパイラのプロジェクト参照）として機能しているのと同じ理由で、`server/`でも**各パッケージの`package.json`の`dependencies`を物理的な壁として使う**。pnpmはデフォルトで`node_modules`をhoistしないため、パッケージが宣言していない依存はimportしようとした時点で解決できずビルド/実行が失敗する（lintより強い、コンパイルエラー相当の強制力）。
@@ -38,7 +38,7 @@ server/
           auth.dto.ts                   # Zodスキーマ
         test/
       managed/                # ~ API/Features/Managed（実装済み）。auth/と同じ形
-      webhook/                  # 未着手。実装時はauth/と同じ形にする
+      webhook/                  # 実装済み（LINE Webhook受信、parking/spotサブ機能を含む）。auth/と同じ形
     tables/                 # ~ API/Tables: Prismaスキーマ・生成される型
       prisma/schema.prisma
     shared/                  # ~ API/Shared: 共通utility（jwt.ts, cookies.ts, hash.ts）

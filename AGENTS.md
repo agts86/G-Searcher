@@ -26,8 +26,8 @@ API は `server/`（TypeScript / Hono / Prisma、pnpm workspace）。
 
 ## 4. 運用ドキュメント
 
-- コマンド辞書: `docs/agent/commands.md`
-- タグ辞書: `docs/agent/tags.md`
+- コマンド辞書: [CLAUDE.md](CLAUDE.md) の「コマンド」節
+- タグ辞書: `.claude/rules/tags.md`
 
 ## 5. 依頼テンプレート
 

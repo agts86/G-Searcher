@@ -118,14 +118,18 @@ graph LR
 
 ```mermaid
 graph LR
+    GitPush["git push（develop）"]
+    Vercel["Vercel<br/>Node.js Functions（api/index.ts + hono/vercel）"]
     GH["GitHub Actions<br/>ContainerDeploy"]
     GHCR["GHCR"]
     Azure["Azure Web App<br/>line-webhook-api"]
 
+    GitPush -->|Vercel Git Integration| Vercel
     GH -->|Docker build/push（context: .）| GHCR
     GHCR -->|container deploy| Azure
 ```
 
 注記:
-- `Dockerfile` は multi-stage build で `web` と `server` をビルドし、`web/out` を server コンテナの `wwwroot` に、`server` 一式（node_modules込み）を同梱します。実行は `tsx` で `src/host/src/main.ts` を直接起動します。
+- **メイン経路は Vercel**。`api/index.ts` が `hono/vercel` の `handle()` で `server/src/host` の Hono アプリをラップし、`vercel.json` の `functions`/`rewrites` で `/api/*` と `/health` を単一 Function へルーティングする。`web/out`（静的出力）は `outputDirectory` としてそのまま配信する。
+- `Dockerfile` は multi-stage build で `web` と `server` をビルドし、`web/out` を server コンテナの `wwwroot` に、`server` 一式（node_modules込み）を同梱します。実行は `tsx` で `src/host/src/main.ts` を直接起動します。この経路（GHCR → Azure Web App）は Vercel と並行稼働するセカンダリ経路です。
 - 認証は `Access Token + Refresh Token` を利用し、`RefreshToken` は DB で管理します。

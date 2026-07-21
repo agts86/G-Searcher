@@ -62,6 +62,9 @@ https://lin.ee/sOGflWx
   LINE_CHANNEL_SECRET={取得したLine公式アカウントのチャンネルシークレット}
   LINE_CHANNEL_ACCESS_TOKEN={取得したLine Developersのチャネルアクセストークン}
   YAHOO_APP_ID={取得したYOLPのAPIキー}
+  DISABLE_LINE_SIGNATURE_VERIFICATION={署名検証を無効化する場合は`true`（デバッグ用途、未指定なら検証する）}
+  BIKE_PARKING_LINE_CHANNEL_SECRET={バイク駐輪場検索bot用チャンネルシークレット}
+  BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN={バイク駐輪場検索bot用チャネルアクセストークン}
   ```
 
 2. ビルド
@@ -106,7 +109,9 @@ pnpm dev
 認証は `Access Token 15分 + Refresh Token 7日`。  
 UI は有効期限の5分前に `/api/v1/auth/refresh` を呼び、失敗時は `401` で再ログインへ遷移する。
 
-## デプロイ用コンテナ
+## デプロイ
 
-`Dockerfile` は multi-stage build で `web` をビルドし、生成物（`web/out`）を server コンテナの `wwwroot` に同梱する。  
+メイン経路は Vercel（Node.js Functions）。ルート直下の `api/index.ts`（`@api/vercel`パッケージ）が `hono/vercel` の `handle()` で `server/src/host` の Hono アプリをラップし、`vercel.json` の `functions`/`rewrites` で `/api/*` と `/health` を単一 Function へルーティングする。`web/out`（静的出力）は `outputDirectory` としてそのまま配信する。
+
+GHCR → Azure Web App 経路も別途稼働している。`Dockerfile` は multi-stage build で `web` をビルドし、生成物（`web/out`）を server コンテナの `wwwroot` に同梱する。  
 そのため、コンテナビルド時の context はリポジトリルート（`.`）を使用する。

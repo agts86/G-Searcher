@@ -37,6 +37,6 @@
 
 ## 5. 関連仕様
 
-- 詳細仕様: `web/docs/INSTRUCTION.md`
-- コマンド辞書: `docs/agent/commands.md`
-- タグ辞書: `docs/agent/tags.md`
+- 詳細仕様: `web/.claude/rules/instruction.md`
+- コマンド辞書: [CLAUDE.md](../CLAUDE.md) の「コマンド」節
+- タグ辞書: `.claude/rules/tags.md`
