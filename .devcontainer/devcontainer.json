@@ -9,11 +9,11 @@
 		"vscode": {
 			"extensions": [
 				"dbaeumer.vscode-eslint",
-				"esbenp.prettier-vscode",
+				"biomejs.biome",
 				"Prisma.prisma",
 				"ms-azuretools.vscode-docker"
 			]
 		}
 	},
-	"postCreateCommand": "cd /workspaces/LineWebHookAPI/server && pnpm install --store-dir /tmp/pnpm-store && pnpm --filter @api/tables exec prisma generate"
+	"postCreateCommand": "cd /workspaces/LineWebHookAPI && pnpm install --store-dir /tmp/pnpm-store && cd server && pnpm install --store-dir /tmp/pnpm-store && pnpm --filter @api/tables exec prisma generate && cd ../web && pnpm install --store-dir /tmp/pnpm-store --ignore-workspace"
 }
