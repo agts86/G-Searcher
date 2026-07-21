@@ -59,8 +59,8 @@ https://lin.ee/sOGflWx
   ADMIN_PASSWORD={管理画面の管理者パスワード}
   ACCESS_TOKEN_EXPIRES_MINUTES=15
   REFRESH_TOKEN_EXPIRES_DAYS=7
-  LINE_CHANNEL_SECRET={取得したLine公式アカウントのチャンネルシークレット}
-  LINE_CHANNEL_ACCESS_TOKEN={取得したLine Developersのチャネルアクセストークン}
+  SPOT_LINE_CHANNEL_SECRET={取得したLine公式アカウントのチャンネルシークレット（グルメ検索bot用）}
+  SPOT_LINE_CHANNEL_ACCESS_TOKEN={取得したLine Developersのチャネルアクセストークン（グルメ検索bot用）}
   YAHOO_APP_ID={取得したYOLPのAPIキー}
   DISABLE_LINE_SIGNATURE_VERIFICATION={署名検証を無効化する場合は`true`（デバッグ用途、未指定なら検証する）}
   BIKE_PARKING_LINE_CHANNEL_SECRET={バイク駐輪場検索bot用チャンネルシークレット}

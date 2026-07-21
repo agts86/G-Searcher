@@ -75,11 +75,11 @@ function buildSpotRouter(
 	verifyLineSignature: boolean,
 ): OpenAPIHono {
 	const spotSearchClient = new YolpClientImpl(httpAdapter, requireEnv("YAHOO_APP_ID"));
-	const lineReplyClient = new LineReplyClientImpl(requireEnv("LINE_CHANNEL_ACCESS_TOKEN"));
+	const lineReplyClient = new LineReplyClientImpl(requireEnv("SPOT_LINE_CHANNEL_ACCESS_TOKEN"));
 	const spotReplyService = new SpotReplyService(spotSearchClient, lineReplyClient, skipLineApiCall);
 	const webhookRepository = new PrismaWebhookRepository(prisma);
 	const spotService = new SpotService(spotReplyService, webhookRepository);
-	return createSpotRouter(spotService, requireEnv("LINE_CHANNEL_SECRET"), verifyLineSignature);
+	return createSpotRouter(spotService, requireEnv("SPOT_LINE_CHANNEL_SECRET"), verifyLineSignature);
 }
 
 /**

@@ -15,8 +15,8 @@ beforeAll(() => {
 	process.env.ADMIN_PASSWORD = "admin";
 	process.env.DATABASE_URL =
 		"postgresql://postgres:postgres@localhost:5432/postgres?schema=public&sslmode=disable";
-	process.env.LINE_CHANNEL_SECRET = "test-line-channel-secret";
-	process.env.LINE_CHANNEL_ACCESS_TOKEN = "test-line-channel-access-token";
+	process.env.SPOT_LINE_CHANNEL_SECRET = "test-spot-line-channel-secret";
+	process.env.SPOT_LINE_CHANNEL_ACCESS_TOKEN = "test-spot-line-channel-access-token";
 	process.env.BIKE_PARKING_LINE_CHANNEL_SECRET = "test-bike-parking-line-channel-secret";
 	process.env.BIKE_PARKING_LINE_CHANNEL_ACCESS_TOKEN =
 		"test-bike-parking-line-channel-access-token";
@@ -75,7 +75,7 @@ describe("createApp() 経由でマウントしたWebhookルート", () => {
 	});
 
 	// webhookRouterとbikeParkingRouterを同じ/api/v1/webhookにapp.route()で二重マウントした際、
-	// 先にマウントされた側のミドルウェア（LINE_CHANNEL_SECRET検証）が後からマウントされた
+	// 先にマウントされた側のミドルウェア（SPOT_LINE_CHANNEL_SECRET検証）が後からマウントされた
 	// bikeParkingRouterのパスにも適用されてしまい、正しいBIKE_PARKING_LINE_CHANNEL_SECRETで
 	// 署名しても401になる回帰バグがあった。単体ルーターのテストでは検出できないため、
 	// createApp()経由（実際にマウントされる構成）で正しい署名なら通ることを検証する。
@@ -95,7 +95,7 @@ describe("createApp() 経由でマウントしたWebhookルート", () => {
 		expect(res.status).not.toBe(401);
 	});
 
-	it("LINE_CHANNEL_SECRETで正しく署名したPOST /api/v1/webhook/spotは401にならない", async () => {
+	it("SPOT_LINE_CHANNEL_SECRETで正しく署名したPOST /api/v1/webhook/spotは401にならない", async () => {
 		const app = createApp();
 		const body = JSON.stringify({ destination: "U123", events: [] });
 
@@ -103,7 +103,7 @@ describe("createApp() 経由でマウントしたWebhookルート", () => {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				"x-line-signature": sign("test-line-channel-secret", body),
+				"x-line-signature": sign("test-spot-line-channel-secret", body),
 			},
 			body,
 		});
