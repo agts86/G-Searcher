@@ -22,10 +22,6 @@
 		"react-leaflet": "^5.0.0"
 	},
 	"type": "module",
-	"volta": {
-		"node": "24.11.1",
-		"pnpm": "10.26.0"
-	},
 	"devDependencies": {
 		"@types/leaflet": "^1.9.14",
 		"@types/node": "^22.10.0",

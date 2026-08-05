@@ -9,10 +9,6 @@
 		"lint": "pnpm -r lint",
 		"dev": "pnpm --filter @api/host dev"
 	},
-	"volta": {
-		"node": "24.11.1",
-		"pnpm": "10.26.0"
-	},
 	"devDependencies": {
 		"@eslint/js": "^9.17.0",
 		"@types/node": "^22.10.0",
