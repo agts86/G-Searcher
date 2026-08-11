@@ -4,11 +4,8 @@
 
 LineChatBotのフック先に使うAPI<br/>
 
-https://lin.ee/sOGflWx
-
-## 作成の背景
-
-ナイツーや飲み会後の締めのラーメン屋を探すのに苦労したので作りました。
+[近くのラーメン屋](https://lin.ee/sOGflWx)
+[近くのバイク駐車場](https://lin.ee/xzQjD6s)
 
 ## 使用技術
 
